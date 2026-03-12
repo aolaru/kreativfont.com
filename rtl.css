@@ -1,0 +1,31 @@
+/*
+Theme Name: Oceania
+RTL Support for KREATIV Theme
+*/
+
+body {
+  direction: rtl;
+  unicode-bidi: embed;
+  text-align: right;
+}
+
+/* Typography alignment */
+p, h1, h2, h3, h4, h5, h6 {
+  text-align: right;
+}
+
+/* Float & margin reversal */
+.float-left { float: right !important; }
+.float-right { float: left !important; }
+.ml-auto { margin-right: auto !important; margin-left: 0 !important; }
+.mr-auto { margin-left: auto !important; margin-right: 0 !important; }
+
+/* Navbar direction */
+.kreativ-header .navbar-nav {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+/* Post navigation arrows */
+.post_nav_next { right: auto; left: 2rem; }
+.post_nav_prev { left: auto; right: 2rem; }

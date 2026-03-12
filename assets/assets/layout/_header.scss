@@ -1,0 +1,211 @@
+// Header
+
+.kreativ-header {
+  border-bottom: $gray-200 solid 1px;
+  background: $white;
+  transition: $transition-base;
+  padding-bottom: .5rem!important;
+  padding-top: .5rem!important;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1030;
+
+  &.header-shadow {
+    box-shadow: 0 2px 4px rgba(0,0,0,.07);
+  }
+
+  .navbar {
+      padding: 0!important;
+
+    @include media-breakpoint-up(md) {
+      flex-flow: row nowrap;
+    }
+  }
+
+  .navbar-collapse {
+    justify-content: space-between;
+  }
+
+  .kreativ-logo {
+
+    a {
+      padding: $nav-link-padding-y $nav-link-padding-x;
+      color: $gray-500;
+      font-size: $font-size-lg;
+
+      &:hover {
+        text-decoration: none;
+        color: $link-hover-color;
+      }
+    }
+
+    margin: 0 !important;
+  }
+
+  @include media-breakpoint-up(lg) {
+    .kreativ-hdr-right,
+    .kreativ-hdr-left {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .navbar-nav {
+    li.menu-item {
+      @extend .nav-item;
+
+      a {
+        @extend .nav-link;
+      }
+    }
+  }
+}
+
+// Search box
+
+.kreativ-search {
+  display: inline-block;
+  position: relative;
+
+  @include media-breakpoint-up(md) {
+    margin-right: 1.5rem!important;
+  }
+
+  input {
+    min-width: 320px;
+    padding-left: $spacer * 2;
+  }
+
+  .icon-search {
+    position: absolute;
+    left: 0.6rem;
+    top: 0.2rem;
+  }
+}
+
+
+.btn-edit-cart {
+  @include float-right;
+  position: relative;
+
+  .badge {
+    position: absolute;
+    background: $green;
+    color: $white;
+    height: 18px;
+    text-align: center;
+    border-radius: 10px;
+    line-height: 18px;
+    width: 18px;
+    right: -8px;
+    top: -8px;
+    display: block;
+    font-size: 11px;
+    font-weight: bold;
+  }
+}
+
+// Responsive
+
+@include media-breakpoint-down(md) {
+  .offcanvas-collapse {
+    position: fixed;
+    top: 57px;
+    bottom: 0;
+    left: 100%;
+    width: 100%;
+    padding: $spacer;
+    overflow-y: auto;
+    visibility: hidden;
+    background-color: $white;
+    transition-timing-function: ease-in-out;
+    transition-duration: .3s;
+    transition-property: left, visibility;
+
+    &.open {
+      left: 0;
+      visibility: visible;
+
+      .kreativ-logo {
+        display: none;
+      }
+
+      .kreativ-search {
+        margin: $spacer 0 ($spacer * 2) !important;
+        display: block;
+
+        input {
+          min-width: 100px;
+        }
+      }
+
+      .kreativ-account-btn {
+        @include float-left;
+
+        .dropdown.open {
+
+          .dropdown-toggle {
+            display: block;
+          }
+
+          .dropdown-menu {
+            position: relative;
+          }
+        }
+      }
+
+      .btn-edit-cart {
+        @include float-right;
+        position: relative;
+      }
+    }
+  }
+}
+
+.offcanvas-show {
+  display: none;
+
+  @include media-breakpoint-down(md) {
+    display: block;
+  }
+}
+
+@include media-breakpoint-down(md) {
+  .kreativ-header .container {
+    max-width: none;
+  }
+
+  .navbar-collapse.offcanvas-collapse {
+    align-items: flex-start;
+    display: block !important;
+  }
+}
+
+@include media-breakpoint-up(md) {
+  .navbar-collapse {
+    display: flex !important;
+    flex-basis: auto;
+  }
+}
+
+.navbar-nav {
+  margin-right: auto!important;
+}
+
+.navbar-toggler {
+  padding: 0!important;
+}
+
+.ml-4 {
+  margin-left: 1.5rem!important;
+}
+
+.ml-1 {
+  margin-left: .25rem!important;
+}
+
+.mr-1 {
+  margin-right: .25rem!important;
+}

@@ -1,0 +1,20 @@
+{
+  "name": "kreativfont",
+  "version": "1.0.0",
+  "description": "kreativfont",
+  "author": "kreativfont",
+  "license": "",
+  "readmeFilename": "Readme.md",
+  "main": "",
+  "scripts": {},
+  "devDependencies": {
+    "bower": "^1.3.5",
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.11",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-sass": "^1.0.0",
+    "grunt-contrib-copy": "latest",
+    "grunt-contrib-cssmin": "latest",
+    "grunt-fontello": "latest"
+  }
+}

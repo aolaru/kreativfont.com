@@ -1,0 +1,227 @@
+// Content
+
+body {
+  padding-top: 57px;
+}
+
+// Heading
+
+.kreativ-heading {
+  margin: ($spacer * 1.5) 0;
+  text-align: center;
+  font-size: $h2-font-size;
+}
+
+// Cards
+
+.kreativ-font-card {
+  text-align: center;
+  border-radius: $card-border-radius;
+  margin-bottom: $spacer * 2;
+
+  img {
+    border: transparent solid 2px;
+    z-index: 150;
+    width: 75%;
+  }
+
+  .kreativ-card-title {
+    position: relative;
+    z-index: 350;
+    max-height: 230px;
+    overflow: hidden;
+
+    strong {
+      font-weight: 300;
+      padding: ($spacer / 2) 0 ($spacer / 3);
+      display: block;
+      font-size: $h6-font-size * 1.1;
+    }
+
+    &:hover {
+
+      img {
+        border-color: $blue;
+        @include border-radius($card-border-radius);
+      }
+    }
+  }
+  
+  a {
+    display: block;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .card {
+    position: relative;
+    z-index: 100;
+    border: 0;
+    padding: ($spacer / 3) 0 0;
+
+    strong {
+      @include float-right;
+    }
+  }
+}
+
+a {
+  font-weight: 700;
+}
+
+.dropdown-toggle::after {
+  position: relative;
+  top: 2px;
+}
+
+#screenshot {
+  position: absolute;
+  border: darken($primary, 10%) solid 1px;
+  background: $primary;
+  padding: 5px;
+  display: none;
+  color: #fff;
+  z-index: 1500;
+}
+
+.sticky-bar {
+  position: fixed;
+  left: 0;
+  top: -190px;
+  width: 100%;
+  z-index: 10000;
+  border-bottom: $gray-200 solid 1px;
+  background: $gray-100;
+  transition: $transition-base;
+  padding: ($spacer / 3) ($spacer) $spacer;
+  text-align: center;
+
+  a {
+    color: blue;
+  }
+
+  h2 {
+    margin: 0 0 ($spacer / 3);
+  }
+
+  span {
+    display: block;
+    padding: 0 0 $spacer / 2;
+
+  }
+
+  &.active {
+    box-shadow: 0 2px 4px rgba(0,0,0,.07);
+    top: 0;
+  }
+}
+
+%post-nav {
+  font-size: 6rem;
+  height: 60px;
+  line-height: 60px;
+  display: block;
+}
+
+.post_nav_prev,
+.post_nav_next {
+  left: $spacer * 2;
+  right: auto;
+  @extend %post-nav;
+  position: fixed;
+  top: 50%;
+  margin-top: -30px;
+
+  @include media-breakpoint-down(md) {
+    position: relative;
+    top: -19px;
+    width: 40px;
+    font-size: 3rem;
+    text-align: center;
+  }
+}
+
+.post_nav_next a i,
+.post_nav_prev a i,
+.post_nav_next a i:before,
+.post_nav_prev a i:before,
+.post_nav_prev a,
+.post_nav_next a {
+  @extend %post-nav;
+}
+
+.post_nav_prev a,
+.post_nav_next a {
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.post_nav_prev {
+  @include media-breakpoint-down(md) {
+    left: $spacer / 2;
+    right: auto;
+    @include float-left;
+  }
+}
+
+.post_nav_next {
+  left: auto;
+  right: $spacer * 2;
+  @include media-breakpoint-down(md) {
+    right: $spacer / 2;
+    left: auto;
+    @include float-right;
+  }
+}
+
+.post_tags,
+.post_content,
+.post_meta {
+  margin-bottom: $spacer;
+}
+
+.post_content {
+  text-align:justify;
+  text-justify: inter-word;
+  text-align-last:center;
+  -ms-text-align-last:center;
+  font-size: $font-size-base * 1.1;
+
+  img.size-full {
+    max-width: 100%;
+  }
+}
+
+.heading-h1 {
+  font-size: $h1-font-size;
+  text-align: center;
+}
+
+.text-center,
+#page {
+  text-align: center;
+}
+
+.post-box {
+  margin-bottom: $spacer;
+  padding-bottom: $spacer;
+  border-bottom: $gray-200 solid 1px;
+}
+
+.center-margin {
+  margin-left: auto !important;
+  margin-right: auto !important;
+  @include float-none;
+}
+
+.kreativ-related-posts {
+  background: $white;
+
+  h2 {
+    font-size: $h1-font-size;
+    text-align: center;
+  }
+}

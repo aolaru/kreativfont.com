@@ -1,0 +1,212 @@
+/* ================================================================
+   CATEGORY GRADIENT + ANIMATION
+================================================================ */
+.kreativ-category-bg {
+    padding: 2.5rem 1rem;
+    border-radius: 22px;
+    margin-bottom: 2.5rem;
+    background: var(--kreativ-cat-gradient);
+    animation: kreativGradientMove 12s ease infinite;
+    background-size: 200% 200%;
+}
+
+@keyframes kreativGradientMove {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* CATEGORY-SPECIFIC GRADIENTS */
+body.kreativ-cat-fonts            { --kreativ-cat-gradient: linear-gradient(135deg, #f8f9ff 0%, #eef1ff 100%); }
+body.kreativ-cat-templates-themes { --kreativ-cat-gradient: linear-gradient(135deg, #f5fcfc 0%, #eefdfd 100%); }
+body.kreativ-cat-graphics         { --kreativ-cat-gradient: linear-gradient(135deg, #fff4ed 0%, #fff9f6 100%); }
+body.kreativ-cat-photos           { --kreativ-cat-gradient: linear-gradient(135deg, #fff9dd 0%, #fffdf3 100%); }
+body.kreativ-cat-videos           { --kreativ-cat-gradient: linear-gradient(135deg, #ffe9e9 0%, #fff6f6 100%); }
+body.kreativ-cat-sounds           { --kreativ-cat-gradient: linear-gradient(135deg, #f9ecff 0%, #fcf7ff 100%); }
+body.kreativ-cat-free             { --kreativ-cat-gradient: linear-gradient(135deg, #dff8e4 0%, #effff4 100%); }
+
+/* ================================================================
+   CATEGORY HEADER
+================================================================ */
+.kreativ-category-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.kreativ-category-header h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+}
+
+.kreativ-category-header i {
+    font-size: 2rem;
+    margin-right: .4rem;
+    color: #4A4AFF;
+}
+
+.kreativ-category-header p {
+    color: #444;
+    font-size: 1.1rem;
+    max-width: 720px;
+    margin: .5rem auto 0;
+}
+
+/* ================================================================
+   SORTING BAR
+================================================================ */
+.kreativ-sort-bar {
+    text-align: center;
+    margin: 2rem 0 2.5rem;
+}
+
+.kreativ-sort-btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    margin: .25rem;
+    border: 1px solid #dfe2ee;
+    border-radius: 8px;
+    background: #fff;
+    color: #333;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.25s ease;
+}
+
+.kreativ-sort-btn:hover,
+.kreativ-sort-btn.active {
+    background: #4A4AFF;
+    border-color: #4A4AFF;
+    color: white;
+}
+
+/* ================================================================
+   CARDS
+================================================================ */
+.kreativ-category-grid .row {
+    margin-left: -10px;
+    margin-right: -10px;
+}
+
+.kreativ-category-grid .col-md-4,
+.kreativ-category-grid .col-lg-3,
+.kreativ-category-grid .col-sm-6 {
+    padding: 10px;
+}
+
+.kreativ-font-card {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 14px;
+    border: 1px solid #e2e4ea;
+    transition: .25s ease;
+    position: relative;
+}
+
+.kreativ-font-card:hover {
+    box-shadow: 0px 6px 22px rgba(0,0,0,0.12);
+    transform: translateY(-4px);
+    border-color: #4A4AFF;
+}
+
+.kreativ-card-media {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.kreativ-card-media img {
+    width: 100%;
+    display: block;
+    transition: transform .3s ease;
+}
+
+.kreativ-font-card:hover img {
+    transform: scale(1.06);
+}
+
+/* CATEGORY-SPECIFIC BADGES */
+.kf-badge {
+    position: absolute;
+    top: .7rem;
+    left: .7rem;
+    padding: 0.25rem 0.65rem;
+    font-size: 0.72rem;
+    border-radius: 999px;
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    z-index: 5;
+}
+
+.kf-badge-fonts            { background: #4A4AFF; }
+.kf-badge-templates-themes { background: #00A7B5; }
+.kf-badge-graphics         { background: #FF7A59; }
+.kf-badge-photos           { background: #F4B400; }
+.kf-badge-videos           { background: #E53935; }
+.kf-badge-sounds           { background: #8E24AA; }
+.kf-badge-free             { background: #43A047; }
+
+/* Animation */
+.kreativ-card-animate {
+    opacity: 0;
+    transform: translateY(14px);
+    animation: cardFadeUp .55s ease forwards;
+}
+@keyframes cardFadeUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ================================================================
+   KREATIV PAGINATION
+================================================================ */
+.kreativ-pagination {
+    text-align: center;
+    margin: 3rem 0;
+}
+
+.kreativ-pagination .page-numbers {
+    display: inline-block;
+    padding: 0.45rem 0.85rem;
+    margin: 0 0.15rem;
+    font-size: 1.05rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.kreativ-pagination .page-numbers:hover {
+    background: #4A4AFF;
+    color: #fff;
+    border-color: #4A4AFF;
+    transform: translateY(-2px);
+}
+
+.kreativ-pagination .current {
+    background: #4A4AFF;
+    color: #fff;
+    border-color: #4A4AFF;
+    font-weight: 600;
+    cursor: default;
+}
+
+.kreativ-pagination .prev,
+.kreativ-pagination .next {
+    color: #E53935;
+    font-weight: 600;
+}
+
+.kreativ-pagination .prev:hover,
+.kreativ-pagination .next:hover {
+    background: #E53935;
+    color: #fff;
+    border-color: #E53935;
+}
+
+.kreativ-pagination .dots {
+    cursor: default;
+    padding: 0.45rem 0.5rem;
+    color: #999;
+}

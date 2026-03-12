@@ -1,0 +1,117 @@
+Oceania 2024
+- fully resposnsive theme
+- search form improvements
+- tons of optimisations
+
+----------------------------------
+
+2016 - 2024 - many changes and updates that were not really tracked via chnage log
+
+----------------------------------
+version 0.9.9.8 (June 6, 2015)
+- full https switch
+- remove www from url
+
+version 0.9.9.7 (May 29, 2015)
+- filter tags were added
+- css font face was added
+- css style improvements
+
+version 0.9.9.6 (May 15, 2015)
+- preparations for https switch
+- code speed improvements
+
+version 0.9.9.5 (April 30, 2015)
+- filter code improvements
+- high quality filter images
+- removed unnecessary php code
+
+version 0.9.9.4 (March 31, 2015)
+- improved mobile exprience
+- fixes for old bugs
+- responsive design started
+
+version 0.9.9.3 (September 4, 2014)
+- improvements and fixes
+
+version 0.9.9.2 (July 8, 2014)
+- theme customization
+- wordpress 3.9.1 optimizations
+- scripts updated
+- better js minification and loading
+- improvements and fixes
+
+version 0.9.9.1 (March 25, 2014)
+- more improvements and fixes
+
+version 0.9.9.0 (February 10, 2014)
+- new style
+- google webfonts
+- scripts updated
+
+version 0.9.8.1 (January 15, 2014)
+- wp_query used for filter
+- extension template is now based on wp_query filtering
+- screenshotPreview js loading optimization
+- alt added to author gravatar
+
+version 0.9.8 (August 1, 2013)
+- lazyload update
+- screenshot preview on filter page
+- branded login page
+- timthumb update
+- unified design
+- removed unnecessary css and code
+- many fixes and improvements
+- apple touch icons
+- web app template
+
+version 0.9.7.1 (May 12, 2012)
+- separate author page
+- category page fix to fit the width correctly
+
+version 0.9.7.0 (May 04, 2012)
+- css text display fixes
+- support for Disquss, WP-PageViews
+- about author
+- timthumb update
+
+version 0.9.6.2 (February 25, 2012)
+- [img] shortcode to use TimThumb inside posts.
+- transparency for header and footer added to work great with a custom background
+- css3 improvements
+- unused resorces removed
+- started the _s theme adaptation
+
+version 0.9.6.0 (February 6, 2012)
+- native wordpress menu enabled
+- 4 filters types
+- better transparent logo and new favicon
+- lots of css3 and htlm5 fixes
+
+version 0.9.5.0 (February 1, 2012)
+- post thumbnails
+- backgorund image enabled
+- add the the items filter
+- text readability improved with Google fonts
+- 4 widgets footer
+- many css3 and htlm5 improvements
+
+version 0.9.0.7 (March 29, 2011)
+- text readability improved
+- lots of HTML and CSS fixes
+- sidebar widgetized 
+
+version 0.8.5.1 (March 17, 2011)
+- widgetize footer area
+- css3 shadow features added
+- html5 enabled
+- lots of fixes
+
+version 0.8.4.0 (November 12, 2010)
+- lots of fixes
+
+version 0.8.0.0 (October 12, 2010)
+- ported to WordPress
+- many css and php fixes.
+- first version of Oceania css theme

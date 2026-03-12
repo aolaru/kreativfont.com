@@ -1,0 +1,17 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+	Andrei -- Developer
+	Iulia -- Copywriter
+
+# THANKS
+
+	Alex and Radu
+
+# TECHNOLOGY COLOPHON
+
+	HTML5, CSS3, PHP
+	jQuery, Bootstrap
+	FontAwesome

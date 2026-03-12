@@ -1,0 +1,206 @@
+/*
+Theme Name: Oceania (KREATIV Edition)
+Theme URI: https://kreativfont.com
+Author: Andrei Olaru
+Author URI: https://kreativfont.com
+Description: A creative, lightweight, and responsive WordPress theme by KREATIV — designed for designers, typographers, and creators. Includes dark mode, Bootstrap grid, and SEO-optimized structure.
+Version: 1.0.3
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: kreativ
+Tags: blog, portfolio, typography, responsive, dark-mode, minimal, creative, bootstrap, ai, clean
+*/
+
+@charset "UTF-8";
+
+/* --- Font --- */
+@font-face {
+  font-family: 'ProximaNova-Light';
+  src: url('webfonts/2EE639_0_0.woff2') format('woff2'),
+       url('webfonts/2EE639_0_0.woff') format('woff');
+  font-display: swap;
+}
+
+/* --- KREATIV Brand Colors --- */
+:root {
+  --color-brand: #FF3366;    /* Main brand pink */
+  --color-accent: #00C2FF;   /* Accent cyan */
+  --color-success: #00d084;
+  --color-text: #212529;
+  --color-bg: #ffffff;
+  --color-muted: #6c757d;
+
+  /* Buttons, links, and highlights */
+  --color-btn-primary: var(--color-brand);
+  --color-btn-hover: var(--color-accent);
+}
+
+/* --- Dark Mode Variables --- */
+body.dark-mode {
+  --color-bg: #0e0e10;
+  --color-text: #f5f5f7;
+  --color-muted: #a1a1aa;
+  --color-btn-primary: var(--color-accent);
+  --color-btn-hover: var(--color-brand);
+}
+
+/* --- Base Styles --- */
+body {
+  margin: 0;
+  font-family: "ProximaNova-Light", "Trebuchet MS", Verdana, sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-brand);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: var(--color-brand);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+a:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+/* --- Buttons --- */
+.btn-primary {
+  color: #fff;
+  background-color: var(--color-btn-primary);
+  border-color: var(--color-btn-primary);
+  border-radius: 0.3rem;
+  padding: 0.4rem 1rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.btn-primary:hover {
+  background-color: var(--color-btn-hover);
+  border-color: var(--color-btn-hover);
+}
+
+/* --- Header --- */
+.kreativ-header {
+  background: var(--color-bg);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+.kreativ-logo a {
+  color: var(--color-brand);
+  font-weight: 800;
+  font-size: 2rem;
+  letter-spacing: -0.03em;
+  transition: color 0.3s ease;
+}
+.kreativ-logo a:hover {
+  color: var(--color-accent);
+}
+
+.kreativ-nav a {
+  color: var(--color-text);
+  font-weight: 600;
+  margin-left: 1.5rem;
+  transition: color 0.3s ease;
+}
+.kreativ-nav a:hover {
+  color: var(--color-accent);
+}
+
+/* --- Dark Mode --- */
+body.dark-mode,
+body.dark-mode .kreativ-header,
+body.dark-mode .kreativ-footer {
+  background-color: #0e0e10;
+  color: var(--color-text);
+}
+
+body.dark-mode a {
+  color: var(--color-accent);
+}
+body.dark-mode a:hover {
+  color: var(--color-brand);
+}
+
+body.dark-mode .btn-primary {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+body.dark-mode .btn-primary:hover {
+  background-color: var(--color-brand);
+  border-color: var(--color-brand);
+}
+
+body.dark-mode .kreativ-header {
+  background: #111;
+  border-bottom: 1px solid #222;
+}
+body.dark-mode .kreativ-logo a {
+  color: var(--color-accent);
+}
+
+/* --- Footer --- */
+.kreativ-footer {
+  padding: 2.5rem 0;
+  color: var(--color-muted);
+  text-align: center;
+  background-color: #fafafa;
+  border-top: 1px solid rgba(0,0,0,0.05);
+  font-size: 0.95rem;
+}
+body.dark-mode .kreativ-footer {
+  background-color: #111;
+  color: #bbb;
+  border-top-color: #222;
+}
+
+/* --- Dark Mode Toggle --- */
+.dark-toggle {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  background: var(--color-btn-primary);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 46px;
+  height: 46px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  transition: background 0.3s ease;
+  z-index: 10000;
+}
+.dark-toggle:hover {
+  background: var(--color-btn-hover);
+}
+.dark-toggle svg {
+  width: 22px;
+  height: 22px;
+  vertical-align: middle;
+  fill: currentColor;
+}
+
+
+
+.kreativ-header { padding-bottom: 0.5rem; }
+.kreativ-content { padding-top: 1.5rem; }
+
+.kreativ-heading {
+  border-top: 1px solid rgba(0,0,0,0.05);
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+.kreativ-font-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+

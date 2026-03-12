@@ -1,0 +1,6 @@
+# robotstxt.org/
+
+User-agent: *
+Disallow: /wp-admin/
+
+Sitemap: https://kreativfont.com/sitemap.xml.gz
