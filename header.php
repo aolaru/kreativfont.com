@@ -67,6 +67,9 @@
 
     <?php wp_head(); ?>
 
+    <!-- Cloudflare Web Analytics -->
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "ab7a9c1b54714400a0112acefa6e4479"}'></script>
+
     <!-- Affiliate / CJ Script (async for performance) -->
     <script async src="https://www.anrdoezrs.net/am/100743026/include/allCj/generate/onLoad/impressions/page/am.js"></script>
 
