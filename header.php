@@ -1,19 +1,35 @@
 <!DOCTYPE html>
 <html <?php language_attributes(); ?> class="no-js no-svg">
 <head>
+    <?php
+    $theme_uri = get_template_directory_uri();
+    $site_url = home_url( '/' );
+    $current_request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '/';
+    $current_url = home_url( $current_request_uri );
+    $document_title = wp_get_document_title();
+    $logo_url = $theme_uri . '/img/logo-512.png';
+
+    if ( is_singular() && has_post_thumbnail() ) {
+        $logo_url = get_the_post_thumbnail_url( null, 'large' );
+    }
+
+    if ( is_singular() && has_excerpt() ) {
+        $meta_description = wp_strip_all_tags( get_the_excerpt() );
+    } elseif ( is_singular() ) {
+        $meta_description = wp_trim_words(
+            wp_strip_all_tags( get_post_field( 'post_content', get_queried_object_id() ) ),
+            25,
+            '...'
+        );
+    } else {
+        $meta_description = 'Discover, identify, and submit fonts, templates, and creatives with KREATIV - your home for modern typography and design.';
+    }
+    ?>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Dynamic meta description -->
-    <meta name="description" content="<?php
-        if ( is_singular() && has_excerpt() ) {
-            echo esc_attr( wp_strip_all_tags( get_the_excerpt() ) );
-        } elseif ( is_singular() ) {
-            echo esc_attr( wp_trim_words( wp_strip_all_tags( get_the_content() ), 25, '…' ) );
-        } else {
-            echo esc_attr( 'Discover, identify, and submit fonts, templates, and creatives with KREATIV — your home for modern typography and design.' );
-        }
-    ?>">
+    <meta name="description" content="<?php echo esc_attr( $meta_description ); ?>">
 
     <!-- SEO keywords (optional but harmless) -->
     <meta name="keywords" content="kreativ, fonts, templates, graphics, photos, sounds, typography, ai font identifier, creative marketplace, design assets">
@@ -24,46 +40,39 @@
     <?php endif; ?>
 
     <!-- Open Graph / Twitter Meta -->
-    <?php 
-    // Use featured image if available, fallback to logo
-    $og_image = get_template_directory_uri() . '/img/logo-512.png';
-    if ( is_singular() && has_post_thumbnail() ) {
-        $og_image = get_the_post_thumbnail_url( null, 'large' );
-    }
-    ?>
     <meta property="og:site_name" content="KREATIV">
-    <meta property="og:title" content="<?php echo esc_attr( wp_get_document_title() ); ?>">
-    <meta property="og:description" content="<?php echo esc_attr( get_bloginfo('description') ); ?>">
-    <meta property="og:url" content="<?php echo esc_url( home_url( $_SERVER['REQUEST_URI'] ) ); ?>">
-    <meta property="og:image" content="<?php echo esc_url( $og_image ); ?>">
+    <meta property="og:title" content="<?php echo esc_attr( $document_title ); ?>">
+    <meta property="og:description" content="<?php echo esc_attr( $meta_description ); ?>">
+    <meta property="og:url" content="<?php echo esc_url( $current_url ); ?>">
+    <meta property="og:image" content="<?php echo esc_url( $logo_url ); ?>">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="<?php echo esc_attr( wp_get_document_title() ); ?>">
-    <meta name="twitter:description" content="<?php echo esc_attr( get_bloginfo('description') ); ?>">
-    <meta name="twitter:image" content="<?php echo esc_url( $og_image ); ?>">
+    <meta name="twitter:title" content="<?php echo esc_attr( $document_title ); ?>">
+    <meta name="twitter:description" content="<?php echo esc_attr( $meta_description ); ?>">
+    <meta name="twitter:image" content="<?php echo esc_url( $logo_url ); ?>">
 
     <!-- PWA: Web App metadata -->
     <meta name="application-name" content="KREATIV">
     <meta name="theme-color" content="#ffffff">
 
     <!-- Favicon -->
-    <link rel="icon" href="<?php echo get_template_directory_uri(); ?>/img/favicon-96x96.png" type="image/png">
+    <link rel="icon" href="<?php echo esc_url( $theme_uri . '/img/favicon-96x96.png' ); ?>" type="image/png">
 
     <!-- Manifest -->
-    <link rel="manifest" href="<?php echo get_template_directory_uri(); ?>/manifest.json">
+    <link rel="manifest" href="<?php echo esc_url( $theme_uri . '/manifest.json' ); ?>">
 
     <!-- PWA: Apple iOS Support -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
     <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="https://kreativfont.com/wp-content/uploads/pwa/icon-192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo esc_url( $theme_uri . '/img/logo-192.png' ); ?>">
 
     <!-- Safari pinned tab -->
     <link rel="mask-icon" href="https://kreativfont.com/wp-content/uploads/pwa/icon-512-maskable.png" color="#000000">
 
     <!-- Font Preload -->
-    <link rel="preload" href="<?php echo get_template_directory_uri(); ?>/webfonts/2EE639_0_0.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="<?php echo esc_url( $theme_uri . '/webfonts/2EE639_0_0.woff2' ); ?>" as="font" type="font/woff2" crossorigin>
 
     <?php wp_head(); ?>
 
@@ -79,8 +88,8 @@
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "KREATIV",
-      "url": "<?php echo esc_url( home_url( '/' ) ); ?>",
-      "logo": "<?php echo get_template_directory_uri(); ?>/img/logo-512.png",
+      "url": "<?php echo esc_url( $site_url ); ?>",
+      "logo": "<?php echo esc_url( $theme_uri . '/img/logo-512.png' ); ?>",
       "sameAs": [
           "https://www.instagram.com/kreativandrei",
           "https://x.com/kreativfont",
@@ -100,8 +109,8 @@
                 
                 <div class="kreativ-hdr-left">
                     <h1 class="kreativ-logo">
-						<a href="<?php echo esc_url( home_url('/') ); ?>" title="<?php bloginfo('description'); ?>">
-							<img src="https://kreativfont.com/wp-content/uploads/pwa/icon-96.png"
+						<a href="<?php echo esc_url( $site_url ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
+							<img src="<?php echo esc_url( $theme_uri . '/img/logo-96.png' ); ?>"
 								 alt="KREATIV Logo"
 								 class="kreativ-logo-icon">
 							<span class="kreativ-logo-text">KREATIV</span>
@@ -111,9 +120,10 @@
                 </div>				
 
                 <div class="kreativ-search">
-                    <form method="get" id="searchform" action="<?php echo esc_url( home_url('/') ); ?>">
+                    <form method="get" id="searchform" action="<?php echo esc_url( $site_url ); ?>" role="search" aria-label="Search Kreativ Font">
                         <input id="searchi" type="search" name="s" value="<?php echo get_search_query(); ?>"
                                maxlength="128" placeholder="Type your search and press enter"
+                               aria-label="Search Kreativ Font"
                                class="form-control form-control-sm">
                     </form>
                 </div>
@@ -133,15 +143,15 @@
 
 
 			<h2 class="kreativ-logo offcanvas-show">
-				<a href="<?php echo esc_url( home_url('/') ); ?>" title="<?php bloginfo('description'); ?>">
-					<img src="https://kreativfont.com/wp-content/uploads/pwa/icon-96.png"
+				<a href="<?php echo esc_url( $site_url ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
+					<img src="<?php echo esc_url( $theme_uri . '/img/logo-96.png' ); ?>"
 						 alt="KREATIV Logo"
 						 class="kreativ-logo-icon">
 					<span class="kreativ-logo-text">KREATIV</span>
 				</a>
 			</h2>
 
-            <button class="navbar-toggler" type="button" data-toggle="offcanvas">
+            <button class="navbar-toggler" type="button" data-toggle="offcanvas" aria-label="Toggle navigation">
                 Menu
             </button>
         </nav>

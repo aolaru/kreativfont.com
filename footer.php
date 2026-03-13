@@ -31,7 +31,10 @@
 		<script>
 		document.addEventListener('DOMContentLoaded', function() {
 		  const toggle = document.createElement('button');
+		  toggle.type = 'button';
 		  toggle.classList.add('dark-toggle');
+		  toggle.setAttribute('aria-label', 'Toggle dark mode');
+		  toggle.setAttribute('title', 'Toggle dark mode');
 		  toggle.innerHTML = '<svg viewBox="0 0 24 24"><path d="M21.64 13a9 9 0 0 1-8.64 8.95A9 9 0 0 1 12 3v0a9 9 0 0 1 9.64 10z"/></svg>';
 		  document.body.appendChild(toggle);
 
