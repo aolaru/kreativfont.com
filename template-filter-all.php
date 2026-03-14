@@ -15,6 +15,89 @@ $kreativ_fa_icons = [
     'fonts' => 'fa-solid fa-font',
 ];
 
+$font_filters = [
+    'latest' => [
+        'label' => 'Latest',
+        'title' => 'Latest Fonts',
+        'orderby' => 'date',
+        'tax_query' => [],
+    ],
+    'popular' => [
+        'label' => 'Popular',
+        'title' => 'Popular Fonts',
+        'orderby' => 'comment_count',
+        'tax_query' => [],
+    ],
+    'free' => [
+        'label' => 'Free',
+        'title' => 'Free Fonts',
+        'orderby' => 'date',
+        'tax_query' => [
+            [
+                'taxonomy' => 'category',
+                'field' => 'slug',
+                'terms' => [ 'free' ],
+            ],
+        ],
+    ],
+    'serif' => [
+        'label' => 'Serif',
+        'title' => 'Serif Fonts',
+        'orderby' => 'date',
+        'tax_query' => [
+            [
+                'taxonomy' => 'post_tag',
+                'field' => 'slug',
+                'terms' => [ 'serif' ],
+            ],
+        ],
+    ],
+    'sans-serif' => [
+        'label' => 'Sans Serif',
+        'title' => 'Sans Serif Fonts',
+        'orderby' => 'date',
+        'tax_query' => [
+            [
+                'taxonomy' => 'post_tag',
+                'field' => 'slug',
+                'terms' => [ 'sans-serif', 'sansserif' ],
+            ],
+        ],
+    ],
+    'script' => [
+        'label' => 'Script',
+        'title' => 'Script Fonts',
+        'orderby' => 'date',
+        'tax_query' => [
+            [
+                'taxonomy' => 'post_tag',
+                'field' => 'slug',
+                'terms' => [ 'script' ],
+            ],
+        ],
+    ],
+    'display' => [
+        'label' => 'Display',
+        'title' => 'Display Fonts',
+        'orderby' => 'date',
+        'tax_query' => [
+            [
+                'taxonomy' => 'post_tag',
+                'field' => 'slug',
+                'terms' => [ 'display' ],
+            ],
+        ],
+    ],
+];
+
+$active_font_filter = isset( $_GET['font_filter'] ) ? sanitize_key( wp_unslash( $_GET['font_filter'] ) ) : 'latest';
+
+if ( ! isset( $font_filters[ $active_font_filter ] ) ) {
+    $active_font_filter = 'latest';
+}
+
+$active_font_filter_config = $font_filters[ $active_font_filter ];
+
 ?>
 
 <!-- Load Font Awesome 6 -->
@@ -110,6 +193,14 @@ $kreativ_fa_icons = [
         width: 100%;
         justify-content: center;
     }
+
+    .kreativ-font-filter-bar {
+        gap: 0.5rem;
+    }
+
+    .kreativ-font-filter {
+        flex: 1 1 calc(50% - 0.5rem);
+    }
 }
 
 /* ---------------------------------------------------------
@@ -156,6 +247,43 @@ $kreativ_fa_icons = [
 .kf-view-all:hover {
     color: #2d2def;
     transform: translateX(3px);
+}
+
+.kreativ-font-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 0 0 1.5rem;
+}
+
+.kreativ-font-filter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1rem;
+    border: 1px solid #d7dbeb;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #3d43a4;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.kreativ-font-filter:hover {
+    border-color: #4A4AFF;
+    box-shadow: 0 8px 24px rgba(74, 74, 255, 0.12);
+    transform: translateY(-1px);
+    text-decoration: none;
+}
+
+.kreativ-font-filter.active {
+    background: #4A4AFF;
+    border-color: #4A4AFF;
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(74, 74, 255, 0.2);
 }
 
 /* ---------------------------------------------------------
@@ -330,11 +458,21 @@ $kreativ_fa_icons = [
 ===================================================== -->
 <?php
 $home_sections = [
-    'fonts' => 'Latest Fonts',
+    'fonts' => $active_font_filter_config['title'],
 ];
 
 foreach ( $home_sections as $slug => $title ) :
     $icon = $kreativ_fa_icons[ $slug ] ?? '';
+    $font_tax_query = array_merge(
+        [
+            [
+                'taxonomy' => 'category',
+                'field' => 'slug',
+                'terms' => [ $slug ],
+            ],
+        ],
+        $active_font_filter_config['tax_query']
+    );
     ?>
     <div class="container kreativ-section kreativ-section-<?php echo esc_attr( $slug ); ?>">
 
@@ -348,22 +486,26 @@ foreach ( $home_sections as $slug => $title ) :
             <a href="<?php echo esc_url( '/category/' . $slug ); ?>" class="kf-view-all">View All &rsaquo;</a>
         </div>
 
+        <div class="kreativ-font-filter-bar">
+            <?php foreach ( $font_filters as $filter_slug => $filter_config ) : ?>
+                <a href="<?php echo esc_url( add_query_arg( 'font_filter', $filter_slug, get_permalink() ) ); ?>" class="kreativ-font-filter <?php echo $active_font_filter === $filter_slug ? 'active' : ''; ?>">
+                    <?php echo esc_html( $filter_config['label'] ); ?>
+                </a>
+            <?php endforeach; ?>
+        </div>
+
         <div class="row">
             <?php
             $query = new WP_Query( [
-                'posts_per_page'         => 8,
+                'posts_per_page'         => 24,
                 'post_status'            => 'publish',
                 'ignore_sticky_posts'    => true,
                 'no_found_rows'          => true, // perf
                 'update_post_term_cache' => false,
                 'update_post_meta_cache' => false,
-                'tax_query'              => [
-                    [
-                        'taxonomy' => 'category',
-                        'field'    => 'slug',
-                        'terms'    => [ $slug ],
-                    ],
-                ],
+                'orderby'                => $active_font_filter_config['orderby'],
+                'order'                  => 'DESC',
+                'tax_query'              => $font_tax_query,
             ] );
 
             if ( $query->have_posts() ) :
@@ -400,6 +542,12 @@ foreach ( $home_sections as $slug => $title ) :
                     </div>
                 <?php
                 endwhile;
+            else :
+                ?>
+                <div class="col-12">
+                    <p class="text-center">No fonts found for this filter yet.</p>
+                </div>
+                <?php
             endif;
             wp_reset_postdata();
             ?>
