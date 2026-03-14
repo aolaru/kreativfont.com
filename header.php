@@ -22,7 +22,7 @@
             '...'
         );
     } else {
-        $meta_description = 'Discover, identify, and submit fonts, templates, and creatives with KREATIV - your home for modern typography and design.';
+        $meta_description = 'Discover fonts, compare styles, and use practical font tools for identification, pairing, and naming.';
     }
     ?>
     <meta charset="<?php bloginfo('charset'); ?>">
@@ -112,18 +112,23 @@
 							<img src="<?php echo esc_url( $theme_uri . '/img/logo-96.png' ); ?>"
 								 alt="KREATIV Logo"
 								 class="kreativ-logo-icon">
-							<span class="kreativ-logo-text">KREATIV</span>
+							<span class="kreativ-logo-lockup">
+								<span class="kreativ-logo-text">KREATIV</span>
+								<span class="kreativ-logo-tagline">Fonts and Font Tools</span>
+							</span>
 						</a>
 					</h1>
 
                 </div>				
 
                 <div class="kreativ-search">
-                    <form method="get" id="searchform" action="<?php echo esc_url( $site_url ); ?>" role="search" aria-label="Search Kreativ Font">
+                    <form method="get" id="searchform" class="kreativ-search-form" action="<?php echo esc_url( $site_url ); ?>" role="search" aria-label="Search Kreativ Font">
+                        <span class="kreativ-search-icon" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
                         <input id="searchi" type="search" name="s" value="<?php echo get_search_query(); ?>"
-                               maxlength="128" placeholder="Type your search and press enter"
+                               maxlength="128" placeholder="Search fonts, styles, foundries, or tools"
                                aria-label="Search Kreativ Font"
-                               class="form-control form-control-sm">
+                               class="form-control form-control-sm kreativ-search-input">
+                        <button type="submit" class="kreativ-search-submit">Search</button>
                     </form>
                 </div>
 
@@ -146,7 +151,10 @@
 					<img src="<?php echo esc_url( $theme_uri . '/img/logo-96.png' ); ?>"
 						 alt="KREATIV Logo"
 						 class="kreativ-logo-icon">
-					<span class="kreativ-logo-text">KREATIV</span>
+					<span class="kreativ-logo-lockup">
+						<span class="kreativ-logo-text">KREATIV</span>
+						<span class="kreativ-logo-tagline">Fonts and Font Tools</span>
+					</span>
 				</a>
 			</h2>
 

@@ -1,0 +1,215 @@
+.kreativ-header {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(74, 74, 255, 0.08);
+    box-shadow: 0 12px 40px rgba(18, 22, 34, 0.05);
+}
+
+.kreativ-header .navbar {
+    min-height: 78px;
+    gap: 1.5rem;
+}
+
+.kreativ-header .navbar-collapse {
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.kreativ-hdr-left,
+.kreativ-hdr-right {
+    display: flex;
+    align-items: center;
+}
+
+.kreativ-logo {
+    margin: 0;
+}
+
+.kreativ-logo a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    color: #121622;
+    text-decoration: none;
+}
+
+.kreativ-logo-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    flex: 0 0 auto;
+}
+
+.kreativ-logo-lockup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.kreativ-logo-text {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1;
+}
+
+.kreativ-logo-tagline {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #5a6284;
+}
+
+.kreativ-search {
+    flex: 1 1 460px;
+    max-width: 620px;
+    margin: 0;
+}
+
+.kreativ-search-form {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.65rem 0.55rem 1rem;
+    background: linear-gradient(135deg, rgba(248, 249, 255, 0.98) 0%, rgba(255, 255, 255, 0.98) 100%);
+    border: 1px solid rgba(74, 74, 255, 0.12);
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(74, 74, 255, 0.08);
+}
+
+.kreativ-search-icon {
+    color: #4A4AFF;
+    font-size: 1rem;
+}
+
+.kreativ-search-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: #121622;
+    font-size: 1rem;
+    padding: 0;
+}
+
+.kreativ-search-input:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.kreativ-search-input::placeholder {
+    color: #7d85a4;
+}
+
+.kreativ-search-submit {
+    border: 0;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #4A4AFF 0%, #FF3366 100%);
+    color: #fff;
+    font-weight: 800;
+    padding: 0.7rem 1rem;
+    line-height: 1;
+    box-shadow: 0 14px 28px rgba(74, 74, 255, 0.18);
+}
+
+.kreativ-search-submit:hover,
+.kreativ-search-submit:focus {
+    color: #fff;
+    text-decoration: none;
+}
+
+.kreativ-header .navbar-nav {
+    gap: 0.4rem;
+    align-items: center;
+}
+
+.kreativ-header .navbar-nav li.menu-item a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 0.6rem 0.95rem;
+    border-radius: 999px;
+    color: #27304f;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.kreativ-header .navbar-nav li.menu-item a:hover,
+.kreativ-header .navbar-nav li.current-menu-item a,
+.kreativ-header .navbar-nav li.current_page_item a {
+    background: rgba(74, 74, 255, 0.08);
+    color: #2d2def;
+    text-decoration: none;
+}
+
+.kreativ-header .navbar-toggler {
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #121622 0%, #242d46 100%);
+    color: #fff;
+    font-size: 0.92rem;
+    font-weight: 800;
+    line-height: 1;
+    padding: 0.85rem 1rem !important;
+}
+
+@media (max-width: 991.98px) {
+    .kreativ-header .navbar {
+        min-height: 72px;
+    }
+
+    .kreativ-search {
+        max-width: none;
+        width: 100%;
+    }
+
+    .navbar-collapse.offcanvas-collapse {
+        padding: 1rem 1rem 2rem;
+        gap: 1rem;
+    }
+
+    .offcanvas-collapse.open .kreativ-search {
+        margin: 0;
+    }
+
+    .offcanvas-collapse.open .kreativ-search-form {
+        box-shadow: none;
+    }
+
+    .kreativ-header .navbar-nav {
+        align-items: stretch;
+    }
+
+    .kreativ-header .navbar-nav li.menu-item a {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 767px) {
+    .kreativ-logo-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+    }
+
+    .kreativ-logo-text {
+        font-size: 1.2rem;
+    }
+
+    .kreativ-logo-tagline {
+        font-size: 0.68rem;
+    }
+
+    .kreativ-search-form {
+        padding: 0.5rem 0.55rem 0.5rem 0.85rem;
+    }
+
+    .kreativ-search-submit {
+        padding: 0.68rem 0.9rem;
+    }
+}

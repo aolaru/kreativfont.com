@@ -136,33 +136,228 @@ $active_font_filter_config = $font_filters[ $active_font_filter ];
 }
 
 .kreativ-hero {
-    padding: 3rem 1rem;
-    text-align: center;
-    background: linear-gradient(135deg, #eef1ff 0%, #fafbff 100%);
-    border-radius: 22px;
-    margin-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.9fr);
+    gap: 2rem;
+    padding: 3.25rem;
+    background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.92) 0%, rgba(246, 247, 255, 0.97) 44%, rgba(236, 239, 255, 1) 100%);
+    border-radius: 30px;
+    margin-bottom: 2.75rem;
+    box-shadow: 0 26px 60px rgba(74, 74, 255, 0.08);
 }
 
-/* Hero subtitle */
+.kreativ-hero::before,
+.kreativ-hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 999px;
+    pointer-events: none;
+}
+
+.kreativ-hero::before {
+    width: 340px;
+    height: 340px;
+    right: -90px;
+    top: -120px;
+    background: radial-gradient(circle, rgba(255, 51, 102, 0.22) 0%, rgba(255, 51, 102, 0) 72%);
+}
+
+.kreativ-hero::after {
+    width: 360px;
+    height: 360px;
+    left: -160px;
+    bottom: -200px;
+    background: radial-gradient(circle, rgba(74, 74, 255, 0.18) 0%, rgba(74, 74, 255, 0) 70%);
+}
+
+.kreativ-hero-main,
+.kreativ-hero-side {
+    position: relative;
+    z-index: 1;
+}
+
+.kreativ-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.74);
+    color: #30378e;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+}
+
+.kreativ-hero-title {
+    max-width: 11ch;
+    font-size: clamp(2.8rem, 5vw, 4.7rem);
+    line-height: 0.95;
+    letter-spacing: -0.05em;
+    color: #121622;
+    margin-bottom: 1rem;
+}
+
 .kreativ-hero-subtitle {
-    font-size: 1.25rem;
-    margin-bottom: 2.2rem;
-    color: #444;
-    max-width: 650px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.5;
+    font-size: 1.12rem;
+    margin-bottom: 1.7rem;
+    color: #444d66;
+    max-width: 640px;
+    line-height: 1.65;
+}
+
+.kreativ-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-bottom: 1.8rem;
+}
+
+.kreativ-hero-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 50px;
+    padding: 0.85rem 1.2rem;
+    border-radius: 14px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kreativ-hero-cta:hover {
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
+.kreativ-hero-cta-primary {
+    background: linear-gradient(135deg, #4A4AFF 0%, #FF3366 100%);
+    color: #fff;
+    box-shadow: 0 18px 34px rgba(74, 74, 255, 0.2);
+}
+
+.kreativ-hero-cta-secondary {
+    background: rgba(255, 255, 255, 0.86);
+    color: #24304e;
+    border: 1px solid rgba(74, 74, 255, 0.14);
+}
+
+.kreativ-hero-notes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.kreativ-hero-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.76);
+    color: #3b4260;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.kreativ-hero-note i {
+    color: #4A4AFF;
+}
+
+.kreativ-hero-side {
+    display: grid;
+    gap: 1rem;
+}
+
+.kreativ-hero-panel {
+    padding: 1.25rem;
+    border-radius: 22px;
+    background: rgba(18, 22, 34, 0.96);
+    color: #fff;
+    box-shadow: 0 24px 40px rgba(18, 22, 34, 0.18);
+}
+
+.kreativ-hero-panel-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.9rem;
+}
+
+.kreativ-hero-panel-title {
+    font-size: 1.45rem;
+    line-height: 1.1;
+    margin-bottom: 0.7rem;
+}
+
+.kreativ-hero-panel-copy {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: 0.98rem;
+    line-height: 1.6;
+}
+
+.kreativ-hero-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.kreativ-hero-mini-card {
+    padding: 1.05rem;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(74, 74, 255, 0.08);
+}
+
+.kreativ-hero-mini-label {
+    display: block;
+    color: #70789a;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 0.45rem;
+}
+
+.kreativ-hero-mini-value {
+    display: block;
+    color: #121622;
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+}
+
+.kreativ-hero-mini-copy {
+    margin: 0;
+    color: #535c7c;
+    font-size: 0.93rem;
+    line-height: 1.45;
 }
 
 /* ---------------------------------------------------------
    HERO TOOL SHORTCUTS
 --------------------------------------------------------- */
 .kreativ-hero-tools {
+    grid-column: 1 / -1;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
+    padding-top: 0.5rem;
 }
 
 .kreativ-hero-tools-label {
@@ -210,6 +405,31 @@ $active_font_filter_config = $font_filters[ $active_font_filter ];
 }
 
 @media (max-width: 767px) {
+    .kreativ-hero {
+        grid-template-columns: 1fr;
+        padding: 1.6rem;
+        border-radius: 24px;
+    }
+
+    .kreativ-hero-title {
+        max-width: none;
+        font-size: 2.5rem;
+    }
+
+    .kreativ-hero-actions,
+    .kreativ-hero-notes {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .kreativ-hero-cta {
+        width: 100%;
+    }
+
+    .kreativ-hero-mini-grid {
+        grid-template-columns: 1fr;
+    }
+
     .kreativ-hero-tool-card {
         width: 100%;
         justify-content: center;
@@ -440,10 +660,60 @@ $active_font_filter_config = $font_filters[ $active_font_filter ];
      HERO SECTION WITH TOOLS
 ===================================================== -->
 <div class="kreativ-hero container">
+    <div class="kreativ-hero-main">
+        <div class="kreativ-hero-eyebrow">
+            <i class="fa-solid fa-font"></i>
+            Font discovery platform
+        </div>
 
-    <p class="kreativ-hero-subtitle">
-        Discover curated fonts and practical tools for pairing, identifying, and naming type.
-    </p>
+        <h1 class="kreativ-hero-title">Find better fonts faster.</h1>
+
+        <p class="kreativ-hero-subtitle">
+            Browse fresh type discoveries, filter the latest releases, and use practical tools to identify fonts, build pairings, and generate better naming ideas.
+        </p>
+
+        <div class="kreativ-hero-actions">
+            <a href="/category/fonts" class="kreativ-hero-cta kreativ-hero-cta-primary">
+                <i class="fa-solid fa-compass"></i>
+                Explore Font Library
+            </a>
+            <a href="/tools/kreativ-font-identifier" class="kreativ-hero-cta kreativ-hero-cta-secondary">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Try Font Identifier
+            </a>
+        </div>
+
+        <div class="kreativ-hero-notes">
+            <span class="kreativ-hero-note"><i class="fa-solid fa-layer-group"></i> Fonts-first curation</span>
+            <span class="kreativ-hero-note"><i class="fa-solid fa-bolt"></i> Practical tools, not filler</span>
+            <span class="kreativ-hero-note"><i class="fa-solid fa-sparkles"></i> Updated with new finds</span>
+        </div>
+    </div>
+
+    <div class="kreativ-hero-side">
+        <div class="kreativ-hero-panel">
+            <span class="kreativ-hero-panel-label">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                What You Can Do Here
+            </span>
+            <h2 class="kreativ-hero-panel-title">Discover type, compare styles, and jump straight into the right tool.</h2>
+            <p class="kreativ-hero-panel-copy">Kreativ is now focused on fonts and the workflows around them, from browsing inspiration to identifying the exact face you need.</p>
+        </div>
+
+        <div class="kreativ-hero-mini-grid">
+            <div class="kreativ-hero-mini-card">
+                <span class="kreativ-hero-mini-label">Browse</span>
+                <span class="kreativ-hero-mini-value">24</span>
+                <p class="kreativ-hero-mini-copy">fresh fonts on the homepage at a glance</p>
+            </div>
+
+            <div class="kreativ-hero-mini-card">
+                <span class="kreativ-hero-mini-label">Use</span>
+                <span class="kreativ-hero-mini-value">4</span>
+                <p class="kreativ-hero-mini-copy">core font tools linked right from the hero</p>
+            </div>
+        </div>
+    </div>
 
     <div class="kreativ-hero-tools">
         <span class="kreativ-hero-tools-label">Tools:</span>
@@ -469,7 +739,6 @@ $active_font_filter_config = $font_filters[ $active_font_filter ];
             <span>Font Name Generator</span>
         </a>
     </div>
-
 </div>
 
 

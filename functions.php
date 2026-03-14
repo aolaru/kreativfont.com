@@ -63,6 +63,12 @@ function kreativ_script_enqueue()
         array( 'font-awesome' ),
         kreativ_asset_version( '/assets/dist/main.min.css' )
     );
+    wp_enqueue_style(
+        'kreativ-header',
+        get_template_directory_uri() . '/css/kreativ-header.css',
+        array( 'kreativ-styles' ),
+        kreativ_asset_version( '/css/kreativ-header.css' )
+    );
     wp_register_script(
         'init',
         get_template_directory_uri() . '/assets/assets/components/init.js',
