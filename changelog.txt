@@ -1,3 +1,17 @@
+Kreativ Font 2026
+- repository initialized on GitHub for ongoing theme development
+- added a GitHub README for the private WordPress theme
+- added Cloudflare Web Analytics site-wide
+- improved theme metadata and asset handling
+- homepage refocused on fonts and font tools
+- homepage now supports font filters with safer runtime-aware behavior
+- Font Awesome standardized as the main icon system for newer UI work
+- favicon system rebuilt with a new branded SVG and matching PNG/apple-touch assets
+- homepage hero redesigned with clearer positioning and stronger calls to action
+- global header and search upgraded to better support font discovery
+
+----------------------------------
+
 Oceania 2024
 - fully resposnsive theme
 - search form improvements
