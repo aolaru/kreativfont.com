@@ -59,7 +59,6 @@
     <link rel="icon" href="<?php echo esc_url( $theme_uri . '/img/favicon.svg' ); ?>" type="image/svg+xml">
     <link rel="icon" sizes="32x32" href="<?php echo esc_url( $theme_uri . '/img/favicon-32x32.png' ); ?>" type="image/png">
     <link rel="icon" sizes="16x16" href="<?php echo esc_url( $theme_uri . '/img/favicon-16x16.png' ); ?>" type="image/png">
-    <link rel="shortcut icon" href="<?php echo esc_url( $theme_uri . '/img/favicon.ico' ); ?>">
 
     <!-- Manifest -->
     <link rel="manifest" href="<?php echo esc_url( $theme_uri . '/manifest.json' ); ?>">
@@ -69,10 +68,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
     <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo esc_url( $theme_uri . '/img/apple-touch-icon-180x180.png' ); ?>">
-
-    <!-- Safari pinned tab -->
-    <link rel="mask-icon" href="https://kreativfont.com/wp-content/uploads/pwa/icon-512-maskable.png" color="#000000">
+    <link rel="apple-touch-icon" href="<?php echo esc_url( $theme_uri . '/img/apple-touch-icon.png' ); ?>">
 
     <!-- Font Preload -->
     <link rel="preload" href="<?php echo esc_url( $theme_uri . '/webfonts/2EE639_0_0.woff2' ); ?>" as="font" type="font/woff2" crossorigin>

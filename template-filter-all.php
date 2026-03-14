@@ -15,18 +15,33 @@ $kreativ_fa_icons = [
     'fonts' => 'fa-solid fa-font',
 ];
 
+function kf_home_filter_has_terms( $taxonomy, $slugs ) {
+    $term_ids = get_terms(
+        [
+            'taxonomy'   => $taxonomy,
+            'slug'       => (array) $slugs,
+            'hide_empty' => true,
+            'fields'     => 'ids',
+        ]
+    );
+
+    return ! is_wp_error( $term_ids ) && ! empty( $term_ids );
+}
+
 $font_filters = [
     'latest' => [
         'label' => 'Latest',
         'title' => 'Latest Fonts',
         'orderby' => 'date',
         'tax_query' => [],
+        'available' => true,
     ],
     'popular' => [
         'label' => 'Popular',
         'title' => 'Popular Fonts',
         'orderby' => 'comment_count',
         'tax_query' => [],
+        'available' => true,
     ],
     'free' => [
         'label' => 'Free',
@@ -39,6 +54,7 @@ $font_filters = [
                 'terms' => [ 'free' ],
             ],
         ],
+        'available' => kf_home_filter_has_terms( 'category', [ 'free' ] ),
     ],
     'serif' => [
         'label' => 'Serif',
@@ -51,6 +67,7 @@ $font_filters = [
                 'terms' => [ 'serif' ],
             ],
         ],
+        'available' => kf_home_filter_has_terms( 'post_tag', [ 'serif' ] ),
     ],
     'sans-serif' => [
         'label' => 'Sans Serif',
@@ -63,6 +80,7 @@ $font_filters = [
                 'terms' => [ 'sans-serif', 'sansserif' ],
             ],
         ],
+        'available' => kf_home_filter_has_terms( 'post_tag', [ 'sans-serif', 'sansserif' ] ),
     ],
     'script' => [
         'label' => 'Script',
@@ -75,6 +93,7 @@ $font_filters = [
                 'terms' => [ 'script' ],
             ],
         ],
+        'available' => kf_home_filter_has_terms( 'post_tag', [ 'script' ] ),
     ],
     'display' => [
         'label' => 'Display',
@@ -87,8 +106,16 @@ $font_filters = [
                 'terms' => [ 'display' ],
             ],
         ],
+        'available' => kf_home_filter_has_terms( 'post_tag', [ 'display' ] ),
     ],
 ];
+
+$font_filters = array_filter(
+    $font_filters,
+    static function ( $filter ) {
+        return ! empty( $filter['available'] );
+    }
+);
 
 $active_font_filter = isset( $_GET['font_filter'] ) ? sanitize_key( wp_unslash( $_GET['font_filter'] ) ) : 'latest';
 
