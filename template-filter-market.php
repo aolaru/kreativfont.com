@@ -50,12 +50,6 @@ function kf_is_new_post( $post_id ) {
 
 ?>
 
-<!-- Load Font Awesome 6 -->
-<link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer" />
-
 <style>
 
 /* ---------------------------------------------------------

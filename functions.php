@@ -52,9 +52,15 @@ add_action('wp_enqueue_scripts', 'kreativ_enqueue_lazyload');
 function kreativ_script_enqueue()
 {
     wp_enqueue_style(
+        'font-awesome',
+        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+        array(),
+        '6.5.1'
+    );
+    wp_enqueue_style(
         'kreativ-styles',
         get_template_directory_uri() . '/assets/dist/main.min.css',
-        array(),
+        array( 'font-awesome' ),
         kreativ_asset_version( '/assets/dist/main.min.css' )
     );
     wp_register_script(
@@ -179,4 +185,3 @@ add_action('wp_enqueue_scripts', function () {
     }
 
 });
-
