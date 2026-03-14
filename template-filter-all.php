@@ -8,23 +8,11 @@ get_header();
  * CATEGORY LABELS + ICONS
  */
 $kreativ_category_labels = [
-    'fonts'            => 'Fonts',
-    'templates-themes' => 'Templates',
-    'graphics'         => 'Graphics',
-    'photos'           => 'Photos',
-    'videos'           => 'Videos',
-    'sounds'           => 'Sounds',
-    'free'             => 'Freebies',
+    'fonts' => 'Fonts',
 ];
 
 $kreativ_fa_icons = [
-    'fonts'            => 'fa-solid fa-font',
-    'templates-themes' => 'fa-solid fa-layer-group',
-    'graphics'         => 'fa-solid fa-pen-nib',
-    'photos'           => 'fa-solid fa-camera',
-    'videos'           => 'fa-solid fa-film',
-    'sounds'           => 'fa-solid fa-music',
-    'free'             => 'fa-solid fa-gift',
+    'fonts' => 'fa-solid fa-font',
 ];
 
 ?>
@@ -179,36 +167,6 @@ $kreativ_fa_icons = [
     background: linear-gradient(135deg, #f8f9ff 0%, #fdfdff 100%) !important;
 }
 
-/* Templates — very light teal */
-.kreativ-section-templates-themes {
-    background: linear-gradient(135deg, #f5fcfc 0%, #fcfefe 100%) !important;
-}
-
-/* Graphics — very light peach */
-.kreativ-section-graphics {
-    background: linear-gradient(135deg, #fff9f6 0%, #fffdfb 100%) !important;
-}
-
-/* Photos — very light gold */
-.kreativ-section-photos {
-    background: linear-gradient(135deg, #fffdf3 0%, #fffef9 100%) !important;
-}
-
-/* Videos — very light coral */
-.kreativ-section-videos {
-    background: linear-gradient(135deg, #fff6f6 0%, #fffafa 100%) !important;
-}
-
-/* Sounds — very light lavender */
-.kreativ-section-sounds {
-    background: linear-gradient(135deg, #fcf7ff 0%, #fefbff 100%) !important;
-}
-
-/* Freebies — green */
-.kreativ-section-free {
-    background: linear-gradient(135deg, #e2f7e8 0%, #f3fff6 100%) !important;
-}
-
 /* ---------------------------------------------------------
    CARDS
 --------------------------------------------------------- */
@@ -275,12 +233,6 @@ $kreativ_fa_icons = [
 }
 
 .kf-badge-fonts            { background: #4A4AFF; }
-.kf-badge-templates-themes { background: #00A7B5; }
-.kf-badge-graphics         { background: #FF7A59; }
-.kf-badge-photos           { background: #F4B400; }
-.kf-badge-videos           { background: #E53935; }
-.kf-badge-sounds           { background: #8E24AA; }
-.kf-badge-free             { background: #43A047; }
 
 /* NEW badge */
 .kf-badge-new {
@@ -341,7 +293,7 @@ $kreativ_fa_icons = [
 <div class="kreativ-hero container">
 
     <p class="kreativ-hero-subtitle">
-        Fonts, Templates, Graphics, Photos, Videos & Sounds — updated daily.
+        Discover curated fonts and practical tools for pairing, identifying, and naming type.
     </p>
 
     <div class="kreativ-hero-tools">
@@ -378,12 +330,7 @@ $kreativ_fa_icons = [
 ===================================================== -->
 <?php
 $home_sections = [
-    'fonts'            => 'Latest Fonts',
-    'templates-themes' => 'Latest Templates',
-    'graphics'         => 'Latest Graphics',
-    'photos'           => 'Latest Photos',
-    'videos'           => 'Latest Videos',
-    'sounds'           => 'Latest Sounds',
+    'fonts' => 'Latest Fonts',
 ];
 
 foreach ( $home_sections as $slug => $title ) :
@@ -459,70 +406,5 @@ foreach ( $home_sections as $slug => $title ) :
         </div>
     </div>
 <?php endforeach; ?>
-
-
-
-<!-- =====================================================
-     FREEBIES
-===================================================== -->
-<div class="container kreativ-section kreativ-section-free">
-
-    <div class="kreativ-section-header">
-        <h2 class="kreativ-section-title">
-            <i class="fa-solid fa-gift"></i>
-            Free Creative Resources
-        </h2>
-        <a href="/category/free" class="kf-view-all">View All &rsaquo;</a>
-    </div>
-
-    <div class="row">
-        <?php
-        $free = new WP_Query( [
-            'category_name'           => 'free',
-            'posts_per_page'          => 8,
-            'post_status'             => 'publish',
-            'ignore_sticky_posts'     => true,
-            'no_found_rows'           => true,
-            'update_post_term_cache'  => false,
-            'update_post_meta_cache'  => false,
-        ] );
-
-        if ( $free->have_posts() ) :
-            while ( $free->have_posts() ) :
-                $free->the_post();
-
-                $thumb     = wp_get_attachment_image_src( get_post_thumbnail_id(), 'medium' );
-                $thumb_url = $thumb[0] ?? get_template_directory_uri() . '/img/default-thumb.png';
-                $is_new    = kf_is_new_post( get_the_ID() );
-                ?>
-                <div class="col-md-3 col-sm-6 kreativ-card-animate">
-                    <div class="kreativ-font-card">
-                        <a href="<?php the_permalink(); ?>">
-                            <div class="kreativ-card-media">
-
-                                <span class="kf-badge kf-badge-free">Free</span>
-
-                                <?php if ( $is_new ) : ?>
-                                    <span class="kf-badge-new">NEW</span>
-                                <?php endif; ?>
-
-                                <img class="lazyload"
-                                     loading="lazy"
-                                     decoding="async"
-                                     alt="<?php the_title_attribute(); ?>"
-                                     data-src="<?php echo esc_url( $thumb_url ); ?>"
-                                     src="<?php echo esc_url( get_template_directory_uri() . '/img/loading.gif' ); ?>" />
-                            </div>
-                            <h3><?php the_title(); ?></h3>
-                        </a>
-                    </div>
-                </div>
-            <?php
-            endwhile;
-        endif;
-        wp_reset_postdata();
-        ?>
-    </div>
-</div>
 
 <?php get_footer(); ?>
