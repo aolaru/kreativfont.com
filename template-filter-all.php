@@ -194,20 +194,20 @@ $active_font_filter_config = $font_filters[ $active_font_filter ];
 }
 
 .kreativ-hero-title {
-    max-width: 11ch;
-    font-size: clamp(2.8rem, 5vw, 4.7rem);
-    line-height: 0.95;
+    max-width: 10ch;
+    font-size: clamp(3rem, 5.2vw, 5rem);
+    line-height: 0.9;
     letter-spacing: -0.05em;
     color: #121622;
-    margin-bottom: 1rem;
+    margin-bottom: 1.1rem;
 }
 
 .kreativ-hero-subtitle {
-    font-size: 1.12rem;
-    margin-bottom: 1.7rem;
+    font-size: 1.08rem;
+    margin-bottom: 1.5rem;
     color: #444d66;
-    max-width: 640px;
-    line-height: 1.65;
+    max-width: 560px;
+    line-height: 1.6;
 }
 
 .kreativ-hero-actions {
@@ -295,16 +295,16 @@ $active_font_filter_config = $font_filters[ $active_font_filter ];
 }
 
 .kreativ-hero-panel-title {
-    font-size: 1.45rem;
-    line-height: 1.1;
-    margin-bottom: 0.7rem;
+    font-size: 1.6rem;
+    line-height: 1.08;
+    margin-bottom: 0.8rem;
 }
 
 .kreativ-hero-panel-copy {
     margin: 0;
     color: rgba(255, 255, 255, 0.76);
-    font-size: 0.98rem;
-    line-height: 1.6;
+    font-size: 0.96rem;
+    line-height: 1.55;
 }
 
 .kreativ-hero-mini-grid {
@@ -333,7 +333,7 @@ $active_font_filter_config = $font_filters[ $active_font_filter ];
 .kreativ-hero-mini-value {
     display: block;
     color: #121622;
-    font-size: 1.5rem;
+    font-size: 1.7rem;
     font-weight: 800;
     line-height: 1;
     margin-bottom: 0.3rem;
@@ -666,20 +666,20 @@ $active_font_filter_config = $font_filters[ $active_font_filter ];
             Curated fonts and practical tools
         </div>
 
-        <h1 class="kreativ-hero-title">Discover great type and use better font tools.</h1>
+        <h1 class="kreativ-hero-title">Curated fonts. Practical tools. Faster decisions.</h1>
 
         <p class="kreativ-hero-subtitle">
-            Explore a growing library of curated fonts, then move straight into practical workflows for identification, pairing, and naming when you need to make a type decision quickly.
+            Browse a growing library of curated type, then jump into the tools that help you identify, pair, and name fonts without wasting time.
         </p>
 
         <div class="kreativ-hero-actions">
             <a href="/category/fonts" class="kreativ-hero-cta kreativ-hero-cta-primary">
                 <i class="fa-solid fa-compass"></i>
-                Explore Font Library
+                Browse Fonts
             </a>
             <a href="/tools/kreativ-font-identifier" class="kreativ-hero-cta kreativ-hero-cta-secondary">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                Try Font Identifier
+                Identify a Font
             </a>
         </div>
 
@@ -694,23 +694,23 @@ $active_font_filter_config = $font_filters[ $active_font_filter ];
         <div class="kreativ-hero-panel">
             <span class="kreativ-hero-panel-label">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
-                What You Can Do Here
+                Why Kreativ Works
             </span>
-            <h2 class="kreativ-hero-panel-title">Browse curated type and move directly into the tool that helps you decide.</h2>
-            <p class="kreativ-hero-panel-copy">Kreativ combines font discovery with practical workflows, so you can go from inspiration to identification, pairing, and naming without leaving the site.</p>
+            <h2 class="kreativ-hero-panel-title">A fonts-first workflow built for browsing, identifying, and choosing faster.</h2>
+            <p class="kreativ-hero-panel-copy">Kreativ brings curation and utility together, so discovery does not stop at inspiration and tools do not live in a separate silo.</p>
         </div>
 
         <div class="kreativ-hero-mini-grid">
             <div class="kreativ-hero-mini-card">
                 <span class="kreativ-hero-mini-label">Browse</span>
                 <span class="kreativ-hero-mini-value">4000+</span>
-                <p class="kreativ-hero-mini-copy">curated fonts collected for discovery and inspiration</p>
+                <p class="kreativ-hero-mini-copy">curated fonts collected for discovery, comparison, and inspiration</p>
             </div>
 
             <div class="kreativ-hero-mini-card">
                 <span class="kreativ-hero-mini-label">Use</span>
                 <span class="kreativ-hero-mini-value">4</span>
-                <p class="kreativ-hero-mini-copy">core font tools linked right from the hero</p>
+                <p class="kreativ-hero-mini-copy">core tools available right from the homepage</p>
             </div>
         </div>
     </div>
@@ -719,7 +719,7 @@ $active_font_filter_config = $font_filters[ $active_font_filter ];
         <span class="kreativ-hero-tools-label">Tools:</span>
 
         <a href="/tools/kreativ-font-pairing-tools" class="kreativ-hero-tool-card">
-            <i class="fa-solid fa-search"></i>
+            <i class="fa-solid fa-object-group"></i>
             <span>Font Pairing Tools</span>
             <small class="kreativ-tool-new">NEW</small>
         </a>
