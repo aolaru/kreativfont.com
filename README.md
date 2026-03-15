@@ -51,6 +51,26 @@ This codebase is used for the live Kreativ Font site and is maintained as a prac
 4. Push to GitHub.
 5. Deploy to the WordPress environment using your normal hosting workflow.
 
+## Automated Deployment
+
+This repository includes a GitHub Actions workflow at `.github/workflows/deploy-theme.yml` that can deploy the theme after every push to `main`.
+
+Add these GitHub repository secrets before enabling it:
+
+- `WP_SSH_HOST`: WordPress.com SFTP/SSH host
+- `WP_SSH_PORT`: SSH port
+- `WP_SSH_USER`: WordPress.com SSH username
+- `WP_SSH_PASSWORD`: WordPress.com SSH password
+- `WP_REMOTE_PATH`: Absolute remote path to the live theme folder
+
+Example `WP_REMOTE_PATH`:
+
+```text
+/htdocs/wp-content/themes/kreativfont.com/
+```
+
+Important: the remote path must point to the theme directory only, because the workflow uses `rsync --delete`.
+
 ## Important Files
 
 - `functions.php`: theme bootstrapping, enqueue logic, theme support, site hooks

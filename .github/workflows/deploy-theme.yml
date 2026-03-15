@@ -1,0 +1,51 @@
+name: Deploy Theme
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-theme-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install deployment tools
+        run: sudo apt-get update && sudo apt-get install -y sshpass rsync
+
+      - name: Configure SSH known hosts
+        env:
+          WP_SSH_HOST: ${{ secrets.WP_SSH_HOST }}
+          WP_SSH_PORT: ${{ secrets.WP_SSH_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${WP_SSH_PORT}" "${WP_SSH_HOST}" >> ~/.ssh/known_hosts
+
+      - name: Deploy theme to WordPress.com
+        env:
+          WP_SSH_HOST: ${{ secrets.WP_SSH_HOST }}
+          WP_SSH_PORT: ${{ secrets.WP_SSH_PORT }}
+          WP_SSH_USER: ${{ secrets.WP_SSH_USER }}
+          WP_SSH_PASSWORD: ${{ secrets.WP_SSH_PASSWORD }}
+          WP_REMOTE_PATH: ${{ secrets.WP_REMOTE_PATH }}
+        run: |
+          test -n "${WP_SSH_HOST}"
+          test -n "${WP_SSH_PORT}"
+          test -n "${WP_SSH_USER}"
+          test -n "${WP_SSH_PASSWORD}"
+          test -n "${WP_REMOTE_PATH}"
+          sshpass -p "${WP_SSH_PASSWORD}" rsync -az --delete \
+            --exclude ".git/" \
+            --exclude ".github/" \
+            --exclude ".gitignore" \
+            --exclude "README.md" \
+            -e "ssh -p ${WP_SSH_PORT} -o StrictHostKeyChecking=yes" \
+            ./ "${WP_SSH_USER}@${WP_SSH_HOST}:${WP_REMOTE_PATH}"
