@@ -663,13 +663,13 @@ $active_font_filter_config = $font_filters[ $active_font_filter ];
     <div class="kreativ-hero-main">
         <div class="kreativ-hero-eyebrow">
             <i class="fa-solid fa-font"></i>
-            Font discovery platform
+            Curated fonts and practical tools
         </div>
 
-        <h1 class="kreativ-hero-title">Find better fonts faster.</h1>
+        <h1 class="kreativ-hero-title">Discover great type and use better font tools.</h1>
 
         <p class="kreativ-hero-subtitle">
-            Browse fresh type discoveries, filter the latest releases, and use practical tools to identify fonts, build pairings, and generate better naming ideas.
+            Explore a growing library of curated fonts, then move straight into practical workflows for identification, pairing, and naming when you need to make a type decision quickly.
         </p>
 
         <div class="kreativ-hero-actions">
@@ -684,9 +684,9 @@ $active_font_filter_config = $font_filters[ $active_font_filter ];
         </div>
 
         <div class="kreativ-hero-notes">
-            <span class="kreativ-hero-note"><i class="fa-solid fa-layer-group"></i> Fonts-first curation</span>
+            <span class="kreativ-hero-note"><i class="fa-solid fa-layer-group"></i> 4000+ curated fonts</span>
             <span class="kreativ-hero-note"><i class="fa-solid fa-bolt"></i> Practical tools, not filler</span>
-            <span class="kreativ-hero-note"><i class="fa-solid fa-sparkles"></i> Updated with new finds</span>
+            <span class="kreativ-hero-note"><i class="fa-solid fa-sparkles"></i> Discovery and utility in one place</span>
         </div>
     </div>
 
@@ -696,15 +696,15 @@ $active_font_filter_config = $font_filters[ $active_font_filter ];
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                 What You Can Do Here
             </span>
-            <h2 class="kreativ-hero-panel-title">Discover type, compare styles, and jump straight into the right tool.</h2>
-            <p class="kreativ-hero-panel-copy">Kreativ is now focused on fonts and the workflows around them, from browsing inspiration to identifying the exact face you need.</p>
+            <h2 class="kreativ-hero-panel-title">Browse curated type and move directly into the tool that helps you decide.</h2>
+            <p class="kreativ-hero-panel-copy">Kreativ combines font discovery with practical workflows, so you can go from inspiration to identification, pairing, and naming without leaving the site.</p>
         </div>
 
         <div class="kreativ-hero-mini-grid">
             <div class="kreativ-hero-mini-card">
                 <span class="kreativ-hero-mini-label">Browse</span>
-                <span class="kreativ-hero-mini-value">24</span>
-                <p class="kreativ-hero-mini-copy">fresh fonts on the homepage at a glance</p>
+                <span class="kreativ-hero-mini-value">4000+</span>
+                <p class="kreativ-hero-mini-copy">curated fonts collected for discovery and inspiration</p>
             </div>
 
             <div class="kreativ-hero-mini-card">
