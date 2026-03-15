@@ -15,7 +15,6 @@ This codebase is used for the live Kreativ Font site and is maintained as a prac
 
 ```text
 .
-├── app/                  PWA app assets
 ├── assets/               Source assets and compiled theme CSS
 ├── css/                  Additional stylesheet overrides
 ├── img/                  Theme images and icons

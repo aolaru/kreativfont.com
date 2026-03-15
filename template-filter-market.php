@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: Kreativ Unified Home
+Template Name: Kreativ Market Home
 */
 get_header();
 

@@ -54,7 +54,7 @@ Template Name: Filter Free
 			<div class="kreativ-font-card">
 				<a href="<?php the_permalink() ?>" class="kreativ-card-title" title="<?php the_title(); ?> font">
 					<strong><?php the_title(); ?></strong>
-					<img  class="card-img-top" src="//www.kreativfont.com/wp-content/themes/oceania/img/loading.gif" data-original="<?php echo $image_medium[0]; ?>" alt="<?php the_title(); ?> font"/>
+					<img  class="card-img-top" src="<?php echo esc_url( get_template_directory_uri() . '/img/loading.gif' ); ?>" data-original="<?php echo $image_medium[0]; ?>" alt="<?php the_title(); ?> font"/>
 				</a>
 				<a href="//www.kreativfont.com/checkout?edd_action=add_to_cart&download_id=<?php echo $post_id; ?>" title="Download <?php the_title(); ?> font" class="card">
 					<span class="btn btn-primary">Download free font</span>
