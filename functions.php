@@ -1,5 +1,5 @@
 <?php
-function oceania_setup() {
+function kreativ_font_setup() {
 
 	//Enable Custom Menus
     add_theme_support('menus');
@@ -16,7 +16,7 @@ function oceania_setup() {
 
 }
 
-add_action( 'after_setup_theme', 'oceania_setup' );
+add_action( 'after_setup_theme', 'kreativ_font_setup' );
 
 function kreativ_asset_version( $relative_path ) {
 	$absolute_path = get_template_directory() . $relative_path;

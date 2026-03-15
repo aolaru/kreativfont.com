@@ -1,10 +1,10 @@
-Oceania WordPres Theme
+Kreativ Font WordPress Theme
 * by Andrei Olaru - http://kreativpro.wordpress.com
 
 About
-Oceania is a clean, flexible WordPress theme started in 2010 as a personal project to have the same theme on all my websites. It was built to make it easier for me to take care of all my website by updating only one theme.
+Kreativ Font is a clean, flexible WordPress theme focused on fonts, typography, and practical font discovery tools. It continues the earlier private theme work used across Kreativ projects, but is now tailored specifically to kreativfont.com.
 
-Oceania is:
+Kreativ Font is:
 
 	1. fast loading
 	2. clean looking
@@ -13,4 +13,4 @@ Oceania is:
 	5. responsive and mobile ready
 	6. unique in features
 
-These points are always kept in mind when Oceania is developed.
+These points are kept in mind as Kreativ Font evolves.
