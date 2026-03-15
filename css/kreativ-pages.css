@@ -1,0 +1,234 @@
+.kreativ-page-shell {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+}
+
+.kreativ-page-hero {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.85fr);
+    gap: 1.5rem;
+    padding: 2.4rem;
+    margin-bottom: 2rem;
+    border-radius: 28px;
+    background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.94) 0%, rgba(244, 246, 255, 0.98) 44%, rgba(235, 238, 255, 1) 100%);
+    box-shadow: 0 22px 54px rgba(74, 74, 255, 0.08);
+}
+
+.kreativ-page-hero::before,
+.kreativ-page-hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 999px;
+    pointer-events: none;
+}
+
+.kreativ-page-hero::before {
+    width: 320px;
+    height: 320px;
+    top: -140px;
+    right: -100px;
+    background: radial-gradient(circle, rgba(255, 51, 102, 0.18) 0%, rgba(255, 51, 102, 0) 72%);
+}
+
+.kreativ-page-hero::after {
+    width: 280px;
+    height: 280px;
+    left: -120px;
+    bottom: -180px;
+    background: radial-gradient(circle, rgba(74, 74, 255, 0.15) 0%, rgba(74, 74, 255, 0) 70%);
+}
+
+.kreativ-page-hero-main,
+.kreativ-page-hero-side {
+    position: relative;
+    z-index: 1;
+}
+
+.kreativ-page-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.8rem;
+    margin-bottom: 1rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.78);
+    color: #313890;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.kreativ-page-title {
+    margin: 0 0 0.9rem;
+    color: #121622;
+    font-size: clamp(2.3rem, 4.2vw, 4rem);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+}
+
+.kreativ-page-summary {
+    max-width: 58ch;
+    margin: 0;
+    color: #44506c;
+    font-size: 1.06rem;
+    line-height: 1.65;
+}
+
+.kreativ-page-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 1.5rem;
+}
+
+.kreativ-page-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+    color: #38425e;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.kreativ-page-badge i {
+    color: #4A4AFF;
+}
+
+.kreativ-page-side-card {
+    padding: 1.25rem;
+    border-radius: 22px;
+    background: rgba(18, 22, 34, 0.96);
+    color: #fff;
+    box-shadow: 0 20px 36px rgba(18, 22, 34, 0.15);
+}
+
+.kreativ-page-side-card h2 {
+    margin: 0 0 0.8rem;
+    color: #fff;
+    font-size: 1.4rem;
+    line-height: 1.08;
+}
+
+.kreativ-page-side-card p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.74);
+    font-size: 0.98rem;
+    line-height: 1.6;
+}
+
+.kreativ-page-card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.kreativ-page-mini-card {
+    padding: 1rem;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(74, 74, 255, 0.08);
+}
+
+.kreativ-page-mini-label {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: #6f7694;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.kreativ-page-mini-value {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: #121622;
+    font-size: 1.45rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.kreativ-page-mini-copy {
+    margin: 0;
+    color: #535c7c;
+    font-size: 0.92rem;
+    line-height: 1.45;
+}
+
+.kreativ-page-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 2.2rem;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 18px 42px rgba(18, 22, 34, 0.06);
+}
+
+.kreativ-page-content h2,
+.kreativ-page-content h3 {
+    color: #121622;
+}
+
+.kreativ-page-content p,
+.kreativ-page-content li {
+    color: #37415d;
+    line-height: 1.8;
+}
+
+.kreativ-page-content > *:last-child {
+    margin-bottom: 0;
+}
+
+.kreativ-page-content a {
+    color: #2d2def;
+}
+
+.kreativ-page-content .wp-block-button__link,
+.kreativ-page-content .button,
+.kreativ-page-content .btn,
+.kreativ-page-content input[type="submit"],
+.kreativ-page-content button {
+    border-radius: 14px;
+}
+
+.kreativ-page-shell.kreativ-tool-page .kreativ-page-content {
+    border: 1px solid rgba(74, 74, 255, 0.08);
+}
+
+@media (max-width: 991.98px) {
+    .kreativ-page-hero {
+        grid-template-columns: 1fr;
+        padding: 1.8rem;
+    }
+
+    .kreativ-page-card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kreativ-page-content {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .kreativ-page-shell {
+        padding: 1.5rem 0.85rem 3rem;
+    }
+
+    .kreativ-page-title {
+        font-size: 2.2rem;
+    }
+
+    .kreativ-page-badges {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

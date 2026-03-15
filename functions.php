@@ -69,6 +69,12 @@ function kreativ_script_enqueue()
         array( 'kreativ-styles' ),
         kreativ_asset_version( '/css/kreativ-header.css' )
     );
+    wp_enqueue_style(
+        'kreativ-pages',
+        get_template_directory_uri() . '/css/kreativ-pages.css',
+        array( 'kreativ-styles' ),
+        kreativ_asset_version( '/css/kreativ-pages.css' )
+    );
     wp_register_script(
         'init',
         get_template_directory_uri() . '/assets/assets/components/init.js',
