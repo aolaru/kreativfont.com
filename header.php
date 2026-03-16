@@ -64,14 +64,12 @@
     <link rel="manifest" href="<?php echo esc_url( $theme_uri . '/manifest.json' ); ?>">
 
     <!-- PWA: Apple iOS Support -->
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
     <!-- Apple Touch Icon -->
     <link rel="apple-touch-icon" href="<?php echo esc_url( $theme_uri . '/img/apple-touch-icon.png' ); ?>">
-
-    <!-- Font Preload -->
-    <link rel="preload" href="<?php echo esc_url( $theme_uri . '/webfonts/2EE639_0_0.woff2' ); ?>" as="font" type="font/woff2" crossorigin>
 
     <?php wp_head(); ?>
 
