@@ -57,51 +57,6 @@ $page_summary = wp_trim_words( wp_strip_all_tags( $page_summary ), 24, '...' );
             <?php edit_post_link( 'Edit', ' | ', '' ); ?>
         </div>
 
-        <section class="kreativ-related-posts">
-            <div class="kreativ-section-header">
-                <h2 class="kreativ-section-title">
-                    <i class="fa-solid fa-compass" aria-hidden="true"></i>
-                    You Might Also Like
-                </h2>
-            </div>
-
-            <div class="row">
-                <?php
-                $related_query = new WP_Query(
-                    array(
-                        'post_type'           => 'post',
-                        'posts_per_page'      => 4,
-                        'post__not_in'        => array( get_the_ID() ),
-                        'ignore_sticky_posts' => true,
-                        'orderby'             => 'rand',
-                        'category__in'        => wp_get_post_categories( get_the_ID() ),
-                    )
-                );
-
-                if ( $related_query->have_posts() ) :
-                    while ( $related_query->have_posts() ) :
-                        $related_query->the_post();
-                        list( $badge_slug, $badge_text ) = kreativ_get_primary_category_badge( get_the_ID() );
-                        kreativ_render_font_card(
-                            array(
-                                'post_id'        => get_the_ID(),
-                                'badge_text'     => $badge_text ? $badge_text : 'Related',
-                                'badge_slug'     => $badge_slug ? $badge_slug : 'tag',
-                                'column_classes' => 'col-md-3 col-sm-6',
-                            )
-                        );
-                    endwhile;
-                    wp_reset_postdata();
-                else :
-                    ?>
-                    <div class="col-12">
-                        <p class="text-center">No related posts found.</p>
-                    </div>
-                    <?php
-                endif;
-                ?>
-            </div>
-        </section>
     </section>
 </div>
 
