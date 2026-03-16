@@ -111,42 +111,16 @@ $query = new WP_Query($args);
 
         <?php if ($query->have_posts()) : ?>
             <?php while ($query->have_posts()) : $query->the_post(); ?>
-
                 <?php
-                $img   = wp_get_attachment_image_src(get_post_thumbnail_id(), 'medium');
-                $thumb = $img[0] ?? get_template_directory_uri() . '/img/default-thumb.png';
-
-                $is_new = (time() - get_the_time('U')) < 7 * DAY_IN_SECONDS;
+                kreativ_render_font_card(
+                    array(
+                        'post_id'        => get_the_ID(),
+                        'badge_text'     => '#' . $tag_name,
+                        'badge_slug'     => 'tag',
+                        'column_classes' => 'col-md-4 col-lg-3 col-sm-6',
+                    )
+                );
                 ?>
-
-                <div class="col-md-4 col-lg-3 col-sm-6 kreativ-card-animate">
-                    <div class="kreativ-font-card">
-
-                        <a href="<?php the_permalink(); ?>">
-                            <div class="kreativ-card-media">
-
-                                <!-- Tag badge -->
-                                <span class="kf-badge" style="background:#555;">
-                                    #<?php echo esc_html($tag_name); ?>
-                                </span>
-
-                                <?php if ($is_new): ?>
-                                    <span class="kf-badge kf-badge-new">NEW</span>
-                                <?php endif; ?>
-
-                                <img
-                                    src="<?php echo esc_url($thumb); ?>"
-                                    loading="lazy"
-                                    decoding="async"
-                                    alt="<?php the_title_attribute(); ?>"
-                                />
-                            </div>
-
-                            <h3><?php the_title(); ?></h3>
-                        </a>
-
-                    </div>
-                </div>
 
             <?php endwhile; ?>
         <?php else : ?>

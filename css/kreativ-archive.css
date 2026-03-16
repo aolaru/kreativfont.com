@@ -146,6 +146,7 @@ body.kreativ-cat-free             { --kreativ-cat-gradient: linear-gradient(135d
 .kf-badge-videos           { background: #E53935; }
 .kf-badge-sounds           { background: #8E24AA; }
 .kf-badge-free             { background: #43A047; }
+.kf-badge-tag              { background: #555555; }
 
 /* Animation */
 .kreativ-card-animate {

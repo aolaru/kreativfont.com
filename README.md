@@ -8,7 +8,7 @@ This codebase is used for the live Kreativ Font site and is maintained as a prac
 
 - Custom WordPress theme templates for the main site
 - Theme assets, styles, scripts, and webfonts
-- PWA-related files such as `manifest.json` and service-worker assets
+- Branded site icons and `manifest.json`
 - Marketplace/archive/filter templates used by the site
 
 ## Structure
@@ -17,10 +17,12 @@ This codebase is used for the live Kreativ Font site and is maintained as a prac
 .
 ├── assets/               Source assets and compiled theme CSS
 ├── css/                  Additional stylesheet overrides
+├── inc/                  Theme bootstrap modules and helper functions
 ├── img/                  Theme images and icons
 ├── js/                   Frontend JavaScript
+├── partials/             Shared reusable template fragments
 ├── webfonts/             Theme webfonts
-├── functions.php         Theme setup and WordPress hooks
+├── functions.php         Theme loader for `inc/` modules
 ├── header.php            Global head markup and site header
 ├── footer.php            Global footer markup
 └── template-*.php        Custom page/filter templates
@@ -68,15 +70,30 @@ Example `WP_REMOTE_PATH`:
 /htdocs/wp-content/themes/kreativfont.com/
 ```
 
-Important: the remote path must point to the theme directory only, because the workflow uses `rsync --delete`.
+Important: the remote path must point to the theme directory only. The current workflow deploys over SFTP, so treat it as production infrastructure and verify credentials carefully before enabling automatic deployments.
 
 ## Important Files
 
-- `functions.php`: theme bootstrapping, enqueue logic, theme support, site hooks
+- `functions.php`: lightweight loader for theme modules
+- `inc/assets.php`: enqueue logic and asset versioning
+- `inc/template-helpers.php`: shared page and font-card helpers
 - `header.php`: meta tags, global scripts, analytics, top navigation
 - `footer.php`: footer content, dark mode toggle script, `wp_footer()`
 - `assets/package.json`: frontend asset tooling entry point
 - `assets/Gruntfile.js`: legacy asset build workflow
+
+## Templates To Verify In WordPress Admin
+
+These files may still be assigned to pages from the WordPress dashboard. Do not delete them until you confirm actual usage in the admin:
+
+- `template-filter-free.php`
+- `template-filter-market.php`
+- `template-popular.php`
+- `template-sitemap.php`
+- `template-wide.php`
+- `links.php`
+- `image.php`
+- `frontend-menu.php`
 
 ## Repository Status
 

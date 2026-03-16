@@ -133,37 +133,16 @@ $query = new WP_Query($args);
 
         <?php if ($query->have_posts()) : ?>
             <?php while ($query->have_posts()) : $query->the_post(); ?>
-
                 <?php
-                $img = wp_get_attachment_image_src(get_post_thumbnail_id(), 'medium');
-                $thumb = $img[0] ?? get_template_directory_uri() . "/img/default-thumb.png";
+                kreativ_render_font_card(
+                    array(
+                        'post_id'        => get_the_ID(),
+                        'badge_text'     => $cat_name,
+                        'badge_slug'     => $cat_slug,
+                        'column_classes' => 'col-md-4 col-lg-3 col-sm-6',
+                    )
+                );
                 ?>
-
-                <div class="col-md-4 col-lg-3 col-sm-6 kreativ-card-animate">
-                    <div class="kreativ-font-card">
-
-                        <a href="<?php the_permalink(); ?>">
-                            <div class="kreativ-card-media">
-
-                                <!-- Category badge -->
-                                <span class="kf-badge kf-badge-<?php echo esc_attr($cat_slug); ?>">
-                                    <?php echo esc_html($cat_name); ?>
-                                </span>
-
-                                <img class="lazyload"
-                                     loading="lazy"
-                                     decoding="async"
-                                     alt="<?php the_title_attribute(); ?>"
-                                     data-src="<?php echo esc_url($thumb); ?>"
-                                     src="<?php echo esc_url(get_template_directory_uri() . '/img/loading.gif'); ?>"
-                                />
-                            </div>
-
-                            <h3><?php the_title(); ?></h3>
-                        </a>
-
-                    </div>
-                </div>
 
             <?php endwhile; ?>
 

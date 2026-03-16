@@ -1,0 +1,107 @@
+<?php
+
+function kreativ_add_category_body_class( $classes ) {
+    if ( is_category() ) {
+        $cat = get_queried_object();
+        if ( isset( $cat->slug ) ) {
+            $classes[] = 'kreativ-cat-' . sanitize_html_class( $cat->slug );
+        }
+    }
+
+    return $classes;
+}
+add_filter( 'body_class', 'kreativ_add_category_body_class' );
+
+function kf_is_new_post( $post_id ) {
+    return ( time() - get_post_time( 'U', true, $post_id ) ) <= 7 * DAY_IN_SECONDS;
+}
+
+function kreativ_get_page_summary( $post = null ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post ) {
+        return '';
+    }
+
+    if ( has_excerpt( $post ) ) {
+        return get_the_excerpt( $post );
+    }
+
+    return wp_trim_words( wp_strip_all_tags( $post->post_content ), 28, '...' );
+}
+
+function kreativ_is_tool_page( $post = null ) {
+    $post = get_post( $post );
+
+    if ( $post instanceof WP_Post ) {
+        $template_slug = get_page_template_slug( $post );
+
+        if ( 'template-tools-page.php' === $template_slug ) {
+            return true;
+        }
+    }
+
+    $request_uri   = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+    $request_path  = trim( (string) wp_parse_url( $request_uri, PHP_URL_PATH ), '/' );
+    $path_segments = $request_path ? explode( '/', $request_path ) : array();
+
+    return isset( $path_segments[0] ) && 'tools' === $path_segments[0];
+}
+
+function kreativ_render_partial( $template, $args = array() ) {
+    $template_path = locate_template( $template );
+
+    if ( ! $template_path ) {
+        return;
+    }
+
+    if ( ! empty( $args ) ) {
+        extract( $args, EXTR_SKIP );
+    }
+
+    include $template_path;
+}
+
+function kreativ_get_font_card_args( $args = array() ) {
+    $defaults = array(
+        'post_id'          => get_the_ID(),
+        'badge_text'       => '',
+        'badge_slug'       => '',
+        'column_classes'   => 'col-md-3 col-sm-6',
+        'animation_class'  => 'kreativ-card-animate',
+        'thumb_size'       => 'medium',
+        'title_tag'        => 'h3',
+        'new_label'        => 'NEW',
+        'show_new_badge'   => null,
+        'empty_thumb_url'  => get_template_directory_uri() . '/img/default-thumb.png',
+        'loading_thumb_url'=> get_template_directory_uri() . '/img/loading.gif',
+    );
+
+    $args = wp_parse_args( $args, $defaults );
+    $post = get_post( $args['post_id'] );
+
+    if ( ! $post instanceof WP_Post ) {
+        return array();
+    }
+
+    $thumb = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), $args['thumb_size'] );
+
+    $args['post_id']        = $post->ID;
+    $args['permalink']      = get_permalink( $post );
+    $args['title']          = get_the_title( $post );
+    $args['title_attr']     = the_title_attribute( array( 'post' => $post, 'echo' => false ) );
+    $args['thumb_url']      = $thumb[0] ?? $args['empty_thumb_url'];
+    $args['show_new_badge'] = null === $args['show_new_badge'] ? kf_is_new_post( $post->ID ) : (bool) $args['show_new_badge'];
+
+    return $args;
+}
+
+function kreativ_render_font_card( $args = array() ) {
+    $font_card_args = kreativ_get_font_card_args( $args );
+
+    if ( empty( $font_card_args ) ) {
+        return;
+    }
+
+    kreativ_render_partial( 'partials/font-card.php', $font_card_args );
+}

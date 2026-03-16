@@ -6,9 +6,7 @@ Template Name: Wide page
 <?php get_header(); ?>
 
 <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
-<?php
-$page_summary = has_excerpt() ? get_the_excerpt() : wp_trim_words( wp_strip_all_tags( get_the_content() ), 28, '...' );
-?>
+<?php $page_summary = kreativ_get_page_summary( get_post() ); ?>
 
 <div class="kreativ-page-shell">
     <section class="kreativ-page-hero">

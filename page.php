@@ -2,11 +2,8 @@
 
 <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 <?php
-$request_uri        = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
-$request_path       = trim( (string) wp_parse_url( $request_uri, PHP_URL_PATH ), '/' );
-$path_segments      = $request_path ? explode( '/', $request_path ) : [];
-$is_tool_page       = isset( $path_segments[0] ) && 'tools' === $path_segments[0];
-$page_summary       = has_excerpt() ? get_the_excerpt() : wp_trim_words( wp_strip_all_tags( get_the_content() ), 28, '...' );
+$is_tool_page       = kreativ_is_tool_page( get_post() );
+$page_summary       = kreativ_get_page_summary( get_post() );
 $page_shell_classes = 'kreativ-page-shell';
 
 if ( $is_tool_page ) {

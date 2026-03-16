@@ -1,0 +1,508 @@
+:root {
+    --kf-gradient: linear-gradient(180deg, #fafbff 0%, #f4f6ff 100%);
+}
+
+.kreativ-hero {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.9fr);
+    gap: 2rem;
+    padding: 3.25rem;
+    background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.92) 0%, rgba(246, 247, 255, 0.97) 44%, rgba(236, 239, 255, 1) 100%);
+    border-radius: 30px;
+    margin-bottom: 2.75rem;
+    box-shadow: 0 26px 60px rgba(74, 74, 255, 0.08);
+}
+
+.kreativ-hero::before,
+.kreativ-hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 999px;
+    pointer-events: none;
+}
+
+.kreativ-hero::before {
+    width: 340px;
+    height: 340px;
+    right: -90px;
+    top: -120px;
+    background: radial-gradient(circle, rgba(255, 51, 102, 0.22) 0%, rgba(255, 51, 102, 0) 72%);
+}
+
+.kreativ-hero::after {
+    width: 360px;
+    height: 360px;
+    left: -160px;
+    bottom: -200px;
+    background: radial-gradient(circle, rgba(74, 74, 255, 0.18) 0%, rgba(74, 74, 255, 0) 70%);
+}
+
+.kreativ-hero-main,
+.kreativ-hero-side {
+    position: relative;
+    z-index: 1;
+}
+
+.kreativ-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.74);
+    color: #30378e;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+}
+
+.kreativ-hero-title {
+    max-width: 10ch;
+    font-size: clamp(3rem, 5.2vw, 5rem);
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    color: #121622;
+    margin-bottom: 1.1rem;
+}
+
+.kreativ-hero-subtitle {
+    font-size: 1.08rem;
+    margin-bottom: 1.5rem;
+    color: #444d66;
+    max-width: 560px;
+    line-height: 1.6;
+}
+
+.kreativ-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-bottom: 1.8rem;
+}
+
+.kreativ-hero-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 50px;
+    padding: 0.85rem 1.2rem;
+    border-radius: 14px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kreativ-hero-cta:hover {
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
+.kreativ-hero-cta-primary {
+    background: linear-gradient(135deg, #4a4aff 0%, #ff3366 100%);
+    color: #fff;
+    box-shadow: 0 18px 34px rgba(74, 74, 255, 0.2);
+}
+
+.kreativ-hero-cta-secondary {
+    background: rgba(255, 255, 255, 0.86);
+    color: #24304e;
+    border: 1px solid rgba(74, 74, 255, 0.14);
+}
+
+.kreativ-hero-notes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.kreativ-hero-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.85rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.76);
+    color: #3b4260;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.kreativ-hero-note i {
+    color: #4a4aff;
+}
+
+.kreativ-hero-side {
+    display: grid;
+    gap: 1rem;
+}
+
+.kreativ-hero-panel {
+    padding: 1.25rem;
+    border-radius: 22px;
+    background: rgba(18, 22, 34, 0.96);
+    color: #fff;
+    box-shadow: 0 24px 40px rgba(18, 22, 34, 0.18);
+}
+
+.kreativ-hero-panel-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.9rem;
+}
+
+.kreativ-hero-panel-title {
+    font-size: 1.6rem;
+    line-height: 1.08;
+    margin-bottom: 0.8rem;
+}
+
+.kreativ-hero-panel-copy {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.76);
+    font-size: 0.96rem;
+    line-height: 1.55;
+}
+
+.kreativ-hero-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.kreativ-hero-mini-card {
+    padding: 1.05rem;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(74, 74, 255, 0.08);
+}
+
+.kreativ-hero-mini-label {
+    display: block;
+    color: #70789a;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 0.45rem;
+}
+
+.kreativ-hero-mini-value {
+    display: block;
+    color: #121622;
+    font-size: 1.7rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+}
+
+.kreativ-hero-mini-copy {
+    margin: 0;
+    color: #535c7c;
+    font-size: 0.93rem;
+    line-height: 1.45;
+}
+
+.kreativ-hero-tools {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0;
+    padding-top: 0.5rem;
+}
+
+.kreativ-hero-tools-label {
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.75rem 0.3rem;
+    color: #4a4aff;
+}
+
+.kreativ-hero-tool-card {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1.3rem;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e2e4ea;
+    text-decoration: none;
+    color: #1a1a1a;
+    transition: 0.25s ease;
+    font-weight: 600;
+}
+
+.kreativ-hero-tool-card i {
+    font-size: 1.2rem;
+    color: #4a4aff;
+}
+
+.kreativ-hero-tool-card:hover {
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.12);
+    transform: translateY(-3px);
+    border-color: #4a4aff;
+}
+
+.kreativ-tool-new {
+    background: #ff3366;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 0.65rem;
+    margin-left: 4px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.kreativ-section {
+    padding: 1rem 0;
+    background: var(--kf-gradient);
+    border-radius: 22px;
+    margin-bottom: 3rem;
+}
+
+.kreativ-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+}
+
+.kreativ-section-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.kreativ-section-title i {
+    font-size: 1.8rem;
+    color: #4a4aff;
+}
+
+.kf-view-all {
+    font-size: 1.2rem;
+    padding-right: 4px;
+    color: #4a4aff;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.kf-view-all:hover {
+    color: #2d2def;
+    transform: translateX(3px);
+}
+
+.kreativ-font-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 0 0 1.5rem;
+}
+
+.kreativ-font-filter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1rem;
+    border: 1px solid #d7dbeb;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #3d43a4;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.kreativ-font-filter:hover {
+    border-color: #4a4aff;
+    box-shadow: 0 8px 24px rgba(74, 74, 255, 0.12);
+    transform: translateY(-1px);
+    text-decoration: none;
+}
+
+.kreativ-font-filter.active {
+    background: #4a4aff;
+    border-color: #4a4aff;
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(74, 74, 255, 0.2);
+}
+
+.kreativ-section-fonts {
+    background: linear-gradient(135deg, #f8f9ff 0%, #fdfdff 100%) !important;
+}
+
+.kreativ-font-card {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 14px;
+    margin-bottom: 1rem;
+    border: 1px solid #e2e4ea;
+    transition: 0.25s ease;
+}
+
+.kreativ-font-card:hover {
+    box-shadow: 0 5px 22px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
+    border-color: #4a4aff;
+}
+
+.kreativ-font-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.kreativ-card-media {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.kreativ-card-media img {
+    width: 100%;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.kreativ-card-media:hover img {
+    transform: scale(1.06);
+}
+
+.kreativ-section .row {
+    margin-left: -10px;
+    margin-right: -10px;
+}
+
+.kreativ-section .col-md-3,
+.kreativ-section .col-sm-6 {
+    padding: 10px;
+}
+
+.kf-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #fff;
+    z-index: 2;
+}
+
+.kf-badge-fonts {
+    background: #4a4aff;
+}
+
+.kf-badge-tag {
+    background: #555555;
+}
+
+.kf-badge-new {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    background: #ff3366;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    z-index: 2;
+}
+
+.kreativ-font-card h3 {
+    font-size: 1rem;
+    margin-top: 0.85rem;
+    margin-bottom: 0;
+    font-weight: 600;
+}
+
+.kreativ-card-animate {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: kfFadeUp 0.6s ease forwards;
+}
+
+@keyframes kfFadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.kreativ-card-animate:nth-child(2) {
+    animation-delay: 0.05s;
+}
+
+.kreativ-card-animate:nth-child(3) {
+    animation-delay: 0.1s;
+}
+
+.kreativ-card-animate:nth-child(4) {
+    animation-delay: 0.15s;
+}
+
+@media (max-width: 767px) {
+    .kreativ-hero {
+        grid-template-columns: 1fr;
+        padding: 1.6rem;
+        border-radius: 24px;
+    }
+
+    .kreativ-hero-title {
+        max-width: none;
+        font-size: 2.5rem;
+    }
+
+    .kreativ-hero-actions,
+    .kreativ-hero-notes {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .kreativ-hero-cta {
+        width: 100%;
+    }
+
+    .kreativ-hero-mini-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kreativ-hero-tool-card {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .kreativ-font-filter-bar {
+        gap: 0.5rem;
+    }
+
+    .kreativ-font-filter {
+        flex: 1 1 calc(50% - 0.5rem);
+    }
+
+    .kreativ-section-title {
+        font-size: 1.4rem;
+    }
+}
