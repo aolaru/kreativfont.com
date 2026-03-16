@@ -2,10 +2,9 @@
 
 <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 <?php
-$page_summary = kreativ_get_page_summary( get_post() );
+$page_summary = kreativ_get_content_summary( get_post(), 24 );
 $categories   = get_the_category();
 $primary_cat  = ! empty( $categories ) ? $categories[0]->name : 'Article';
-$page_summary = wp_trim_words( wp_strip_all_tags( $page_summary ), 24, '...' );
 ?>
 
 <div class="kreativ-page-shell">

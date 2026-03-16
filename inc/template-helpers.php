@@ -128,6 +128,68 @@ function kreativ_get_page_summary( $post = null ) {
     return wp_trim_words( wp_strip_all_tags( $post->post_content ), 28, '...' );
 }
 
+function kreativ_is_noise_summary_paragraph( $text ) {
+    $normalized = strtolower( trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $text ) ) ) );
+
+    if ( '' === $normalized ) {
+        return true;
+    }
+
+    $blocked_phrases = array(
+        'view & purchase',
+        'important notice',
+        'premium commercial font',
+        'not available for free download',
+        'discover free fonts',
+        'free tier',
+        'official marketplace',
+        'join the kreativ font free tier',
+    );
+
+    foreach ( $blocked_phrases as $phrase ) {
+        if ( false !== strpos( $normalized, $phrase ) ) {
+            return true;
+        }
+    }
+
+    return str_word_count( $normalized ) < 6;
+}
+
+function kreativ_get_content_summary( $post = null, $max_words = 24 ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post ) {
+        return '';
+    }
+
+    if ( has_excerpt( $post ) ) {
+        return wp_trim_words( wp_strip_all_tags( get_the_excerpt( $post ) ), $max_words, '...' );
+    }
+
+    $content = apply_filters( 'the_content', $post->post_content );
+
+    if ( preg_match_all( '/<p\b[^>]*>(.*?)<\/p>/is', $content, $paragraph_matches ) ) {
+        foreach ( $paragraph_matches[1] as $paragraph_html ) {
+            $paragraph_text = trim( wp_strip_all_tags( $paragraph_html ) );
+
+            if ( kreativ_is_noise_summary_paragraph( $paragraph_text ) ) {
+                continue;
+            }
+
+            return wp_trim_words( $paragraph_text, $max_words, '...' );
+        }
+    }
+
+    $fallback = wp_strip_all_tags( strip_shortcodes( $post->post_content ) );
+    $fallback = preg_replace( '/\s+/', ' ', (string) $fallback );
+
+    if ( kreativ_is_noise_summary_paragraph( $fallback ) ) {
+        return '';
+    }
+
+    return wp_trim_words( trim( $fallback ), $max_words, '...' );
+}
+
 function kreativ_is_tool_page( $post = null ) {
     $post = get_post( $post );
 
