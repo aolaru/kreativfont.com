@@ -41,20 +41,36 @@
 
 		<script>
 		document.addEventListener('DOMContentLoaded', function() {
-		  const toggle = document.createElement('button');
-		  toggle.type = 'button';
-		  toggle.classList.add('dark-toggle');
-		  toggle.setAttribute('aria-label', 'Toggle dark mode');
-		  toggle.setAttribute('title', 'Toggle dark mode');
-		  toggle.innerHTML = '<svg viewBox="0 0 24 24"><path d="M21.64 13a9 9 0 0 1-8.64 8.95A9 9 0 0 1 12 3v0a9 9 0 0 1 9.64 10z"/></svg>';
-		  document.body.appendChild(toggle);
-
+		  const toggles = document.querySelectorAll('.kreativ-theme-toggle');
 		  const isDark = localStorage.getItem('kreativ-dark') === 'true';
-		  if (isDark) document.body.classList.add('dark-mode');
+		  const syncThemeToggleState = () => {
+			const darkEnabled = document.body.classList.contains('dark-mode');
 
-		  toggle.addEventListener('click', () => {
-			document.body.classList.toggle('dark-mode');
-			localStorage.setItem('kreativ-dark', document.body.classList.contains('dark-mode'));
+			toggles.forEach((toggle) => {
+			  const icon = toggle.querySelector('i');
+			  toggle.setAttribute('aria-pressed', darkEnabled ? 'true' : 'false');
+			  toggle.setAttribute('title', darkEnabled ? 'Switch to light mode' : 'Switch to dark mode');
+			  toggle.setAttribute('aria-label', darkEnabled ? 'Switch to light mode' : 'Switch to dark mode');
+
+			  if (icon) {
+				icon.classList.toggle('fa-moon', !darkEnabled);
+				icon.classList.toggle('fa-sun', darkEnabled);
+			  }
+			});
+		  };
+
+		  if (isDark) {
+			document.body.classList.add('dark-mode');
+		  }
+
+		  syncThemeToggleState();
+
+		  toggles.forEach((toggle) => {
+			toggle.addEventListener('click', () => {
+			  document.body.classList.toggle('dark-mode');
+			  localStorage.setItem('kreativ-dark', document.body.classList.contains('dark-mode'));
+			  syncThemeToggleState();
+			});
 		  });
 		});
 		</script>

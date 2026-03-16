@@ -139,6 +139,10 @@
                         'depth' => 1,
                     ));
                     ?>
+
+                    <button type="button" class="kreativ-theme-toggle d-none d-lg-inline-flex" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle dark mode">
+                        <i class="fa-solid fa-moon" aria-hidden="true"></i>
+                    </button>
                 </div>
 
             </div>
@@ -156,9 +160,15 @@
 				</a>
 			</h2>
 
-            <button class="navbar-toggler" type="button" data-toggle="offcanvas" aria-label="Toggle navigation">
-                Menu
-            </button>
+            <div class="offcanvas-show kreativ-header-mobile-actions">
+                <button type="button" class="kreativ-theme-toggle" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle dark mode">
+                    <i class="fa-solid fa-moon" aria-hidden="true"></i>
+                </button>
+
+                <button class="navbar-toggler" type="button" data-toggle="offcanvas" aria-label="Toggle navigation">
+                    Menu
+                </button>
+            </div>
         </nav>
     </div>
 </header>
