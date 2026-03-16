@@ -59,7 +59,7 @@ function kreativ_enqueue_theme_assets() {
         kreativ_asset_version( '/css/kreativ-pages.css' )
     );
 
-    if ( is_page_template( 'template-filter-all.php' ) ) {
+    if ( is_page_template( 'template-filter-all.php' ) || is_page_template( 'template-filter-market.php' ) || is_page_template( 'template-filter-free.php' ) ) {
         wp_enqueue_style(
             'kreativ-home',
             get_template_directory_uri() . '/css/kreativ-home.css',

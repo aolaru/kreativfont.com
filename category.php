@@ -26,31 +26,9 @@ $kreativ_fa_icons = [
 $cat_icon = $kreativ_fa_icons[$cat_slug] ?? 'fa-solid fa-folder-open';
 
 /* --------------------------------------------
-   SORTING LOGIC
+   SORTING + QUERY
 --------------------------------------------- */
-$sort = $_GET['sort'] ?? 'latest';
-
-switch ($sort) {
-    case 'popular':
-        $orderby = 'comment_count';
-        break;
-
-    case 'free':
-        $orderby = 'date';
-        break;
-
-    case 'ai':
-        $orderby = 'meta_value_num';
-        add_filter('posts_orderby', function($orderby) {
-            return "comment_count DESC, post_date DESC";
-        });
-        break;
-
-    default:
-        $orderby = 'date';
-}
-
-/* Pagination */
+$sort  = kreativ_get_archive_sort();
 $paged = max(1, get_query_var('paged'));
 
 /* --------------------------------------------
@@ -72,21 +50,16 @@ if ($sort === 'free') {
     ];
 }
 
-/* --------------------------------------------
-   FINAL QUERY (CORRECT PAGINATION)
---------------------------------------------- */
-$args = [
-    'post_type'          => 'post',
-    'posts_per_page'     => 24,
-    'paged'              => $paged,
-    'orderby'            => $orderby,
-    'order'              => 'DESC',
-    'ignore_sticky_posts'=> true,
-    'post_status'        => 'publish',
-    'tax_query'          => $tax_query,
-];
-
-$query = new WP_Query($args);
+$query = new WP_Query(
+    kreativ_get_archive_query_args(
+        array(
+            'sort'           => $sort,
+            'paged'          => $paged,
+            'posts_per_page' => 24,
+            'tax_query'      => $tax_query,
+        )
+    )
+);
 ?>
 
 <!-- =====================================================

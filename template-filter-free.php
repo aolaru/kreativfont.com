@@ -2,73 +2,120 @@
 /*
 Template Name: Filter Free
 */
+get_header();
 ?>
-<?php get_header(); ?>
 
-<div class="container-fluid">
+<div class="kreativ-page-shell">
+    <section class="kreativ-page-hero">
+        <div class="kreativ-page-hero-main">
+            <div class="kreativ-page-eyebrow">
+                <i class="fa-solid fa-gift" aria-hidden="true"></i>
+                Free font downloads
+            </div>
 
-	<h1 style="text-align:center;">Discover new FREE fonts every week</h1>
+            <h1 class="kreativ-page-title">Discover new free fonts every week.</h1>
 
-	<div style="text-align:center;">A constantly growing collection of hand-picked free fonts for designers with commercial use licenses.</div>
+            <p class="kreativ-page-summary">
+                A growing collection of free fonts for designers who still need clear previews, cleaner browsing, and a faster path to download.
+            </p>
 
-	<div class="row">
+            <div class="kreativ-page-badges">
+                <span class="kreativ-page-badge"><i class="fa-solid fa-download"></i> Download-ready</span>
+                <span class="kreativ-page-badge"><i class="fa-solid fa-tag"></i> Free resource stream</span>
+                <span class="kreativ-page-badge"><i class="fa-solid fa-font"></i> Typography focused</span>
+            </div>
+        </div>
 
-		<?php // WP_Query arguments
+        <div class="kreativ-page-hero-side">
+            <div class="kreativ-page-side-card">
+                <h2>Free fonts deserve the same presentation quality as the paid library.</h2>
+                <p>This template now uses the same card system and cleaner page framing as the rest of the theme, instead of the older ad hoc grid markup.</p>
+            </div>
+        </div>
+    </section>
 
-        $args = array (
+    <section class="kreativ-page-content">
+        <div class="container kreativ-section kreativ-section-free">
+            <div class="kreativ-section-header">
+                <h2 class="kreativ-section-title">
+                    <i class="fa-solid fa-gift" aria-hidden="true"></i>
+                    Free Font Downloads
+                </h2>
+            </div>
 
-            'tax_query' => array(
+            <div class="row">
+                <?php
+                $free_query = new WP_Query(
+                    array(
+                        'post_type'           => 'download',
+                        'posts_per_page'      => 100,
+                        'post_status'         => 'publish',
+                        'ignore_sticky_posts' => true,
+                        'tax_query'           => array(
+                            array(
+                                'taxonomy' => 'download_category',
+                                'field'    => 'name',
+                                'terms'    => array( 'Free' ),
+                            ),
+                        ),
+                    )
+                );
 
-                'relation' => 'OR',
+                if ( $free_query->have_posts() ) :
+                    while ( $free_query->have_posts() ) :
+                        $free_query->the_post();
 
-                array (
-                        'taxonomy' => 'download_category',
-                        'field' => 'name',
-                        'terms' => array('Free'),
-                     ),
+                        $card = kreativ_get_font_card_args(
+                            array(
+                                'post_id'        => get_the_ID(),
+                                'badge_text'     => 'Free',
+                                'badge_slug'     => 'free',
+                                'column_classes' => 'col-md-4 col-lg-3 col-sm-6',
+                            )
+                        );
+                        ?>
+                        <div class="<?php echo esc_attr( trim( $card['column_classes'] . ' kreativ-card-animate' ) ); ?>">
+                            <div class="kreativ-font-card">
+                                <a href="<?php echo esc_url( $card['permalink'] ); ?>">
+                                    <div class="kreativ-card-media">
+                                        <span class="kf-badge kf-badge-free">Free</span>
 
-             ),
+                                        <?php if ( ! empty( $card['show_new_badge'] ) ) : ?>
+                                            <span class="kf-badge-new"><?php echo esc_html( $card['new_label'] ); ?></span>
+                                        <?php endif; ?>
 
-            'pagination'        => true,
+                                        <img class="lazyload"
+                                            loading="lazy"
+                                            decoding="async"
+                                            alt="<?php echo esc_attr( $card['title_attr'] ); ?>"
+                                            data-src="<?php echo esc_url( $card['thumb_url'] ); ?>"
+                                            src="<?php echo esc_url( $card['loading_thumb_url'] ); ?>" />
+                                    </div>
+                                    <h3><?php echo esc_html( $card['title'] ); ?></h3>
+                                </a>
 
-            'posts_per_page'    => '100',
-        );
-
-        // The Query
-        $query = new WP_Query( $args );
-
-        // The Loop
-        if ( $query->have_posts() ) {
-
-            while ( $query->have_posts() ) {
-
-                $query->the_post();
-
-                $post_id = $post->ID;
-
+                                <p class="kreativ-card-action">
+                                    <a href="<?php echo esc_url( add_query_arg( array( 'edd_action' => 'add_to_cart', 'download_id' => get_the_ID() ), home_url( '/checkout/' ) ) ); ?>" class="kreativ-hero-cta kreativ-hero-cta-primary">
+                                        <i class="fa-solid fa-download" aria-hidden="true"></i>
+                                        Download Free Font
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                        <?php
+                    endwhile;
+                else :
+                    ?>
+                    <div class="col-12">
+                        <h2 class="text-center my-5">Sorry, no free fonts found.</h2>
+                    </div>
+                    <?php
+                endif;
+                wp_reset_postdata();
                 ?>
+            </div>
+        </div>
+    </section>
+</div>
 
-		<?php $image_medium = wp_get_attachment_image_src( get_post_thumbnail_id( $post_id ), 'medium' ); ?>
-
-		<div class="col-md-4 col-lg-3 col-sm-6">
-			<div class="kreativ-font-card">
-				<a href="<?php the_permalink() ?>" class="kreativ-card-title" title="<?php the_title(); ?> font">
-					<strong><?php the_title(); ?></strong>
-					<img  class="card-img-top" src="<?php echo esc_url( get_template_directory_uri() . '/img/loading.gif' ); ?>" data-original="<?php echo $image_medium[0]; ?>" alt="<?php the_title(); ?> font"/>
-				</a>
-				<a href="//www.kreativfont.com/checkout?edd_action=add_to_cart&download_id=<?php echo $post_id; ?>" title="Download <?php the_title(); ?> font" class="card">
-					<span class="btn btn-primary">Download free font</span>
-				</div>
-			</div>
-			<?php
-            }
-        } else {
-            echo '<h2>Sorry, no fonts found!</h2>';
-        }
-        wp_reset_postdata();
-        ?>
-		</div>
-	</div>
-</section>
-
-<?php get_footer();
+<?php get_footer(); ?>

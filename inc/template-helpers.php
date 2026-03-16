@@ -16,6 +16,104 @@ function kf_is_new_post( $post_id ) {
     return ( time() - get_post_time( 'U', true, $post_id ) ) <= 7 * DAY_IN_SECONDS;
 }
 
+function kreativ_get_category_labels() {
+    return array(
+        'fonts'            => 'Fonts',
+        'templates-themes' => 'Templates',
+        'graphics'         => 'Graphics',
+        'photos'           => 'Photos',
+        'videos'           => 'Videos',
+        'sounds'           => 'Sounds',
+        'free'             => 'Freebies',
+    );
+}
+
+function kreativ_get_category_icons() {
+    return array(
+        'fonts'            => 'fa-solid fa-font',
+        'templates-themes' => 'fa-solid fa-layer-group',
+        'graphics'         => 'fa-solid fa-pen-nib',
+        'photos'           => 'fa-solid fa-camera',
+        'videos'           => 'fa-solid fa-film',
+        'sounds'           => 'fa-solid fa-music',
+        'free'             => 'fa-solid fa-gift',
+    );
+}
+
+function kreativ_get_primary_category_badge( $post_id, $labels = array() ) {
+    $labels = empty( $labels ) ? kreativ_get_category_labels() : $labels;
+    $terms  = get_the_terms( $post_id, 'category' );
+
+    if ( ! $terms || is_wp_error( $terms ) ) {
+        return array( null, null );
+    }
+
+    foreach ( $terms as $term ) {
+        if ( isset( $labels[ $term->slug ] ) ) {
+            return array( $term->slug, $labels[ $term->slug ] );
+        }
+    }
+
+    return array( null, null );
+}
+
+function kreativ_get_archive_sort( $default = 'latest' ) {
+    $sort = isset( $_GET['sort'] ) ? sanitize_key( wp_unslash( $_GET['sort'] ) ) : $default;
+
+    return in_array( $sort, array( 'latest', 'popular', 'free', 'ai' ), true ) ? $sort : $default;
+}
+
+function kreativ_get_archive_query_args( $args = array() ) {
+    $defaults = array(
+        'sort'               => kreativ_get_archive_sort(),
+        'tax_query'          => array(),
+        'posts_per_page'     => 24,
+        'paged'              => max( 1, get_query_var( 'paged' ) ),
+        'post_type'          => 'post',
+        'post_status'        => 'publish',
+        'order'              => 'DESC',
+        'ignore_sticky_posts'=> true,
+        'meta_key'           => '',
+    );
+
+    $args = wp_parse_args( $args, $defaults );
+
+    switch ( $args['sort'] ) {
+        case 'popular':
+            $orderby = 'comment_count';
+            break;
+
+        case 'ai':
+            $orderby         = 'meta_value_num';
+            $args['meta_key'] = $args['meta_key'] ? $args['meta_key'] : 'ai_score';
+            break;
+
+        default:
+            $orderby = 'date';
+            break;
+    }
+
+    if ( 'free' === $args['sort'] ) {
+        $args['tax_query'][] = array(
+            'taxonomy' => 'category',
+            'field'    => 'slug',
+            'terms'    => array( 'free' ),
+        );
+    }
+
+    return array(
+        'post_type'           => $args['post_type'],
+        'posts_per_page'      => $args['posts_per_page'],
+        'paged'               => $args['paged'],
+        'orderby'             => $orderby,
+        'order'               => $args['order'],
+        'meta_key'            => $args['meta_key'] ? $args['meta_key'] : null,
+        'ignore_sticky_posts' => $args['ignore_sticky_posts'],
+        'post_status'         => $args['post_status'],
+        'tax_query'           => $args['tax_query'],
+    );
+}
+
 function kreativ_get_page_summary( $post = null ) {
     $post = get_post( $post );
 

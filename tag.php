@@ -14,30 +14,9 @@ $tag_name = single_tag_title('', false);
 $tag_desc = tag_description();
 
 /* --------------------------------------------
-   SORTING LOGIC
+   SORTING + QUERY
 --------------------------------------------- */
-$sort = $_GET['sort'] ?? 'latest';
-
-$orderby  = 'date';
-$meta_key = '';
-
-switch ($sort) {
-    case 'popular':
-        $orderby = 'comment_count';
-        break;
-
-    case 'ai':
-        // Future-ready AI score
-        $orderby  = 'meta_value_num';
-        $meta_key = 'ai_score';
-        break;
-
-    case 'free':
-        $orderby = 'date';
-        break;
-}
-
-/* Pagination */
+$sort  = kreativ_get_archive_sort();
 $paged = max(1, get_query_var('paged'));
 
 /* --------------------------------------------
@@ -59,22 +38,17 @@ if ($sort === 'free') {
     ];
 }
 
-/* --------------------------------------------
-   FINAL QUERY
---------------------------------------------- */
-$args = [
-    'post_type'           => 'post',
-    'posts_per_page'      => 24,
-    'paged'               => $paged,
-    'orderby'             => $orderby,
-    'order'               => 'DESC',
-    'meta_key'            => $meta_key ?: null,
-    'ignore_sticky_posts' => true,
-    'post_status'         => 'publish',
-    'tax_query'           => $tax_query,
-];
-
-$query = new WP_Query($args);
+$query = new WP_Query(
+    kreativ_get_archive_query_args(
+        array(
+            'sort'           => $sort,
+            'paged'          => $paged,
+            'posts_per_page' => 24,
+            'tax_query'      => $tax_query,
+            'meta_key'       => 'ai_score',
+        )
+    )
+);
 ?>
 
 <!-- =====================================================
