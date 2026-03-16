@@ -158,22 +158,26 @@ body.dark-mode .kreativ-logo a {
     linear-gradient(180deg, #f8f9ff 0%, #f1f4ff 100%);
   border-top: 1px solid rgba(74, 74, 255, 0.08);
   font-size: 0.95rem;
+  text-align: left;
 }
 .kreativ-footer-inner {
   display: grid;
-  gap: 2rem;
+  grid-template-columns: minmax(260px, 1.1fr) minmax(0, 1.9fr);
+  gap: 2rem 3rem;
+  align-items: start;
 }
 .kreativ-footer-brand {
-  max-width: 600px;
+  max-width: 420px;
 }
 .kreativ-footer-mark {
   display: inline-block;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.6rem;
   color: #121622;
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   font-weight: 800;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
   text-decoration: none;
+  text-transform: uppercase;
 }
 .kreativ-footer-mark:hover {
   color: #2d2def;
@@ -182,40 +186,44 @@ body.dark-mode .kreativ-logo a {
 .kreativ-footer-copy {
   margin: 0;
   color: #5d6785;
-  line-height: 1.8;
+  line-height: 1.7;
 }
 .kreativ-footer-links {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.5rem;
+  gap: 1.5rem 2rem;
 }
 .kreativ-footer-group h2 {
-  margin: 0 0 0.85rem;
+  margin: 0 0 0.95rem;
   color: #121622;
-  font-size: 0.86rem;
+  font-size: 0.78rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
 }
 .kreativ-footer-group a {
   display: block;
-  margin-bottom: 0.55rem;
+  margin-bottom: 0.7rem;
   color: #3d4766;
   font-weight: 600;
   text-decoration: none;
+  line-height: 1.45;
 }
 .kreativ-footer-group a:hover {
   color: #2d2def;
   text-decoration: none;
 }
 .kreativ-footer-meta {
+  grid-column: 1 / -1;
   padding-top: 1.25rem;
   border-top: 1px solid rgba(74, 74, 255, 0.08);
+  display: grid;
+  gap: 0.55rem;
 }
 .kreativ-footer-meta p {
-  margin: 0 0 0.7rem;
+  margin: 0;
   color: #697390;
-  line-height: 1.7;
+  line-height: 1.65;
 }
 .kreativ-footer-meta p:last-child {
   margin-bottom: 0;
@@ -255,9 +263,18 @@ body.dark-mode .kreativ-footer-meta {
     padding: 2.8rem 0 1.8rem;
   }
 
+  .kreativ-footer-inner {
+    grid-template-columns: 1fr;
+    gap: 1.6rem;
+  }
+
   .kreativ-footer-links {
     grid-template-columns: 1fr;
     gap: 1.25rem;
+  }
+
+  .kreativ-footer-meta {
+    grid-column: auto;
   }
 }
 

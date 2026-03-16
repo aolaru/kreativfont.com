@@ -236,6 +236,48 @@
     border-radius: 14px;
 }
 
+.kreativ-post-content .wp-block-button,
+.kreativ-post-content p > .btn,
+.kreativ-post-content p > .button,
+.kreativ-post-content p > .btn-primary {
+    margin: 1.25rem 0;
+}
+
+.kreativ-post-content .wp-block-button__link,
+.kreativ-post-content .btn,
+.kreativ-post-content .button,
+.kreativ-post-content .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 0.9rem 1.4rem;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #4a4aff 0%, #ff3366 100%);
+    color: #ffffff;
+    font-weight: 800;
+    line-height: 1.1;
+    text-decoration: none;
+    box-shadow: 0 16px 34px rgba(74, 74, 255, 0.18);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.kreativ-post-content .wp-block-button__link:hover,
+.kreativ-post-content .btn:hover,
+.kreativ-post-content .button:hover,
+.kreativ-post-content .btn-primary:hover,
+.kreativ-post-content .wp-block-button__link:focus,
+.kreativ-post-content .btn:focus,
+.kreativ-post-content .button:focus,
+.kreativ-post-content .btn-primary:focus {
+    color: #ffffff;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 20px 36px rgba(74, 74, 255, 0.22);
+    filter: saturate(1.02);
+}
+
 .kreativ-page-shell.kreativ-tool-page .kreativ-page-content {
     border: 1px solid rgba(74, 74, 255, 0.08);
 }
