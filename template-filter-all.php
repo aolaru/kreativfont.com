@@ -192,7 +192,6 @@ $active_font_filter_config = $font_filters[ $active_font_filter ];
         <a href="/tools/kreativ-font-pairing-tools" class="kreativ-hero-tool-card">
             <i class="fa-solid fa-object-group"></i>
             <span>Font Pairing Tools</span>
-            <small class="kreativ-tool-new">NEW</small>
         </a>
 
         <a href="/tools/kreativ-font-identifier" class="kreativ-hero-tool-card">

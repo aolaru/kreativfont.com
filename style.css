@@ -198,8 +198,3 @@ body.dark-mode .kreativ-footer {
   padding-top: 1rem;
   margin-top: 1rem;
 }
-
-.kreativ-font-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}

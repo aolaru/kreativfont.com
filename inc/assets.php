@@ -59,6 +59,13 @@ function kreativ_enqueue_theme_assets() {
         kreativ_asset_version( '/css/kreativ-pages.css' )
     );
 
+    wp_enqueue_style(
+        'kreativ-cards',
+        get_template_directory_uri() . '/css/kreativ-cards.css',
+        array( 'kreativ-styles' ),
+        kreativ_asset_version( '/css/kreativ-cards.css' )
+    );
+
     if ( is_page_template( 'template-filter-all.php' ) || is_page_template( 'template-filter-market.php' ) || is_page_template( 'template-filter-free.php' ) ) {
         wp_enqueue_style(
             'kreativ-home',
