@@ -191,6 +191,23 @@
     color: #2d2def;
 }
 
+.kreativ-page-content .search-form,
+.kreativ-page-content .searchform {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.kreativ-page-content .search-field,
+.kreativ-page-content input[type="search"] {
+    flex: 1 1 320px;
+    min-height: 52px;
+    padding: 0.8rem 1rem;
+    border: 1px solid rgba(74, 74, 255, 0.14);
+    border-radius: 14px;
+}
+
 .kreativ-page-content .wp-block-button__link,
 .kreativ-page-content .button,
 .kreativ-page-content .btn,
@@ -201,6 +218,52 @@
 
 .kreativ-page-shell.kreativ-tool-page .kreativ-page-content {
     border: 1px solid rgba(74, 74, 255, 0.08);
+}
+
+.kreativ-results-grid,
+.kreativ-related-posts .row {
+    margin-top: 1.5rem;
+}
+
+.kreativ-empty-state {
+    padding: 1rem 0;
+    text-align: center;
+}
+
+.kreativ-post-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+    font-weight: 700;
+}
+
+.kreativ-post-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    text-decoration: none;
+}
+
+.kreativ-post-breadcrumb {
+    margin-bottom: 1.5rem;
+    color: #65708d;
+    font-size: 0.92rem;
+}
+
+.kreativ-post-breadcrumb span {
+    display: inline-block;
+    margin: 0 0.45rem;
+}
+
+.kreativ-post-content {
+    margin-bottom: 1.5rem;
+}
+
+.kreativ-post-tags,
+.kreativ-post-meta {
+    margin-top: 1.25rem;
+    color: #4d5876;
 }
 
 @media (max-width: 991.98px) {
@@ -230,5 +293,9 @@
     .kreativ-page-badges {
         flex-direction: column;
         align-items: stretch;
+    }
+
+    .kreativ-post-nav {
+        flex-direction: column;
     }
 }

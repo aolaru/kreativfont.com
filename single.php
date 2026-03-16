@@ -1,113 +1,139 @@
 <?php get_header(); ?>
 
-<!-- Post Navigation Arrows -->
-<div class="post_nav_next">
-    <?php previous_post_link('%link', '<i class="fas fa-chevron-right"></i>'); ?>
-</div>
-
-<div class="post_nav_prev">
-    <?php next_post_link('%link', '<i class="fas fa-chevron-left"></i>'); ?>
-</div>
-
-<main id="post" class="container-fluid my-5">
-
 <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
+<?php
+$page_summary = kreativ_get_page_summary( get_post() );
+$categories   = get_the_category();
+$primary_cat  = ! empty( $categories ) ? $categories[0]->name : 'Article';
+?>
 
-    <h1 class="heading-h1 mb-4"><?php the_title(); ?></h1>
+<div class="kreativ-page-shell">
+    <section class="kreativ-page-hero">
+        <div class="kreativ-page-hero-main">
+            <div class="kreativ-page-eyebrow">
+                <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+                <?php echo esc_html( $primary_cat ); ?>
+            </div>
 
-    <!-- Breadcrumb -->
-    <div class="col-lg-7 col-md-9 col-sm-12 center-margin">
-        <p class="breadcrumb" style="font-size: 0.7em; text-align: left;">
-            <a href="<?php echo esc_url(home_url('/')); ?>" title="Home">Home</a> › 
-            <?php the_category(' › '); ?>
-        </p>
-    </div>
+            <h1 class="kreativ-page-title"><?php the_title(); ?></h1>
 
-    <!-- Main Post Content -->
-    <div class="post_content mb-5">
-        <div class="col-lg-7 col-md-9 col-sm-12 center-margin">
-            <?php the_content(); ?>
+            <?php if ( ! empty( $page_summary ) ) : ?>
+                <p class="kreativ-page-summary"><?php echo esc_html( wp_strip_all_tags( $page_summary ) ); ?></p>
+            <?php endif; ?>
+
+            <div class="kreativ-page-badges">
+                <span class="kreativ-page-badge"><i class="fa-solid fa-calendar"></i> <?php echo esc_html( get_the_date( 'F j, Y' ) ); ?></span>
+                <span class="kreativ-page-badge"><i class="fa-solid fa-user"></i> <?php the_author(); ?></span>
+            </div>
         </div>
-    </div>
 
-    <!-- Suggested Posts -->
-    <section class="related-posts mt-5">
-        <div class="col-lg-10 col-md-11 col-sm-12 center-margin text-center">
-            <h2 class="heading-h2 mb-4">You Might Also Like</h2>
-            <div class="row justify-content-center">
+        <div class="kreativ-page-hero-side">
+            <div class="kreativ-page-side-card">
+                <h2>Browse the article, then continue exploring related type.</h2>
+                <p>This template now matches the rest of the site instead of dropping into an older standalone article layout.</p>
+            </div>
+
+            <div class="kreativ-page-card-grid">
+                <div class="kreativ-page-mini-card">
+                    <span class="kreativ-page-mini-label">Category</span>
+                    <span class="kreativ-page-mini-value"><?php echo esc_html( $primary_cat ); ?></span>
+                    <p class="kreativ-page-mini-copy">Primary context for this article</p>
+                </div>
+
+                <div class="kreativ-page-mini-card">
+                    <span class="kreativ-page-mini-label">Format</span>
+                    <span class="kreativ-page-mini-value">Post</span>
+                    <p class="kreativ-page-mini-copy">Editorial content inside the Kreativ system</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="kreativ-page-content">
+        <nav class="kreativ-post-nav" aria-label="Post navigation">
+            <div><?php next_post_link( '%link', '<i class="fa-solid fa-arrow-left"></i> Newer' ); ?></div>
+            <div><?php previous_post_link( '%link', 'Older <i class="fa-solid fa-arrow-right"></i>' ); ?></div>
+        </nav>
+
+        <p class="kreativ-post-breadcrumb">
+            <a href="<?php echo esc_url( home_url( '/' ) ); ?>">Home</a>
+            <span>/</span>
+            <?php the_category( ' / ' ); ?>
+        </p>
+
+        <article class="kreativ-post-content">
+            <?php the_content(); ?>
+        </article>
+
+        <?php if ( get_the_tags() ) : ?>
+            <div class="kreativ-post-tags">
+                <strong>Tags:</strong> <?php the_tags( '', ', ', '' ); ?>
+            </div>
+        <?php endif; ?>
+
+        <div class="kreativ-post-meta">
+            Published on <time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date( 'F j, Y' ) ); ?></time>
+            in <?php the_category( ', ' ); ?> by <?php the_author(); ?>.
+            <?php edit_post_link( 'Edit', ' | ', '' ); ?>
+        </div>
+
+        <section class="kreativ-related-posts">
+            <div class="kreativ-section-header">
+                <h2 class="kreativ-section-title">
+                    <i class="fa-solid fa-compass" aria-hidden="true"></i>
+                    You Might Also Like
+                </h2>
+            </div>
+
+            <div class="row">
                 <?php
-                $related_args = array(
-                    'post_type' => 'post',
-                    'posts_per_page' => 4,
-                    'post__not_in' => array(get_the_ID()),
-                    'ignore_sticky_posts' => true,
-                    'orderby' => 'rand',
-                    'category__in' => wp_get_post_categories(get_the_ID()),
+                $related_query = new WP_Query(
+                    array(
+                        'post_type'           => 'post',
+                        'posts_per_page'      => 4,
+                        'post__not_in'        => array( get_the_ID() ),
+                        'ignore_sticky_posts' => true,
+                        'orderby'             => 'rand',
+                        'category__in'        => wp_get_post_categories( get_the_ID() ),
+                    )
                 );
-                $related_query = new WP_Query($related_args);
 
                 if ( $related_query->have_posts() ) :
-                    while ( $related_query->have_posts() ) : $related_query->the_post();
- 					
-					$image_medium = wp_get_attachment_image_src(get_post_thumbnail_id(), 'medium');
-					
-					$image_src = $image_medium[0] ?? get_template_directory_uri() . '/img/default-thumb.png';
-				
-                ?>
-                    <div class="col-md-3 col-sm-6 mb-4">
-                        
-						<div class="kreativ-font-card">
-							
-                        	<a href="<?php echo esc_url( get_permalink() ); ?>" class="kreativ-card-title" title="<?php the_title_attribute(); ?>">
-                            <strong><?php the_title(); ?></strong>
-								<img
-								  class="card-img-top lazyload"
-								  data-src="<?php echo esc_url($image_src); ?>"
-								  src="<?php echo esc_url(get_template_directory_uri() . '/img/loading.gif'); ?>"
-								  alt="<?php the_title_attribute(); ?>"
-								  loading="lazy"
-								/>
-                        	</a>
-                        </div>
-                    </div>
-                <?php
+                    while ( $related_query->have_posts() ) :
+                        $related_query->the_post();
+                        list( $badge_slug, $badge_text ) = kreativ_get_primary_category_badge( get_the_ID() );
+                        kreativ_render_font_card(
+                            array(
+                                'post_id'        => get_the_ID(),
+                                'badge_text'     => $badge_text ? $badge_text : 'Related',
+                                'badge_slug'     => $badge_slug ? $badge_slug : 'tag',
+                                'column_classes' => 'col-md-3 col-sm-6',
+                            )
+                        );
                     endwhile;
                     wp_reset_postdata();
-                else:
-                    echo '<p>No related posts found.</p>';
+                else :
+                    ?>
+                    <div class="col-12">
+                        <p class="text-center">No related posts found.</p>
+                    </div>
+                    <?php
                 endif;
                 ?>
             </div>
-        </div>
-    </section>	
+        </section>
+    </section>
+</div>
 
-    <!-- Meta + Tags -->
-    <div class="post_content">
-        <div class="col-lg-7 col-md-9 col-sm-12 center-margin">
-
-            <?php if ( get_the_tags() ) : ?>
-                <div class="post_tags mb-3">
-                    <strong>Tags:</strong> <?php the_tags('', ', ', ''); ?>
-                </div>
-            <?php endif; ?>
-
-            <div class="post_meta text-muted mb-4">
-                Published on <time datetime="<?php echo get_the_date('c'); ?>"><?php the_time('F j, Y'); ?></time>
-                in <?php the_category(', '); ?> by <?php the_author(); ?>.
-                <?php edit_post_link('Edit', ' | ', ''); ?>
+<?php endwhile; else : ?>
+    <div class="kreativ-page-shell">
+        <section class="kreativ-page-content">
+            <div class="kreativ-empty-state">
+                <h2>Sorry, no articles matched your criteria.</h2>
+                <p><a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="kreativ-hero-cta kreativ-hero-cta-primary">Back to Home</a></p>
             </div>
-        </div>
+        </section>
     </div>
-
-<?php endwhile; else: ?>
-
-    <div class="text-center py-5">
-        <h2>Sorry, no articles matched your criteria.</h2>
-        <a href="<?php echo esc_url(home_url('/')); ?>" class="btn btn-primary mt-3">Back to Home</a>
-    </div>
-
 <?php endif; ?>
-
-</main>
 
 <?php get_footer(); ?>

@@ -1,53 +1,73 @@
 <?php get_header(); ?>
 
-    <div class="container-fluid">
+<?php
+$search_query = get_search_query();
+$result_count = isset( $wp_query->found_posts ) ? (int) $wp_query->found_posts : 0;
+?>
 
-        <div class="text-center">
-
-            <h2 class="heading-h2">No results for “<?php echo esc_html(get_search_query()); ?>”</h2>
-
-        </div>
-
-        <div class="row">
-
-			<?php if (have_posts()) : while (have_posts()) : the_post();
-
-			$post_id = $post->ID;
-			
-			$image_medium = wp_get_attachment_image_src(get_post_thumbnail_id(), 'medium');
-					
-			$image_src = $image_medium[0] ?? get_template_directory_uri() . '/img/default-thumb.png';
-			
-			?>
-            <div class="col-md-4 col-lg-3 col-sm-6">
-
-                <div class="kreativ-font-card">
-
-                        <a href="<?php echo esc_url( get_permalink() ); ?>" class="kreativ-card-title" title="<?php the_title_attribute(); ?>">
-                            <strong><?php the_title(); ?></strong>
-							<img
-							  class="card-img-top lazyload"
-							  data-src="<?php echo esc_url($image_src); ?>"
-							  src="<?php echo esc_url(get_template_directory_uri() . '/img/loading.gif'); ?>"
-							  alt="<?php the_title_attribute(); ?>"
-							  loading="lazy"
-							/>
-                        </a>
-
-                </div>
-
+<div class="kreativ-page-shell">
+    <section class="kreativ-page-hero">
+        <div class="kreativ-page-hero-main">
+            <div class="kreativ-page-eyebrow">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                Search results
             </div>
 
-		<?php endwhile; ?>
+            <h1 class="kreativ-page-title">
+                <?php if ( have_posts() ) : ?>
+                    Results for "<?php echo esc_html( $search_query ); ?>"
+                <?php else : ?>
+                    No results for "<?php echo esc_html( $search_query ); ?>"
+                <?php endif; ?>
+            </h1>
 
-		<?php else : ?>
+            <p class="kreativ-page-summary">
+                <?php if ( have_posts() ) : ?>
+                    <?php echo esc_html( sprintf( '%d result%s across the current library and content.', $result_count, 1 === $result_count ? '' : 's' ) ); ?>
+                <?php else : ?>
+                    We could not find matching fonts or content. Try a different keyword or browse the main font library instead.
+                <?php endif; ?>
+            </p>
 
+            <div class="kreativ-page-badges">
+                <span class="kreativ-page-badge"><i class="fa-solid fa-font"></i> Fonts and resources</span>
+                <span class="kreativ-page-badge"><i class="fa-solid fa-filter"></i> Search-driven discovery</span>
+            </div>
         </div>
 
-		<p class="text-center"> We couldn’t find any matching fonts. Try another keyword or explore our <a href="https://kreativfont.com/fonts">Popular Fonts</a> collection.</p>
+        <div class="kreativ-page-hero-side">
+            <div class="kreativ-page-side-card">
+                <h2>Use search as a fast way into the library.</h2>
+                <p>Search should feel like part of the same curated experience, not a generic WordPress fallback page.</p>
+            </div>
+        </div>
+    </section>
 
-		<?php endif; ?>
+    <section class="kreativ-page-content">
+        <?php get_search_form(); ?>
 
-    </div>
+        <?php if ( have_posts() ) : ?>
+            <div class="row kreativ-results-grid">
+                <?php while ( have_posts() ) : the_post(); ?>
+                    <?php
+                    kreativ_render_font_card(
+                        array(
+                            'post_id'         => get_the_ID(),
+                            'badge_text'      => 'Result',
+                            'badge_slug'      => 'tag',
+                            'column_classes'  => 'col-md-4 col-lg-3 col-sm-6',
+                            'animation_class' => 'kreativ-card-animate',
+                        )
+                    );
+                    ?>
+                <?php endwhile; ?>
+            </div>
+        <?php else : ?>
+            <div class="kreativ-empty-state">
+                <p>Try another search or explore the <a href="<?php echo esc_url( home_url( '/category/fonts' ) ); ?>">Fonts archive</a>.</p>
+            </div>
+        <?php endif; ?>
+    </section>
+</div>
 
-<?php get_footer();
+<?php get_footer(); ?>
