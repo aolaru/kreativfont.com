@@ -47,6 +47,26 @@
     z-index: 1;
 }
 
+.kreativ-page-hero-compact {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 1.8rem 2rem;
+}
+
+.kreativ-page-hero-compact .kreativ-page-title {
+    max-width: 13ch;
+    font-size: clamp(2.2rem, 4vw, 3.9rem);
+}
+
+.kreativ-page-hero-compact .kreativ-page-summary {
+    max-width: 46ch;
+    font-size: 1rem;
+}
+
+.kreativ-page-hero-compact .kreativ-page-badges {
+    margin-top: 1.1rem;
+}
+
 .kreativ-page-eyebrow {
     display: inline-flex;
     align-items: center;
@@ -293,6 +313,10 @@
     .kreativ-page-badges {
         flex-direction: column;
         align-items: stretch;
+    }
+
+    .kreativ-page-hero-compact {
+        padding: 1.5rem;
     }
 
     .kreativ-post-nav {

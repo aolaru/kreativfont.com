@@ -5,10 +5,11 @@
 $page_summary = kreativ_get_page_summary( get_post() );
 $categories   = get_the_category();
 $primary_cat  = ! empty( $categories ) ? $categories[0]->name : 'Article';
+$page_summary = wp_trim_words( wp_strip_all_tags( $page_summary ), 24, '...' );
 ?>
 
 <div class="kreativ-page-shell">
-    <section class="kreativ-page-hero">
+    <section class="kreativ-page-hero kreativ-page-hero-compact">
         <div class="kreativ-page-hero-main">
             <div class="kreativ-page-eyebrow">
                 <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
@@ -24,27 +25,6 @@ $primary_cat  = ! empty( $categories ) ? $categories[0]->name : 'Article';
             <div class="kreativ-page-badges">
                 <span class="kreativ-page-badge"><i class="fa-solid fa-calendar"></i> <?php echo esc_html( get_the_date( 'F j, Y' ) ); ?></span>
                 <span class="kreativ-page-badge"><i class="fa-solid fa-user"></i> <?php the_author(); ?></span>
-            </div>
-        </div>
-
-        <div class="kreativ-page-hero-side">
-            <div class="kreativ-page-side-card">
-                <h2>Browse the article, then continue exploring related type.</h2>
-                <p>This template now matches the rest of the site instead of dropping into an older standalone article layout.</p>
-            </div>
-
-            <div class="kreativ-page-card-grid">
-                <div class="kreativ-page-mini-card">
-                    <span class="kreativ-page-mini-label">Category</span>
-                    <span class="kreativ-page-mini-value"><?php echo esc_html( $primary_cat ); ?></span>
-                    <p class="kreativ-page-mini-copy">Primary context for this article</p>
-                </div>
-
-                <div class="kreativ-page-mini-card">
-                    <span class="kreativ-page-mini-label">Format</span>
-                    <span class="kreativ-page-mini-value">Post</span>
-                    <p class="kreativ-page-mini-copy">Editorial content inside the Kreativ system</p>
-                </div>
             </div>
         </div>
     </section>
