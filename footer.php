@@ -1,31 +1,42 @@
 		<footer class="kreativ-footer">
+			<div class="container kreativ-footer-inner">
+				<div class="kreativ-footer-brand">
+					<a href="/" class="kreativ-footer-mark">Kreativ Font</a>
+					<p class="kreativ-footer-copy">Curated fonts, font reviews, and practical tools for discovering better type faster.</p>
+				</div>
 
-			DISCLAIMER: Kreativ Font does not host or distribute commercial fonts.
-			All font names, trademarks, and copyrights belong to their respective owners.<br />
+				<div class="kreativ-footer-links">
+					<div class="kreativ-footer-group">
+						<h2>Explore</h2>
+						<a href="/category/fonts">Fonts</a>
+						<a href="https://kreativtools.com" target="_blank" rel="noopener">Kreativ Tools</a>
+						<a href="/category/free">Free Fonts</a>
+						<a href="/blog">Blog</a>
+					</div>
 
-			We are supported by our audience.
-			Some links on this site are affiliate links, which may earn us a small commission at no extra cost to you.<br />
+					<div class="kreativ-footer-group">
+						<h2>Info</h2>
+						<a href="/blog/about">About</a>
+						<a href="/blog/contact">Contact</a>
+						<a href="/blog/terms-of-use">Terms of Use</a>
+						<a href="/blog/privacy-policy">Privacy Policy</a>
+					</div>
 
-			Looking for font identification? You may also try
-			<a href="https://www.whatfontis.com" target="_blank" rel="noopener nofollow">
-			  WhatFontIs
-			</a>.<br />
+					<div class="kreativ-footer-group">
+						<h2>Network</h2>
+						<a href="https://madebykreativ.com" target="_blank" rel="noopener">Made by KREATIV</a>
+						<a href="https://kreativsound.com" target="_blank" rel="noopener">Kreativ Sound</a>
+						<a href="https://kreativwp.com" target="_blank" rel="noopener">Kreativ WP</a>
+						<a href="https://www.whatfontis.com" target="_blank" rel="noopener nofollow">WhatFontIs</a>
+					</div>
+				</div>
 
-			<a href="/blog/contact">Contact</a> ·
-			<a href="/blog/terms-of-use">Terms of Use</a> ·
-			<a href="/blog/privacy-policy">Privacy Policy</a>
-			<br/><br/>
-
-						<a href="/">Kreativ Font</a> ·
-			<a href="https://kreativsound.com" target="_blank" rel="noopener">Kreativ Sound</a> ·
-			<a href="/tools">Kreativ Tools</a> ·
-			<a href="https://kreativwp.com" target="_blank" rel="noopener">Kreativ WP</a>
-
-			<br>
-
-			© 2026 <a href="https://madebykreativ.com" target="_blank" rel="noopener">Made by KREATIV</a> ·
-			Independent creative tools and assets by <a href="/blog/about">Andrei Olaru</a>
-
+				<div class="kreativ-footer-meta">
+					<p>Kreativ Font does not host or distribute commercial fonts. Font names, trademarks, and copyrights belong to their respective owners.</p>
+					<p>Some links may be affiliate links, which can earn a commission at no extra cost to you.</p>
+					<p>&copy; 2026 <a href="https://madebykreativ.com" target="_blank" rel="noopener">Made by KREATIV</a> · Independent creative tools and assets by <a href="/blog/about">Andrei Olaru</a></p>
+				</div>
+			</div>
 		</footer>
 
 		<script>
