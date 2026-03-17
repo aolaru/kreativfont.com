@@ -510,14 +510,20 @@ body.dark-mode .kreativ-theme-toggle {
     .kreativ-header .navbar-collapse.offcanvas-collapse {
         bottom: 0;
         width: 100%;
-        display: none !important;
+        display: flex !important;
         visibility: hidden;
-        z-index: 2000;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-1rem);
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+        z-index: 5000;
     }
 
     .kreativ-header .navbar-collapse.offcanvas-collapse.open {
-        display: flex !important;
         visibility: visible;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
     }
 
     .offcanvas-collapse .kreativ-hdr-left {
