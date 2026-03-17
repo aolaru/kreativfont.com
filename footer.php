@@ -42,7 +42,30 @@
 		<script>
 		document.addEventListener('DOMContentLoaded', function() {
 		  const toggles = document.querySelectorAll('.kreativ-theme-toggle');
-		  const isDark = localStorage.getItem('kreativ-dark') === 'true';
+		  const storageKey = 'kreativ-dark';
+		  let storageAvailable = true;
+
+		  const readStoredPreference = () => {
+			try {
+			  return window.localStorage.getItem(storageKey) === 'true';
+			} catch (error) {
+			  storageAvailable = false;
+			  return document.body.classList.contains('dark-mode');
+			}
+		  };
+
+		  const writeStoredPreference = (value) => {
+			if (!storageAvailable) {
+			  return;
+			}
+
+			try {
+			  window.localStorage.setItem(storageKey, value ? 'true' : 'false');
+			} catch (error) {
+			  storageAvailable = false;
+			}
+		  };
+
 		  const syncThemeToggleState = () => {
 			const darkEnabled = document.body.classList.contains('dark-mode');
 
@@ -59,17 +82,17 @@
 			});
 		  };
 
-		  if (isDark) {
-			document.body.classList.add('dark-mode');
-		  }
+		  const setTheme = (darkEnabled) => {
+			document.body.classList.toggle('dark-mode', darkEnabled);
+			writeStoredPreference(darkEnabled);
+			syncThemeToggleState();
+		  };
 
-		  syncThemeToggleState();
+		  setTheme(readStoredPreference());
 
 		  toggles.forEach((toggle) => {
 			toggle.addEventListener('click', () => {
-			  document.body.classList.toggle('dark-mode');
-			  localStorage.setItem('kreativ-dark', document.body.classList.contains('dark-mode'));
-			  syncThemeToggleState();
+			  setTheme(!document.body.classList.contains('dark-mode'));
 			});
 		  });
 		});
