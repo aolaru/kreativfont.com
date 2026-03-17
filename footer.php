@@ -8,8 +8,8 @@
 				<div class="kreativ-footer-links">
 					<div class="kreativ-footer-group">
 						<h2>Explore</h2>
-						<a href="/category/fonts">Fonts</a>
-						<a href="https://kreativtools.com" target="_blank" rel="noopener">Kreativ Tools</a>
+						<a href="https://kreativfont.com/fonts">Fonts</a>
+						<a href="https://kreativfont.com/tools">Font Tools</a>
 						<a href="/category/free">Free Fonts</a>
 						<a href="/blog">Blog</a>
 					</div>
@@ -24,7 +24,7 @@
 
 					<div class="kreativ-footer-group">
 						<h2>Network</h2>
-						<a href="https://madebykreativ.com" target="_blank" rel="noopener">Made by KREATIV</a>
+						<a href="https://kreativtools.com/" target="_blank" rel="noopener">Kreativ Tools</a>
 						<a href="https://kreativsound.com" target="_blank" rel="noopener">Kreativ Sound</a>
 						<a href="https://kreativwp.com" target="_blank" rel="noopener">Kreativ WP</a>
 						<a href="https://www.whatfontis.com" target="_blank" rel="noopener nofollow">WhatFontIs</a>
@@ -34,7 +34,7 @@
 				<div class="kreativ-footer-meta">
 					<p>Kreativ Font does not host or distribute commercial fonts. Font names, trademarks, and copyrights belong to their respective owners.</p>
 					<p>Some links may be affiliate links, which can earn a commission at no extra cost to you.</p>
-					<p>&copy; 2026 <a href="https://madebykreativ.com" target="_blank" rel="noopener">Made by KREATIV</a> · Independent creative tools and assets by <a href="/blog/about">Andrei Olaru</a></p>
+					<p>&copy; 2026 <a href="https://madebykreativ.com" target="_blank" rel="noopener">Made by KREATIV</a> · Independent creative tools and assets by Andrei Olaru</p>
 				</div>
 			</div>
 		</footer>
