@@ -257,6 +257,63 @@
     border-color: #4a4aff;
 }
 
+body.dark-mode {
+    background: #0b1020;
+    color: #edf2ff;
+}
+
+body.dark-mode .kreativ-hero,
+body.dark-mode .kreativ-section {
+    background: radial-gradient(circle at top left, rgba(28, 36, 60, 0.96) 0%, rgba(18, 24, 42, 0.98) 48%, rgba(12, 17, 30, 1) 100%);
+    box-shadow: 0 28px 60px rgba(0, 0, 0, 0.28);
+}
+
+body.dark-mode .kreativ-hero-title,
+body.dark-mode .kreativ-section-title,
+body.dark-mode .kreativ-card-title,
+body.dark-mode .kreativ-card-title a {
+    color: #f4f7ff;
+}
+
+body.dark-mode .kreativ-hero-subtitle,
+body.dark-mode .kreativ-hero-mini-copy,
+body.dark-mode .kreativ-section-link {
+    color: #aeb9d6;
+}
+
+body.dark-mode .kreativ-hero-note,
+body.dark-mode .kreativ-hero-mini-card,
+body.dark-mode .kreativ-hero-tool-card {
+    background: rgba(20, 26, 44, 0.92);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #dfe6fb;
+}
+
+body.dark-mode .kreativ-hero-note i,
+body.dark-mode .kreativ-hero-tool-card i,
+body.dark-mode .kreativ-section-title i,
+body.dark-mode .kreativ-section-link {
+    color: #8ea0ff;
+}
+
+body.dark-mode .kreativ-hero-panel {
+    background: rgba(7, 10, 20, 0.96);
+    box-shadow: 0 24px 44px rgba(0, 0, 0, 0.32);
+}
+
+body.dark-mode .kreativ-hero-mini-label {
+    color: #95a0bf;
+}
+
+body.dark-mode .kreativ-hero-mini-value {
+    color: #ffffff;
+}
+
+body.dark-mode .kreativ-font-card .card,
+body.dark-mode .kreativ-font-card {
+    background: transparent;
+}
+
 .kreativ-section {
     padding: 1rem 0;
     background: var(--kf-gradient);
