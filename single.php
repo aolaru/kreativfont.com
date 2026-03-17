@@ -5,10 +5,15 @@
 $page_summary = kreativ_get_content_summary( get_post(), 24 );
 $categories   = get_the_category();
 $primary_cat  = ! empty( $categories ) ? $categories[0]->name : 'Article';
+$hero_image   = has_post_thumbnail() ? get_the_post_thumbnail_url( get_the_ID(), 'large' ) : '';
+
+if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', $page_summary ) ) {
+    $page_summary = '';
+}
 ?>
 
 <div class="kreativ-page-shell">
-    <section class="kreativ-page-hero kreativ-page-hero-compact">
+    <section class="kreativ-page-hero <?php echo $hero_image ? 'kreativ-single-hero' : 'kreativ-page-hero-compact'; ?>">
         <div class="kreativ-page-hero-main">
             <div class="kreativ-page-eyebrow">
                 <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
@@ -26,6 +31,14 @@ $primary_cat  = ! empty( $categories ) ? $categories[0]->name : 'Article';
                 <span class="kreativ-page-badge"><i class="fa-solid fa-user"></i> <?php the_author(); ?></span>
             </div>
         </div>
+
+        <?php if ( $hero_image ) : ?>
+            <div class="kreativ-page-hero-side kreativ-single-hero-media">
+                <div class="kreativ-single-hero-image-frame">
+                    <img src="<?php echo esc_url( $hero_image ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" class="kreativ-single-hero-image">
+                </div>
+            </div>
+        <?php endif; ?>
     </section>
 
     <section class="kreativ-page-content">

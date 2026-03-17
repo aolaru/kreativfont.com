@@ -67,6 +67,53 @@
     margin-top: 1.1rem;
 }
 
+.kreativ-single-hero {
+    grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.8fr);
+    align-items: center;
+    gap: 1.6rem;
+    min-height: 360px;
+}
+
+.kreativ-single-hero .kreativ-page-title {
+    max-width: 10ch;
+}
+
+.kreativ-single-hero .kreativ-page-summary {
+    max-width: 38ch;
+    font-size: 1.02rem;
+    line-height: 1.55;
+}
+
+.kreativ-single-hero-media {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.kreativ-single-hero-image-frame {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(100%, 420px);
+    min-height: 280px;
+    padding: 1rem;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(74, 74, 255, 0.08);
+    box-shadow: 0 20px 44px rgba(18, 22, 34, 0.08);
+}
+
+.kreativ-single-hero-image {
+    display: block;
+    max-width: 100%;
+    max-height: 280px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    margin: 0 auto;
+    border-radius: 16px;
+}
+
 .kreativ-page-eyebrow {
     display: inline-flex;
     align-items: center;
@@ -322,6 +369,24 @@
     margin-bottom: 1.5rem;
 }
 
+.kreativ-post-content img,
+.kreativ-page-content img,
+.kreativ-post-content .wp-block-image img,
+.kreativ-page-content .wp-block-image img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.kreativ-post-content .wp-block-image,
+.kreativ-page-content .wp-block-image,
+.kreativ-post-content figure,
+.kreativ-page-content figure {
+    text-align: center;
+}
+
 .kreativ-post-tags,
 .kreativ-post-meta {
     margin-top: 1.25rem;
@@ -332,6 +397,15 @@
     .kreativ-page-hero {
         grid-template-columns: 1fr;
         padding: 1.8rem;
+    }
+
+    .kreativ-single-hero {
+        min-height: 0;
+    }
+
+    .kreativ-single-hero .kreativ-page-title,
+    .kreativ-single-hero .kreativ-page-summary {
+        max-width: none;
     }
 
     .kreativ-page-card-grid {
@@ -359,6 +433,11 @@
 
     .kreativ-page-hero-compact {
         padding: 1.5rem;
+    }
+
+    .kreativ-single-hero-image-frame {
+        min-height: 220px;
+        padding: 0.8rem;
     }
 
     .kreativ-post-nav {
