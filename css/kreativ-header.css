@@ -314,3 +314,140 @@ body.dark-mode .kreativ-theme-toggle {
         padding: 0.68rem 0.9rem;
     }
 }
+
+/* Compact header refinement */
+.kreativ-header .navbar {
+    min-height: 82px;
+    gap: 1rem;
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+}
+
+.kreativ-logo a {
+    gap: 0.8rem;
+}
+
+.kreativ-logo-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+}
+
+.kreativ-logo-text {
+    font-size: 1.85rem;
+    letter-spacing: 0.08em;
+    line-height: 0.92;
+}
+
+.kreativ-logo-tagline {
+    margin-top: 0.18rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    line-height: 1.2;
+}
+
+.kreativ-search {
+    flex-basis: 360px;
+    max-width: 560px;
+}
+
+.kreativ-search-form {
+    min-height: 64px;
+    padding: 0.5rem 0.6rem 0.5rem 0.95rem;
+}
+
+.kreativ-search-icon {
+    font-size: 1.3rem;
+}
+
+.kreativ-search-input {
+    font-size: 0.98rem;
+}
+
+.kreativ-search-submit {
+    min-width: 122px;
+    padding: 0.76rem 1.05rem;
+    font-size: 0.96rem;
+    border-radius: 18px;
+}
+
+.kreativ-header .navbar-collapse {
+    gap: 0.8rem;
+}
+
+.kreativ-header .navbar-nav {
+    gap: 0.12rem;
+}
+
+.kreativ-header .navbar-nav li.menu-item a {
+    padding: 0.5rem 0.62rem;
+    font-size: 0.9rem;
+}
+
+.kreativ-theme-toggle {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    box-shadow: 0 10px 24px rgba(100, 94, 255, 0.08);
+}
+
+.kreativ-theme-toggle i {
+    font-size: 1.08rem;
+}
+
+@media (max-width: 1360px) {
+    .kreativ-search {
+        flex-basis: 330px;
+        max-width: 500px;
+    }
+
+    .kreativ-search-form {
+        min-height: 62px;
+    }
+
+    .kreativ-search-submit {
+        min-width: 114px;
+        padding-inline: 0.95rem;
+    }
+
+    .kreativ-header .navbar-nav li.menu-item a {
+        padding: 0.48rem 0.56rem;
+        font-size: 0.87rem;
+    }
+}
+
+@media (max-width: 1220px) {
+    .kreativ-header .navbar {
+        min-height: 76px;
+    }
+
+    .kreativ-logo-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .kreativ-search {
+        flex-basis: 300px;
+        max-width: 430px;
+    }
+
+    .kreativ-search-form {
+        min-height: 60px;
+        padding: 0.48rem 0.5rem 0.48rem 0.85rem;
+    }
+
+    .kreativ-search-input {
+        font-size: 0.94rem;
+    }
+
+    .kreativ-search-submit {
+        min-width: 106px;
+        font-size: 0.92rem;
+    }
+
+    .kreativ-theme-toggle {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+    }
+}
