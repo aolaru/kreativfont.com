@@ -74,6 +74,7 @@ function kreativ_get_archive_query_args( $args = array() ) {
         'order'              => 'DESC',
         'ignore_sticky_posts'=> true,
         'meta_key'           => '',
+        'tag_id'             => 0,
     );
 
     $args = wp_parse_args( $args, $defaults );
@@ -108,6 +109,7 @@ function kreativ_get_archive_query_args( $args = array() ) {
         'orderby'             => $orderby,
         'order'               => $args['order'],
         'meta_key'            => $args['meta_key'] ? $args['meta_key'] : null,
+        'tag_id'              => $args['tag_id'] ? (int) $args['tag_id'] : null,
         'ignore_sticky_posts' => $args['ignore_sticky_posts'],
         'post_status'         => $args['post_status'],
         'tax_query'           => $args['tax_query'],

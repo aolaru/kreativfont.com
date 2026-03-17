@@ -22,13 +22,7 @@ $paged = max(1, get_query_var('paged'));
 /* --------------------------------------------
    TAX QUERY
 --------------------------------------------- */
-$tax_query = [
-    [
-        'taxonomy' => 'post_tag',
-        'field'    => 'term_id',
-        'terms'    => [$tag_id],
-    ]
-];
+$tax_query = [];
 
 if ($sort === 'free') {
     $tax_query[] = [
@@ -44,6 +38,7 @@ $query = new WP_Query(
             'sort'           => $sort,
             'paged'          => $paged,
             'posts_per_page' => 24,
+            'tag_id'         => $tag_id,
             'tax_query'      => $tax_query,
             'meta_key'       => 'ai_score',
         )
