@@ -111,8 +111,8 @@
 								 alt="KREATIV Logo"
 								 class="kreativ-logo-icon">
 							<span class="kreativ-logo-lockup">
-								<span class="kreativ-logo-text">KREATIV</span>
-								<span class="kreativ-logo-tagline">Fonts and Font Tools</span>
+								<span class="kreativ-logo-text">Kreativ Font</span>
+								<span class="kreativ-logo-tagline">Curated Fonts and Tools</span>
 							</span>
 						</a>
 					</h1>
@@ -154,8 +154,8 @@
 						 alt="KREATIV Logo"
 						 class="kreativ-logo-icon">
 					<span class="kreativ-logo-lockup">
-						<span class="kreativ-logo-text">KREATIV</span>
-						<span class="kreativ-logo-tagline">Fonts and Font Tools</span>
+						<span class="kreativ-logo-text">Kreativ Font</span>
+						<span class="kreativ-logo-tagline">Curated Fonts and Tools</span>
 					</span>
 				</a>
 			</h2>
