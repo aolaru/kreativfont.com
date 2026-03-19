@@ -22,37 +22,18 @@ $paged = max(1, get_query_var('paged'));
 /* --------------------------------------------
    QUERY
 --------------------------------------------- */
-$query_args = $GLOBALS['wp_query']->query_vars;
-$query_args = wp_parse_args(
-    kreativ_get_archive_query_args(
-        array(
-            'sort'           => $sort,
-            'paged'          => $paged,
-            'posts_per_page' => 24,
-            'meta_key'       => 'ai_score',
-        )
-    ),
-    $query_args
+$query_args = kreativ_get_archive_query_args(
+    array(
+        'sort'           => $sort,
+        'paged'          => $paged,
+        'posts_per_page' => 24,
+        'meta_key'       => 'ai_score',
+    )
 );
 
-if ($sort === 'free') {
-    $existing_tax_query = isset($query_args['tax_query']) && is_array($query_args['tax_query'])
-        ? $query_args['tax_query']
-        : [];
-
-    $existing_tax_query[] = [
-        'taxonomy' => 'category',
-        'field'    => 'slug',
-        'terms'    => ['free'],
-    ];
-
-    $query_args['tax_query'] = $existing_tax_query;
-}
-
+$query_args['tag'] = $tag_slug;
 $query_args['post_status'] = 'publish';
 $query_args['ignore_sticky_posts'] = true;
-$query_args['paged'] = $paged;
-$query_args['posts_per_page'] = 24;
 
 $query = new WP_Query($query_args);
 ?>
