@@ -14,28 +14,11 @@ $tag_name = single_tag_title('', false);
 $tag_desc = tag_description();
 
 /* --------------------------------------------
-   SORTING + QUERY
+   SORTING
 --------------------------------------------- */
 $sort  = kreativ_get_archive_sort();
 $paged = max(1, get_query_var('paged'));
-
-/* --------------------------------------------
-   QUERY
---------------------------------------------- */
-$query_args = kreativ_get_archive_query_args(
-    array(
-        'sort'           => $sort,
-        'paged'          => $paged,
-        'posts_per_page' => 24,
-        'meta_key'       => 'ai_score',
-    )
-);
-
-$query_args['tag'] = $tag_slug;
-$query_args['post_status'] = 'publish';
-$query_args['ignore_sticky_posts'] = true;
-
-$query = new WP_Query($query_args);
+$query = $GLOBALS['wp_query'];
 ?>
 
 <!-- =====================================================
@@ -70,8 +53,8 @@ $query = new WP_Query($query_args);
 <div class="container kreativ-category-grid kreativ-category-bg">
     <div class="row">
 
-        <?php if ($query->have_posts()) : ?>
-            <?php while ($query->have_posts()) : $query->the_post(); ?>
+        <?php if (have_posts()) : ?>
+            <?php while (have_posts()) : the_post(); ?>
                 <?php
                 kreativ_render_font_card(
                     array(
