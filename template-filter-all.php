@@ -108,6 +108,45 @@ $font_filters = [
         ],
         'available' => kf_home_filter_has_terms( 'post_tag', [ 'display' ] ),
     ],
+    'modern' => [
+        'label' => 'Modern',
+        'title' => 'Modern Fonts',
+        'orderby' => 'date',
+        'tax_query' => [
+            [
+                'taxonomy' => 'post_tag',
+                'field' => 'slug',
+                'terms' => [ 'modern' ],
+            ],
+        ],
+        'available' => kf_home_filter_has_terms( 'post_tag', [ 'modern' ] ),
+    ],
+    'vintage' => [
+        'label' => 'Vintage',
+        'title' => 'Vintage Fonts',
+        'orderby' => 'date',
+        'tax_query' => [
+            [
+                'taxonomy' => 'post_tag',
+                'field' => 'slug',
+                'terms' => [ 'vintage' ],
+            ],
+        ],
+        'available' => kf_home_filter_has_terms( 'post_tag', [ 'vintage' ] ),
+    ],
+    'elegant' => [
+        'label' => 'Elegant',
+        'title' => 'Elegant Fonts',
+        'orderby' => 'date',
+        'tax_query' => [
+            [
+                'taxonomy' => 'post_tag',
+                'field' => 'slug',
+                'terms' => [ 'elegant' ],
+            ],
+        ],
+        'available' => kf_home_filter_has_terms( 'post_tag', [ 'elegant' ] ),
+    ],
 ];
 
 $font_filters = array_filter(

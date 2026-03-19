@@ -357,6 +357,7 @@ body.dark-mode .kreativ-font-card {
 .kreativ-font-filter-bar {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 0.75rem;
     margin: 0 0 1.5rem;
 }
