@@ -239,6 +239,40 @@ function kreativ_get_content_summary( $post = null, $max_words = 24 ) {
     return wp_trim_words( trim( $fallback ), $max_words, '...' );
 }
 
+function kreativ_get_font_credit_data( $post = null ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post ) {
+        return array(
+            'designer' => '',
+            'foundry'  => '',
+        );
+    }
+
+    $content = apply_filters( 'the_content', $post->post_content );
+    $text    = wp_strip_all_tags( $content );
+    $text    = preg_replace( '/\s+/', ' ', (string) $text );
+
+    $designer = '';
+    $foundry  = '';
+
+    if ( preg_match( '/\bdesigned by\s+([^.,;]+?)(?:\s+and\s+(?:published|released)\s+by\b|[.,;]|$)/i', $text, $matches ) ) {
+        $designer = trim( $matches[1] );
+    }
+
+    if ( preg_match( '/\b(?:published|released)\s+by\s+([^.,;]+?)(?:\s+[,;]|\s+and\b|[.,;]|$)/i', $text, $matches ) ) {
+        $foundry = trim( $matches[1] );
+    }
+
+    $designer = preg_replace( '/\s+$/', '', (string) $designer );
+    $foundry  = preg_replace( '/\s+$/', '', (string) $foundry );
+
+    return array(
+        'designer' => $designer,
+        'foundry'  => $foundry,
+    );
+}
+
 function kreativ_is_tool_page( $post = null ) {
     $post = get_post( $post );
 

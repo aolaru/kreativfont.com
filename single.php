@@ -3,6 +3,7 @@
 <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 <?php
 $page_summary = kreativ_get_content_summary( get_post(), 24 );
+$font_credits = kreativ_get_font_credit_data( get_post() );
 $categories   = get_the_category();
 $primary_cat  = ! empty( $categories ) ? $categories[0]->name : 'Article';
 $hero_image   = has_post_thumbnail() ? get_the_post_thumbnail_url( get_the_ID(), 'large' ) : '';
@@ -32,8 +33,15 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
             <?php endif; ?>
 
             <div class="kreativ-page-badges">
-                <span class="kreativ-page-badge"><i class="fa-solid fa-calendar"></i> <?php echo esc_html( get_the_date( 'F j, Y' ) ); ?></span>
-                <span class="kreativ-page-badge"><i class="fa-solid fa-user"></i> <?php the_author(); ?></span>
+                <?php if ( ! empty( $font_credits['designer'] ) ) : ?>
+                    <span class="kreativ-page-badge"><i class="fa-solid fa-pen-nib"></i> <?php echo esc_html( 'Designer: ' . $font_credits['designer'] ); ?></span>
+                <?php endif; ?>
+                <?php if ( ! empty( $font_credits['foundry'] ) ) : ?>
+                    <span class="kreativ-page-badge"><i class="fa-solid fa-building"></i> <?php echo esc_html( 'Foundry: ' . $font_credits['foundry'] ); ?></span>
+                <?php endif; ?>
+                <?php if ( empty( $font_credits['designer'] ) && empty( $font_credits['foundry'] ) ) : ?>
+                    <span class="kreativ-page-badge"><i class="fa-solid fa-calendar"></i> <?php echo esc_html( get_the_date( 'F j, Y' ) ); ?></span>
+                <?php endif; ?>
             </div>
         </div>
 
