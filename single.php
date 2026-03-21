@@ -6,6 +6,11 @@ $page_summary = kreativ_get_content_summary( get_post(), 24 );
 $categories   = get_the_category();
 $primary_cat  = ! empty( $categories ) ? $categories[0]->name : 'Article';
 $hero_image   = has_post_thumbnail() ? get_the_post_thumbnail_url( get_the_ID(), 'large' ) : '';
+$share_url    = rawurlencode( get_permalink() );
+$share_title  = rawurlencode( get_the_title() );
+$share_email_subject = rawurlencode( get_the_title() . ' | Kreativ Font' );
+$share_email_body    = rawurlencode( get_the_title() . "\n\n" . get_permalink() );
+$share_thumb  = $hero_image ? rawurlencode( $hero_image ) : '';
 
 if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', $page_summary ) ) {
     $page_summary = '';
@@ -57,6 +62,32 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
             <?php the_content(); ?>
         </article>
 
+        <div class="kreativ-share-bar">
+            <span class="kreativ-share-label">Share</span>
+            <div class="kreativ-share-actions">
+                <a href="<?php echo esc_url( 'https://www.pinterest.com/pin/create/button/?url=' . $share_url . '&description=' . $share_title . ( $share_thumb ? '&media=' . $share_thumb : '' ) ); ?>" class="kreativ-share-button" target="_blank" rel="noopener noreferrer">
+                    <i class="fa-brands fa-pinterest-p" aria-hidden="true"></i>
+                    <span>Pinterest</span>
+                </a>
+                <a href="<?php echo esc_url( 'https://twitter.com/intent/tweet?url=' . $share_url . '&text=' . $share_title ); ?>" class="kreativ-share-button" target="_blank" rel="noopener noreferrer">
+                    <i class="fa-brands fa-x-twitter" aria-hidden="true"></i>
+                    <span>X</span>
+                </a>
+                <a href="<?php echo esc_url( 'https://www.facebook.com/sharer/sharer.php?u=' . $share_url ); ?>" class="kreativ-share-button" target="_blank" rel="noopener noreferrer">
+                    <i class="fa-brands fa-facebook-f" aria-hidden="true"></i>
+                    <span>Facebook</span>
+                </a>
+                <a href="<?php echo esc_url( 'mailto:?subject=' . $share_email_subject . '&body=' . $share_email_body ); ?>" class="kreativ-share-button">
+                    <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                    <span>Email</span>
+                </a>
+                <button type="button" class="kreativ-share-button kreativ-share-copy" data-share-url="<?php echo esc_url( get_permalink() ); ?>">
+                    <i class="fa-solid fa-link" aria-hidden="true"></i>
+                    <span>Copy Link</span>
+                </button>
+            </div>
+        </div>
+
         <div class="kreativ-post-footer">
             <?php $post_tags = get_the_tags(); ?>
             <?php if ( $post_tags ) : ?>
@@ -91,6 +122,40 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
 
     </section>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.kreativ-share-copy').forEach(function (button) {
+        button.addEventListener('click', async function () {
+            var url = button.getAttribute('data-share-url');
+            if (!url) {
+                return;
+            }
+
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(url);
+                } else {
+                    var tempInput = document.createElement('input');
+                    tempInput.value = url;
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempInput);
+                }
+
+                var originalText = button.querySelector('span').textContent;
+                button.querySelector('span').textContent = 'Copied';
+                window.setTimeout(function () {
+                    button.querySelector('span').textContent = originalText;
+                }, 1500);
+            } catch (error) {
+                window.open(url, '_blank', 'noopener');
+            }
+        });
+    });
+});
+</script>
 
 <?php endwhile; else : ?>
     <div class="kreativ-page-shell">

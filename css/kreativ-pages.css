@@ -369,57 +369,63 @@
     margin-bottom: 1.5rem;
 }
 
-.kreativ-post-content .sharedaddy,
-.kreativ-post-content .sd-sharing-enabled {
+.kreativ-share-bar {
     margin: 2rem 0 0;
     padding-top: 1.5rem;
     border-top: 1px solid rgba(74, 74, 255, 0.1);
+    text-align: center;
 }
 
-.kreativ-post-content .sd-title,
-.kreativ-post-content .sharedaddy h3 {
-    margin: 0 0 0.9rem !important;
-    color: #26304d !important;
-    font-size: 1rem !important;
-    font-weight: 800 !important;
+.kreativ-share-label {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 0.9rem;
+    color: #26304d;
+    font-size: 1rem;
+    font-weight: 800;
     letter-spacing: 0.01em;
 }
 
-.kreativ-post-content .sd-content ul {
+.kreativ-share-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.7rem;
     margin: 0;
     padding: 0;
+    justify-content: center;
 }
 
-.kreativ-post-content .sd-content ul li {
-    margin: 0 !important;
-}
-
-.kreativ-post-content .sd-social-icon-text .sd-content ul li a,
-.kreativ-post-content .sd-content ul li a.sd-button,
-.kreativ-post-content .sd-content ul li .share-more-button {
-    display: inline-flex !important;
+.kreativ-share-button {
+    display: inline-flex;
     align-items: center;
     gap: 0.45rem;
     min-height: 42px;
-    padding: 0.68rem 0.95rem !important;
-    border-radius: 12px !important;
-    border: 1px solid rgba(74, 74, 255, 0.12) !important;
-    background: #fff !important;
+    padding: 0.68rem 0.95rem;
+    border-radius: 12px;
+    border: 1px solid rgba(74, 74, 255, 0.12);
+    background: #fff;
     box-shadow: 0 10px 22px rgba(18, 22, 34, 0.05);
-    color: #2a3554 !important;
-    font-weight: 700 !important;
-    text-decoration: none !important;
+    color: #2a3554;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
 }
 
-.kreativ-post-content .sd-social-icon-text .sd-content ul li a:hover,
-.kreativ-post-content .sd-content ul li a.sd-button:hover,
-.kreativ-post-content .sd-content ul li .share-more-button:hover {
-    border-color: #4a4aff !important;
-    color: #2d2def !important;
+.kreativ-share-button:hover,
+.kreativ-share-button:focus {
+    border-color: #4a4aff;
+    color: #2d2def;
+    text-decoration: none;
     transform: translateY(-1px);
+}
+
+.kreativ-share-button i {
+    color: #4A4AFF;
+}
+
+.kreativ-share-copy {
+    cursor: pointer;
+    font-family: inherit;
 }
 
 .kreativ-post-content img,
@@ -580,13 +586,11 @@
         flex-direction: column;
     }
 
-    .kreativ-post-content .sd-content ul {
+    .kreativ-share-actions {
         gap: 0.55rem;
     }
 
-    .kreativ-post-content .sd-social-icon-text .sd-content ul li a,
-    .kreativ-post-content .sd-content ul li a.sd-button,
-    .kreativ-post-content .sd-content ul li .share-more-button {
+    .kreativ-share-button {
         width: 100%;
         justify-content: center;
     }
@@ -635,20 +639,17 @@ body.dark-mode .kreativ-post-tags a {
     color: #8ea0ff;
 }
 
-body.dark-mode .kreativ-post-content .sharedaddy,
+body.dark-mode .kreativ-share-bar,
 body.dark-mode .kreativ-post-footer {
     border-top-color: rgba(255, 255, 255, 0.08);
 }
 
-body.dark-mode .kreativ-post-content .sd-title,
-body.dark-mode .kreativ-post-content .sharedaddy h3,
+body.dark-mode .kreativ-share-label,
 body.dark-mode .kreativ-post-tags-label {
     color: #f4f7ff !important;
 }
 
-body.dark-mode .kreativ-post-content .sd-social-icon-text .sd-content ul li a,
-body.dark-mode .kreativ-post-content .sd-content ul li a.sd-button,
-body.dark-mode .kreativ-post-content .sd-content ul li .share-more-button,
+body.dark-mode .kreativ-share-button,
 body.dark-mode .kreativ-post-tag-chip,
 body.dark-mode .kreativ-post-meta-item {
     background: rgba(20, 26, 44, 0.92) !important;
