@@ -57,16 +57,36 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
             <?php the_content(); ?>
         </article>
 
-        <?php if ( get_the_tags() ) : ?>
-            <div class="kreativ-post-tags">
-                <strong>Tags:</strong> <?php the_tags( '', ', ', '' ); ?>
-            </div>
-        <?php endif; ?>
+        <div class="kreativ-post-footer">
+            <?php $post_tags = get_the_tags(); ?>
+            <?php if ( $post_tags ) : ?>
+                <div class="kreativ-post-tags">
+                    <span class="kreativ-post-tags-label">Tags</span>
+                    <div class="kreativ-post-tag-list">
+                        <?php foreach ( $post_tags as $post_tag ) : ?>
+                            <a href="<?php echo esc_url( get_tag_link( $post_tag ) ); ?>" class="kreativ-post-tag-chip">
+                                <?php echo esc_html( $post_tag->name ); ?>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
 
-        <div class="kreativ-post-meta">
-            Published on <time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date( 'F j, Y' ) ); ?></time>
-            in <?php the_category( ', ' ); ?> by <?php the_author(); ?>.
-            <?php edit_post_link( 'Edit', ' | ', '' ); ?>
+            <div class="kreativ-post-meta">
+                <span class="kreativ-post-meta-item">
+                    <i class="fa-solid fa-calendar" aria-hidden="true"></i>
+                    <time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date( 'F j, Y' ) ); ?></time>
+                </span>
+                <span class="kreativ-post-meta-item">
+                    <i class="fa-solid fa-folder-open" aria-hidden="true"></i>
+                    <?php the_category( ', ' ); ?>
+                </span>
+                <span class="kreativ-post-meta-item">
+                    <i class="fa-solid fa-user" aria-hidden="true"></i>
+                    <?php the_author(); ?>
+                </span>
+                <?php edit_post_link( 'Edit', '<span class="kreativ-post-meta-item kreativ-post-meta-edit">', '</span>' ); ?>
+            </div>
         </div>
 
     </section>
