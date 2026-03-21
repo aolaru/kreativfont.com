@@ -157,6 +157,41 @@ function kreativ_is_noise_summary_paragraph( $text ) {
     return str_word_count( $normalized ) < 6;
 }
 
+function kreativ_get_font_description_score( $text ) {
+    $normalized = strtolower( trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $text ) ) ) );
+
+    if ( '' === $normalized ) {
+        return 0;
+    }
+
+    $score = 0;
+
+    $positive_patterns = array(
+        '/\bis a\b.{0,80}\b(font|typeface|font family)\b/',
+        '/\b(font|typeface|font family)\b.{0,80}\bdesigned by\b/',
+        '/\b(font|typeface|font family)\b.{0,80}\bpublished by\b/',
+        '/\b(display|serif|sans|sans-serif|script|handwritten|brush|calligraphy|modern|vintage|elegant)\b.{0,80}\b(font|typeface|family)\b/',
+        '/\bdesigned by\b/',
+        '/\bpublished by\b/',
+    );
+
+    foreach ( $positive_patterns as $pattern ) {
+        if ( preg_match( $pattern, $normalized ) ) {
+            $score += 2;
+        }
+    }
+
+    if ( str_word_count( $normalized ) >= 10 ) {
+        $score += 1;
+    }
+
+    if ( str_word_count( $normalized ) >= 18 ) {
+        $score += 1;
+    }
+
+    return $score;
+}
+
 function kreativ_get_content_summary( $post = null, $max_words = 24 ) {
     $post = get_post( $post );
 
@@ -171,6 +206,8 @@ function kreativ_get_content_summary( $post = null, $max_words = 24 ) {
     $content = apply_filters( 'the_content', $post->post_content );
 
     if ( preg_match_all( '/<p\b[^>]*>(.*?)<\/p>/is', $content, $paragraph_matches ) ) {
+        $fallback_summary = '';
+
         foreach ( $paragraph_matches[1] as $paragraph_html ) {
             $paragraph_text = trim( wp_strip_all_tags( $paragraph_html ) );
 
@@ -178,7 +215,17 @@ function kreativ_get_content_summary( $post = null, $max_words = 24 ) {
                 continue;
             }
 
-            return wp_trim_words( $paragraph_text, $max_words, '...' );
+            if ( kreativ_get_font_description_score( $paragraph_text ) >= 3 ) {
+                return wp_trim_words( $paragraph_text, $max_words, '...' );
+            }
+
+            if ( '' === $fallback_summary ) {
+                $fallback_summary = $paragraph_text;
+            }
+        }
+
+        if ( '' !== $fallback_summary ) {
+            return wp_trim_words( $fallback_summary, $max_words, '...' );
         }
     }
 
