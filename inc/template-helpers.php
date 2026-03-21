@@ -273,6 +273,67 @@ function kreativ_get_font_credit_data( $post = null ) {
     );
 }
 
+function kreativ_get_single_font_eyebrow( $post = null ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post ) {
+        return 'Font';
+    }
+
+    $tag_map = array(
+        'serif'       => 'Serif Font',
+        'sans-serif'  => 'Sans Serif Font',
+        'sans serif'  => 'Sans Serif Font',
+        'script'      => 'Script Font',
+        'display'     => 'Display Font',
+        'handwritten' => 'Handwritten Font',
+        'brush'       => 'Brush Font',
+        'calligraphy' => 'Calligraphy Font',
+        'modern'      => 'Modern Font',
+        'vintage'     => 'Vintage Font',
+        'elegant'     => 'Elegant Font',
+    );
+
+    $terms = get_the_terms( $post->ID, 'post_tag' );
+
+    if ( $terms && ! is_wp_error( $terms ) ) {
+        foreach ( $tag_map as $slug => $label ) {
+            foreach ( $terms as $term ) {
+                $term_slug = strtolower( (string) $term->slug );
+                $term_name = strtolower( (string) $term->name );
+
+                if ( $term_slug === $slug || $term_name === $slug ) {
+                    return $label;
+                }
+            }
+        }
+    }
+
+    $summary = strtolower( kreativ_get_content_summary( $post, 28 ) );
+
+    foreach ( $tag_map as $slug => $label ) {
+        if ( false !== strpos( $summary, $slug ) ) {
+            return $label;
+        }
+    }
+
+    $categories = get_the_terms( $post->ID, 'category' );
+
+    if ( $categories && ! is_wp_error( $categories ) ) {
+        foreach ( $categories as $category ) {
+            if ( 'free' === $category->slug ) {
+                return 'Free Font';
+            }
+        }
+    }
+
+    if ( false !== strpos( strtolower( wp_strip_all_tags( $post->post_content ) ), 'premium commercial font' ) ) {
+        return 'Premium Font';
+    }
+
+    return 'Font';
+}
+
 function kreativ_is_tool_page( $post = null ) {
     $post = get_post( $post );
 

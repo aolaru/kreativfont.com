@@ -5,7 +5,7 @@
 $page_summary = kreativ_get_content_summary( get_post(), 24 );
 $font_credits = kreativ_get_font_credit_data( get_post() );
 $categories   = get_the_category();
-$primary_cat  = ! empty( $categories ) ? $categories[0]->name : 'Article';
+$primary_cat  = kreativ_get_single_font_eyebrow( get_post() );
 $hero_image   = has_post_thumbnail() ? get_the_post_thumbnail_url( get_the_ID(), 'large' ) : '';
 $share_url    = rawurlencode( get_permalink() );
 $share_title  = rawurlencode( get_the_title() );
