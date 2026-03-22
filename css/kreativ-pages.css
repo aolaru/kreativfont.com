@@ -258,6 +258,56 @@
     color: #2d2def;
 }
 
+.kreativ-updates-content {
+    max-width: 1040px;
+}
+
+.kreativ-updates-list {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.kreativ-update-card {
+    padding: 1.35rem 1.45rem;
+    border: 1px solid rgba(74, 74, 255, 0.1);
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(248, 249, 255, 0.9) 0%, rgba(255, 255, 255, 1) 100%);
+}
+
+.kreativ-update-date {
+    display: inline-flex;
+    margin-bottom: 0.75rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(74, 74, 255, 0.08);
+    color: #3d43a4;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.kreativ-update-title {
+    margin: 0 0 0.55rem;
+    font-size: 1.55rem;
+    line-height: 1.08;
+}
+
+.kreativ-update-summary {
+    margin: 0 0 0.9rem;
+    color: #46516d;
+    font-size: 1rem;
+}
+
+.kreativ-update-points {
+    margin: 0;
+    padding-left: 1.15rem;
+}
+
+.kreativ-update-points li {
+    margin-bottom: 0.45rem;
+}
+
 .kreativ-page-content .search-form,
 .kreativ-page-content .searchform {
     display: flex;
@@ -586,6 +636,14 @@
         padding: 0.8rem;
     }
 
+    .kreativ-update-card {
+        padding: 1.15rem 1rem;
+    }
+
+    .kreativ-update-title {
+        font-size: 1.3rem;
+    }
+
     .kreativ-post-nav {
         flex-direction: column;
     }
@@ -665,6 +723,21 @@ body.dark-mode .kreativ-post-meta-item {
 body.dark-mode .kreativ-page-content {
     background: #12192c;
     box-shadow: 0 22px 46px rgba(0, 0, 0, 0.28);
+}
+
+body.dark-mode .kreativ-update-card {
+    background: linear-gradient(180deg, rgba(20, 26, 44, 0.96) 0%, rgba(18, 25, 44, 0.98) 100%);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.dark-mode .kreativ-update-date {
+    background: rgba(142, 160, 255, 0.12);
+    color: #b7c4ff;
+}
+
+body.dark-mode .kreativ-update-summary,
+body.dark-mode .kreativ-update-points li {
+    color: #b0bcda;
 }
 
 body.dark-mode .kreativ-page-content .search-field,

@@ -9,6 +9,21 @@ Kreativ Font 2026
 - favicon system rebuilt with a new branded SVG and matching PNG/apple-touch assets
 - homepage hero redesigned with clearer positioning and stronger calls to action
 - global header and search upgraded to better support font discovery
+- brand renamed from Oceania to Kreativ Font
+- removed unused legacy assets and stale theme references
+- theme structure refactored into includes, shared helpers, and reusable partials
+- dedicated layouts added for tools pages and key content pages
+- market, free, archive, search, single, and 404 templates normalized into one design system
+- card styling consolidated into shared CSS
+- footer redesigned and footer links cleaned up
+- homepage, category, and tag filters unified around the same font filter system
+- tag archive queries repaired and simplified
+- dark mode expanded across the theme and header toggle behavior fixed
+- single font pages redesigned with stronger hero sections, font-aware summaries, and better metadata
+- Jetpack share buttons replaced on single posts with a custom share bar
+- mobile header and off-canvas navigation behavior hardened
+- GitHub Actions deployment workflow added and switched to SFTP-based deployment
+- public updates page added for user-facing product changes
 
 ----------------------------------
 
