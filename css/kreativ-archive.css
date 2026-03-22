@@ -51,32 +51,54 @@ body.kreativ-cat-free             { --kreativ-cat-gradient: linear-gradient(135d
     margin: .5rem auto 0;
 }
 
-/* ================================================================
-   SORTING BAR
-================================================================ */
-.kreativ-sort-bar {
-    text-align: center;
+.kreativ-font-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin: 0 0 1.5rem;
+}
+
+.kreativ-font-filter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 1rem;
+    border: 1px solid #d7dbeb;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #3d43a4;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.kreativ-font-filter:hover {
+    border-color: #4a4aff;
+    box-shadow: 0 8px 24px rgba(74, 74, 255, 0.12);
+    transform: translateY(-1px);
+    text-decoration: none;
+}
+
+.kreativ-font-filter.active {
+    background: #4a4aff;
+    border-color: #4a4aff;
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(74, 74, 255, 0.2);
+}
+
+.kreativ-archive-filter-bar {
     margin: 2rem 0 2.5rem;
 }
 
-.kreativ-sort-btn {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    margin: .25rem;
-    border: 1px solid #dfe2ee;
-    border-radius: 8px;
-    background: #fff;
-    color: #333;
-    text-decoration: none;
-    font-weight: 600;
-    transition: 0.25s ease;
+.kreativ-archive-filter-bar .kreativ-font-filter {
+    box-shadow: 0 6px 18px rgba(74, 74, 255, 0.06);
 }
 
-.kreativ-sort-btn:hover,
-.kreativ-sort-btn.active {
-    background: #4A4AFF;
-    border-color: #4A4AFF;
-    color: white;
+.kreativ-archive-filter-bar .kreativ-font-filter.active {
+    box-shadow: 0 10px 24px rgba(74, 74, 255, 0.18);
 }
 
 /* ================================================================
@@ -145,4 +167,18 @@ body.kreativ-cat-free             { --kreativ-cat-gradient: linear-gradient(135d
     cursor: default;
     padding: 0.45rem 0.5rem;
     color: #999;
+}
+
+@media (max-width: 767px) {
+    .kreativ-font-filter-bar {
+        gap: 0.5rem;
+    }
+
+    .kreativ-font-filter {
+        flex: 1 1 calc(50% - 0.5rem);
+    }
+
+    .kreativ-archive-filter-bar {
+        margin: 1.5rem 0 2rem;
+    }
 }

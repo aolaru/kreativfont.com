@@ -30,6 +30,9 @@ $cat_icon = $kreativ_fa_icons[$cat_slug] ?? 'fa-solid fa-folder-open';
 --------------------------------------------- */
 $sort  = kreativ_get_archive_sort();
 $paged = max(1, get_query_var('paged'));
+$font_filters = kreativ_get_font_filters();
+$active_font_filter = kreativ_get_active_font_filter( $font_filters );
+$active_font_filter_config = $font_filters[ $active_font_filter ];
 
 /* --------------------------------------------
    TAX QUERY (CORRECT)
@@ -42,20 +45,17 @@ $tax_query = [
     ]
 ];
 
-if ($sort === 'free') {
-    $tax_query[] = [
-        'taxonomy' => 'category',
-        'field'    => 'slug',
-        'terms'    => ['free'],
-    ];
+if ( ! empty( $active_font_filter_config['tax_query'] ) ) {
+    $tax_query = array_merge( $tax_query, $active_font_filter_config['tax_query'] );
 }
 
 $query = new WP_Query(
     kreativ_get_archive_query_args(
         array(
-            'sort'           => $sort,
+            'sort'           => in_array( $active_font_filter, array( 'latest', 'popular', 'free' ), true ) ? $active_font_filter : 'latest',
             'paged'          => $paged,
             'posts_per_page' => 24,
+            'orderby'        => $active_font_filter_config['orderby'],
             'tax_query'      => $tax_query,
         )
     )
@@ -79,14 +79,12 @@ $query = new WP_Query(
 </div>
 
 
-<!-- =====================================================
-     SORT BAR
-===================================================== -->
-<div class="kreativ-sort-bar">
-    <a href="?sort=latest" class="kreativ-sort-btn <?php echo $sort==='latest'?'active':''; ?>">Latest</a>
-    <a href="?sort=popular" class="kreativ-sort-btn <?php echo $sort==='popular'?'active':''; ?>">Popular</a>
-    <a href="?sort=free" class="kreativ-sort-btn <?php echo $sort==='free'?'active':''; ?>">Free</a>
-    <a href="?sort=ai" class="kreativ-sort-btn <?php echo $sort==='ai'?'active':''; ?>">AI Recommended</a>
+<div class="kreativ-font-filter-bar kreativ-archive-filter-bar">
+    <?php foreach ( $font_filters as $filter_slug => $filter_config ) : ?>
+        <a href="<?php echo esc_url( add_query_arg( 'font_filter', $filter_slug, get_term_link( $category ) ) ); ?>" class="kreativ-font-filter <?php echo $active_font_filter === $filter_slug ? 'active' : ''; ?>">
+            <?php echo esc_html( $filter_config['label'] ); ?>
+        </a>
+    <?php endforeach; ?>
 </div>
 
 
@@ -130,7 +128,7 @@ $query = new WP_Query(
             'mid_size'  => 2,
             'prev_text' => '&laquo; Previous',
             'next_text' => 'Next &raquo;',
-            'add_args'  => ['sort' => $sort],
+            'add_args'  => ['font_filter' => $active_font_filter],
         ]);
         ?>
     </div>

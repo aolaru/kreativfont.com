@@ -18,7 +18,31 @@ $tag_desc = tag_description();
 --------------------------------------------- */
 $sort  = kreativ_get_archive_sort();
 $paged = max(1, get_query_var('paged'));
-$query = $GLOBALS['wp_query'];
+$font_filters = kreativ_get_font_filters();
+$active_font_filter = kreativ_get_active_font_filter( $font_filters );
+$active_font_filter_config = $font_filters[ $active_font_filter ];
+$tax_query = array(
+    array(
+        'taxonomy' => 'post_tag',
+        'field'    => 'term_id',
+        'terms'    => array( $tag_id ),
+    ),
+);
+
+if ( ! empty( $active_font_filter_config['tax_query'] ) ) {
+    $tax_query = array_merge( $tax_query, $active_font_filter_config['tax_query'] );
+}
+
+$query = new WP_Query(
+    kreativ_get_archive_query_args(
+        array(
+            'sort'           => in_array( $active_font_filter, array( 'latest', 'popular', 'free' ), true ) ? $active_font_filter : 'latest',
+            'paged'          => $paged,
+            'posts_per_page' => 24,
+            'tax_query'      => $tax_query,
+        )
+    )
+);
 ?>
 
 <!-- =====================================================
@@ -37,14 +61,12 @@ $query = $GLOBALS['wp_query'];
     </div>
 </div>
 
-<!-- =====================================================
-     SORT BAR
-===================================================== -->
-<div class="kreativ-sort-bar">
-    <a href="?sort=latest" class="kreativ-sort-btn <?php echo $sort==='latest'?'active':''; ?>">Latest</a>
-    <a href="?sort=popular" class="kreativ-sort-btn <?php echo $sort==='popular'?'active':''; ?>">Popular</a>
-    <a href="?sort=free" class="kreativ-sort-btn <?php echo $sort==='free'?'active':''; ?>">Free</a>
-    <a href="?sort=ai" class="kreativ-sort-btn <?php echo $sort==='ai'?'active':''; ?>">AI Recommended</a>
+<div class="kreativ-font-filter-bar kreativ-archive-filter-bar">
+    <?php foreach ( $font_filters as $filter_slug => $filter_config ) : ?>
+        <a href="<?php echo esc_url( add_query_arg( 'font_filter', $filter_slug, get_term_link( $tag ) ) ); ?>" class="kreativ-font-filter <?php echo $active_font_filter === $filter_slug ? 'active' : ''; ?>">
+            <?php echo esc_html( $filter_config['label'] ); ?>
+        </a>
+    <?php endforeach; ?>
 </div>
 
 <!-- =====================================================
@@ -53,8 +75,8 @@ $query = $GLOBALS['wp_query'];
 <div class="container kreativ-category-grid kreativ-category-bg">
     <div class="row">
 
-        <?php if (have_posts()) : ?>
-            <?php while (have_posts()) : the_post(); ?>
+        <?php if ($query->have_posts()) : ?>
+            <?php while ($query->have_posts()) : $query->the_post(); ?>
                 <?php
                 kreativ_render_font_card(
                     array(
@@ -87,7 +109,7 @@ $query = $GLOBALS['wp_query'];
             'mid_size'  => 2,
             'prev_text' => '&laquo; Previous',
             'next_text' => 'Next &raquo;',
-            'add_args'  => ['sort' => $sort],
+            'add_args'  => ['font_filter' => $active_font_filter],
         ]);
         ?>
     </div>

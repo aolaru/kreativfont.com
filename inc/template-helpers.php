@@ -63,6 +63,164 @@ function kreativ_get_archive_sort( $default = 'latest' ) {
     return in_array( $sort, array( 'latest', 'popular', 'free', 'ai' ), true ) ? $sort : $default;
 }
 
+function kreativ_filter_has_terms( $taxonomy, $slugs ) {
+    $term_ids = get_terms(
+        array(
+            'taxonomy'   => $taxonomy,
+            'slug'       => (array) $slugs,
+            'hide_empty' => true,
+            'fields'     => 'ids',
+        )
+    );
+
+    return ! is_wp_error( $term_ids ) && ! empty( $term_ids );
+}
+
+function kreativ_get_font_filters() {
+    $font_filters = array(
+        'latest' => array(
+            'label'     => 'Latest',
+            'title'     => 'Latest Fonts',
+            'orderby'   => 'date',
+            'tax_query' => array(),
+            'available' => true,
+        ),
+        'popular' => array(
+            'label'     => 'Popular',
+            'title'     => 'Popular Fonts',
+            'orderby'   => 'comment_count',
+            'tax_query' => array(),
+            'available' => true,
+        ),
+        'free' => array(
+            'label'     => 'Free',
+            'title'     => 'Free Fonts',
+            'orderby'   => 'date',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'category',
+                    'field'    => 'slug',
+                    'terms'    => array( 'free' ),
+                ),
+            ),
+            'available' => kreativ_filter_has_terms( 'category', array( 'free' ) ),
+        ),
+        'serif' => array(
+            'label'     => 'Serif',
+            'title'     => 'Serif Fonts',
+            'orderby'   => 'date',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'post_tag',
+                    'field'    => 'slug',
+                    'terms'    => array( 'serif' ),
+                ),
+            ),
+            'available' => kreativ_filter_has_terms( 'post_tag', array( 'serif' ) ),
+        ),
+        'sans-serif' => array(
+            'label'     => 'Sans Serif',
+            'title'     => 'Sans Serif Fonts',
+            'orderby'   => 'date',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'post_tag',
+                    'field'    => 'slug',
+                    'terms'    => array( 'sans-serif', 'sansserif' ),
+                ),
+            ),
+            'available' => kreativ_filter_has_terms( 'post_tag', array( 'sans-serif', 'sansserif' ) ),
+        ),
+        'script' => array(
+            'label'     => 'Script',
+            'title'     => 'Script Fonts',
+            'orderby'   => 'date',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'post_tag',
+                    'field'    => 'slug',
+                    'terms'    => array( 'script' ),
+                ),
+            ),
+            'available' => kreativ_filter_has_terms( 'post_tag', array( 'script' ) ),
+        ),
+        'display' => array(
+            'label'     => 'Display',
+            'title'     => 'Display Fonts',
+            'orderby'   => 'date',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'post_tag',
+                    'field'    => 'slug',
+                    'terms'    => array( 'display' ),
+                ),
+            ),
+            'available' => kreativ_filter_has_terms( 'post_tag', array( 'display' ) ),
+        ),
+        'modern' => array(
+            'label'     => 'Modern',
+            'title'     => 'Modern Fonts',
+            'orderby'   => 'date',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'post_tag',
+                    'field'    => 'slug',
+                    'terms'    => array( 'modern' ),
+                ),
+            ),
+            'available' => kreativ_filter_has_terms( 'post_tag', array( 'modern' ) ),
+        ),
+        'vintage' => array(
+            'label'     => 'Vintage',
+            'title'     => 'Vintage Fonts',
+            'orderby'   => 'date',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'post_tag',
+                    'field'    => 'slug',
+                    'terms'    => array( 'vintage' ),
+                ),
+            ),
+            'available' => kreativ_filter_has_terms( 'post_tag', array( 'vintage' ) ),
+        ),
+        'elegant' => array(
+            'label'     => 'Elegant',
+            'title'     => 'Elegant Fonts',
+            'orderby'   => 'date',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'post_tag',
+                    'field'    => 'slug',
+                    'terms'    => array( 'elegant' ),
+                ),
+            ),
+            'available' => kreativ_filter_has_terms( 'post_tag', array( 'elegant' ) ),
+        ),
+    );
+
+    return array_filter(
+        $font_filters,
+        static function ( $filter ) {
+            return ! empty( $filter['available'] );
+        }
+    );
+}
+
+function kreativ_get_active_font_filter( $font_filters ) {
+    $legacy_sort  = isset( $_GET['sort'] ) ? sanitize_key( wp_unslash( $_GET['sort'] ) ) : '';
+    $active_filter = isset( $_GET['font_filter'] ) ? sanitize_key( wp_unslash( $_GET['font_filter'] ) ) : '';
+
+    if ( '' === $active_filter && in_array( $legacy_sort, array( 'latest', 'popular', 'free' ), true ) ) {
+        $active_filter = $legacy_sort;
+    }
+
+    if ( ! isset( $font_filters[ $active_filter ] ) ) {
+        $active_filter = 'latest';
+    }
+
+    return $active_filter;
+}
+
 function kreativ_get_archive_query_args( $args = array() ) {
     $defaults = array(
         'sort'               => kreativ_get_archive_sort(),
