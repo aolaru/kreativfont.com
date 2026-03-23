@@ -1,4 +1,8 @@
 <?php
+/*
+Template Name: Updates Page
+*/
+
 $kreativ_updates = array(
     array(
         'date'    => 'March 2026',
