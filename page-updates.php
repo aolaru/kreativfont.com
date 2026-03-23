@@ -5,13 +5,13 @@ Template Name: Updates Page
 
 $kreativ_updates = array(
     array(
-        'date'    => 'Since September 2025',
-        'title'   => 'Kreativ Font entered a broader modernization phase',
-        'summary' => 'The site began shifting away from an older general creative-assets direction and toward a cleaner fonts-first product focused on discovery, utility, and a more coherent browsing experience.',
+        'date'    => 'March 2026',
+        'title'   => 'Site operations and publishing workflow improved',
+        'summary' => 'The infrastructure behind the theme was upgraded so site changes can move faster from local work to GitHub and then to production.',
         'items'   => array(
-            'The overall direction moved more decisively toward fonts, font reviews, and practical tools.',
-            'Branding, UX, and structure started being treated as product work instead of isolated theme tweaks.',
-            'This set the stage for the larger March 2026 improvements tracked below.',
+            'GitHub repository and structured changelog were added for ongoing theme development.',
+            'Automated deployment was set up through GitHub Actions and SFTP.',
+            'The new public Updates page was added to make product progress visible on the site itself.',
         ),
     ),
     array(
@@ -66,16 +66,6 @@ $kreativ_updates = array(
     ),
     array(
         'date'    => 'March 2026',
-        'title'   => 'Site operations and publishing workflow improved',
-        'summary' => 'The infrastructure behind the theme was upgraded so site changes can move faster from local work to GitHub and then to production.',
-        'items'   => array(
-            'GitHub repository and structured changelog were added for ongoing theme development.',
-            'Automated deployment was set up through GitHub Actions and SFTP.',
-            'The new public Updates page was added to make product progress visible on the site itself.',
-        ),
-    ),
-    array(
-        'date'    => 'March 2026',
         'title'   => 'Visual identity cleaned up',
         'summary' => 'The site now has a more coherent visual system across icons, favicons, cards, and supporting page layouts.',
         'items'   => array(
@@ -92,6 +82,16 @@ $kreativ_updates = array(
             'Theme code split into shared helpers, includes, and reusable partials.',
             'Unused assets and stale legacy references were removed.',
             'Shared components now drive cards, filters, layout patterns, and page structure more consistently.',
+        ),
+    ),
+    array(
+        'date'    => 'Since September 2025',
+        'title'   => 'Kreativ Font entered a broader modernization phase',
+        'summary' => 'The site began shifting away from an older general creative-assets direction and toward a cleaner fonts-first product focused on discovery, utility, and a more coherent browsing experience.',
+        'items'   => array(
+            'The overall direction moved more decisively toward fonts, font reviews, and practical tools.',
+            'Branding, UX, and structure started being treated as product work instead of isolated theme tweaks.',
+            'This set the stage for the larger March 2026 improvements tracked above.',
         ),
     ),
 );
