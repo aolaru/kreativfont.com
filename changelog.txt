@@ -1,4 +1,5 @@
 Kreativ Font 2026
+- broader modernization and fonts-first product direction carried forward from late 2025 into the March 2026 rebuild phase
 - repository initialized on GitHub for ongoing theme development
 - added a GitHub README for the private WordPress theme
 - added Cloudflare Web Analytics site-wide
@@ -19,6 +20,7 @@ Kreativ Font 2026
 - homepage, category, and tag filters unified around the same font filter system
 - tag archive queries repaired and simplified
 - dark mode expanded across the theme and header toggle behavior fixed
+- tool pages, search, 404, and supporting templates brought into the same branded layout system
 - single font pages redesigned with stronger hero sections, font-aware summaries, and better metadata
 - Jetpack share buttons replaced on single posts with a custom share bar
 - mobile header and off-canvas navigation behavior hardened

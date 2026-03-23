@@ -17,6 +17,7 @@
 					<div class="kreativ-footer-group">
 						<h2>Info</h2>
 						<a href="/blog/about">About</a>
+						<a href="/updates">Updates</a>
 						<a href="/blog/contact">Contact</a>
 						<a href="/blog/terms-of-use">Terms of Use</a>
 						<a href="/blog/privacy-policy">Privacy Policy</a>
