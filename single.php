@@ -98,6 +98,7 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
 
         <div class="kreativ-post-footer">
             <?php $post_tags = get_the_tags(); ?>
+            <?php $post_categories = get_the_category(); ?>
             <?php if ( $post_tags ) : ?>
                 <div class="kreativ-post-tags">
                     <span class="kreativ-post-tags-label">Tags</span>
@@ -116,10 +117,16 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
                     <i class="fa-solid fa-calendar" aria-hidden="true"></i>
                     <time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date( 'F j, Y' ) ); ?></time>
                 </span>
-                <span class="kreativ-post-meta-item">
-                    <i class="fa-solid fa-folder-open" aria-hidden="true"></i>
-                    <?php the_category( ', ' ); ?>
-                </span>
+                <?php if ( $post_categories ) : ?>
+                    <?php foreach ( $post_categories as $index => $post_category ) : ?>
+                        <a href="<?php echo esc_url( get_category_link( $post_category ) ); ?>" class="kreativ-post-meta-item">
+                            <?php if ( 0 === $index ) : ?>
+                                <i class="fa-solid fa-folder-open" aria-hidden="true"></i>
+                            <?php endif; ?>
+                            <?php echo esc_html( $post_category->name ); ?>
+                        </a>
+                    <?php endforeach; ?>
+                <?php endif; ?>
                 <span class="kreativ-post-meta-item">
                     <i class="fa-solid fa-user" aria-hidden="true"></i>
                     <?php the_author(); ?>
