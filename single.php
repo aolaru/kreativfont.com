@@ -6,6 +6,7 @@ $page_summary = kreativ_get_content_summary( get_post(), 24 );
 $font_credits = kreativ_get_font_credit_data( get_post() );
 $categories   = get_the_category();
 $primary_cat  = kreativ_get_single_font_eyebrow( get_post() );
+$footer_category = kreativ_get_primary_category_badge( get_the_ID() );
 $hero_image   = has_post_thumbnail() ? get_the_post_thumbnail_url( get_the_ID(), 'large' ) : '';
 $share_url    = rawurlencode( get_permalink() );
 $share_title  = rawurlencode( get_the_title() );
@@ -118,7 +119,7 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
                 </span>
                 <span class="kreativ-post-meta-item">
                     <i class="fa-solid fa-folder-open" aria-hidden="true"></i>
-                    <?php the_category( ', ' ); ?>
+                    <?php echo esc_html( $footer_category[1] ? $footer_category[1] : 'Fonts' ); ?>
                 </span>
                 <span class="kreativ-post-meta-item">
                     <i class="fa-solid fa-user" aria-hidden="true"></i>
