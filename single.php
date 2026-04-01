@@ -56,8 +56,8 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
 
     <section class="kreativ-page-content">
         <nav class="kreativ-post-nav" aria-label="Post navigation">
-            <div><?php next_post_link( '%link', '<i class="fa-solid fa-arrow-left"></i> Newer' ); ?></div>
-            <div><?php previous_post_link( '%link', 'Older <i class="fa-solid fa-arrow-right"></i>' ); ?></div>
+            <div><?php previous_post_link( '%link', '<i class="fa-solid fa-arrow-left"></i> Newer' ); ?></div>
+            <div><?php next_post_link( '%link', 'Older <i class="fa-solid fa-arrow-right"></i>' ); ?></div>
         </nav>
 
         <p class="kreativ-post-breadcrumb">
