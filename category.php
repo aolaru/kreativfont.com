@@ -112,7 +112,17 @@ $query = new WP_Query(
 
         <?php else : ?>
 
-            <h2 class="text-center my-5">No creatives found.</h2>
+            <div class="col-12">
+                <div class="kreativ-archive-empty-state">
+                    <h2>No fonts found in this category.</h2>
+                    <p>Try another filter, browse the full font library, or jump into the latest additions instead.</p>
+                    <div class="kreativ-archive-empty-actions">
+                        <a href="<?php echo esc_url( home_url( '/fonts' ) ); ?>" class="kreativ-font-filter active">Browse Fonts</a>
+                        <a href="<?php echo esc_url( get_term_link( $category ) ); ?>" class="kreativ-font-filter">Try another filter</a>
+                        <a href="<?php echo esc_url( home_url( '/category/fonts?font_filter=latest' ) ); ?>" class="kreativ-font-filter">Explore latest fonts</a>
+                    </div>
+                </div>
+            </div>
 
         <?php endif; wp_reset_postdata(); ?>
 

@@ -91,9 +91,16 @@ $query = new WP_Query(
             <?php endwhile; ?>
         <?php else : ?>
 
-            <div class="text-center my-5">
+            <div class="col-12">
+                <div class="kreativ-archive-empty-state">
                 <h2>No posts found for this tag.</h2>
-                <p>Try changing the sorting or explore related categories.</p>
+                <p>Try another filter, browse the font library, or jump into the latest additions instead.</p>
+                <div class="kreativ-archive-empty-actions">
+                    <a href="<?php echo esc_url( home_url( '/fonts' ) ); ?>" class="kreativ-font-filter active">Browse Fonts</a>
+                    <a href="<?php echo esc_url( get_term_link( $tag ) ); ?>" class="kreativ-font-filter">Try another filter</a>
+                    <a href="<?php echo esc_url( home_url( '/category/fonts?font_filter=latest' ) ); ?>" class="kreativ-font-filter">Explore latest fonts</a>
+                </div>
+                </div>
             </div>
 
         <?php endif; wp_reset_postdata(); ?>

@@ -221,6 +221,101 @@ function kreativ_get_active_font_filter( $font_filters ) {
     return $active_filter;
 }
 
+function kreativ_get_search_terms( $search_string ) {
+    $search_string = trim( (string) $search_string );
+
+    if ( '' === $search_string ) {
+        return array();
+    }
+
+    $terms = preg_split( '/\s+/', $search_string );
+    $terms = array_filter(
+        array_map( 'trim', (array) $terms ),
+        static function ( $term ) {
+            return '' !== $term;
+        }
+    );
+
+    return array_values( array_unique( $terms ) );
+}
+
+function kreativ_tune_main_search_query( $query ) {
+    if ( is_admin() || ! $query->is_main_query() || ! $query->is_search() ) {
+        return;
+    }
+
+    $query->set( 'post_type', 'post' );
+    $query->set( 'post_status', 'publish' );
+    $query->set( 'ignore_sticky_posts', true );
+    $query->set( 'posts_per_page', 24 );
+    $query->set( 'kreativ_enhanced_search', true );
+}
+add_action( 'pre_get_posts', 'kreativ_tune_main_search_query' );
+
+function kreativ_search_orderby( $orderby, $query ) {
+    if ( ! $query->get( 'kreativ_enhanced_search' ) ) {
+        return $orderby;
+    }
+
+    global $wpdb;
+
+    $search_string = trim( (string) $query->get( 's' ) );
+
+    if ( '' === $search_string ) {
+        return $orderby;
+    }
+
+    $search_terms = kreativ_get_search_terms( $search_string );
+    $exact_title  = $wpdb->prepare( "CASE WHEN {$wpdb->posts}.post_title = %s THEN 350 ELSE 0 END", $search_string );
+    $prefix_title = $wpdb->prepare( "CASE WHEN {$wpdb->posts}.post_title LIKE %s THEN 220 ELSE 0 END", $wpdb->esc_like( $search_string ) . '%' );
+    $phrase_title = $wpdb->prepare( "CASE WHEN {$wpdb->posts}.post_title LIKE %s THEN 140 ELSE 0 END", '%' . $wpdb->esc_like( $search_string ) . '%' );
+    $excerpt_hit  = $wpdb->prepare( "CASE WHEN {$wpdb->posts}.post_excerpt LIKE %s THEN 45 ELSE 0 END", '%' . $wpdb->esc_like( $search_string ) . '%' );
+    $content_hit  = $wpdb->prepare( "CASE WHEN {$wpdb->posts}.post_content LIKE %s THEN 30 ELSE 0 END", '%' . $wpdb->esc_like( $search_string ) . '%' );
+
+    $term_scores = array();
+
+    foreach ( $search_terms as $search_term ) {
+        $term_scores[] = $wpdb->prepare( "CASE WHEN {$wpdb->posts}.post_title LIKE %s THEN 40 ELSE 0 END", '%' . $wpdb->esc_like( $search_term ) . '%' );
+        $term_scores[] = $wpdb->prepare(
+            "CASE WHEN EXISTS (
+                SELECT 1
+                FROM {$wpdb->term_relationships} tr
+                INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+                INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+                WHERE tr.object_id = {$wpdb->posts}.ID
+                AND tt.taxonomy IN ('category', 'post_tag')
+                AND t.name LIKE %s
+            ) THEN 35 ELSE 0 END",
+            '%' . $wpdb->esc_like( $search_term ) . '%'
+        );
+    }
+
+    $fonts_category_boost = "CASE WHEN EXISTS (
+        SELECT 1
+        FROM {$wpdb->term_relationships} tr
+        INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+        INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+        WHERE tr.object_id = {$wpdb->posts}.ID
+        AND tt.taxonomy = 'category'
+        AND t.slug = 'fonts'
+    ) THEN 25 ELSE 0 END";
+
+    $score_parts = array_merge(
+        array(
+            $exact_title,
+            $prefix_title,
+            $phrase_title,
+            $excerpt_hit,
+            $content_hit,
+            $fonts_category_boost,
+        ),
+        $term_scores
+    );
+
+    return '( ' . implode( ' + ', $score_parts ) . " ) DESC, {$wpdb->posts}.post_date DESC";
+}
+add_filter( 'posts_orderby', 'kreativ_search_orderby', 10, 2 );
+
 function kreativ_get_archive_query_args( $args = array() ) {
     $defaults = array(
         'sort'               => kreativ_get_archive_sort(),

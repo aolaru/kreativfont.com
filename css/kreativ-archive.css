@@ -169,6 +169,33 @@ body.kreativ-cat-free             { --kreativ-cat-gradient: linear-gradient(135d
     color: #999;
 }
 
+.kreativ-archive-empty-state {
+    padding: 2rem 1.5rem;
+    margin: 1rem 0 0.5rem;
+    text-align: center;
+    border: 1px solid rgba(74, 74, 255, 0.08);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.84);
+}
+
+.kreativ-archive-empty-state h2 {
+    margin-bottom: 0.6rem;
+    color: #121622;
+}
+
+.kreativ-archive-empty-state p {
+    max-width: 42rem;
+    margin: 0 auto 1rem;
+    color: #53607c;
+}
+
+.kreativ-archive-empty-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
 @media (max-width: 767px) {
     .kreativ-font-filter-bar {
         gap: 0.5rem;
@@ -180,5 +207,13 @@ body.kreativ-cat-free             { --kreativ-cat-gradient: linear-gradient(135d
 
     .kreativ-archive-filter-bar {
         margin: 1.5rem 0 2rem;
+    }
+
+    .kreativ-archive-empty-state {
+        padding: 1.5rem 1rem;
+    }
+
+    .kreativ-archive-empty-actions {
+        gap: 0.5rem;
     }
 }

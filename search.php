@@ -23,7 +23,7 @@ $result_count = isset( $wp_query->found_posts ) ? (int) $wp_query->found_posts :
 
             <p class="kreativ-page-summary">
                 <?php if ( have_posts() ) : ?>
-                    <?php echo esc_html( sprintf( '%d result%s across the current library and content.', $result_count, 1 === $result_count ? '' : 's' ) ); ?>
+                    <?php echo esc_html( sprintf( '%d result%s ranked by font-name relevance, matching terms, and the broader library context.', $result_count, 1 === $result_count ? '' : 's' ) ); ?>
                 <?php else : ?>
                     We could not find matching fonts or content. Try a different keyword or browse the main font library instead.
                 <?php endif; ?>
@@ -32,6 +32,7 @@ $result_count = isset( $wp_query->found_posts ) ? (int) $wp_query->found_posts :
             <div class="kreativ-page-badges">
                 <span class="kreativ-page-badge"><i class="fa-solid fa-font"></i> Fonts and resources</span>
                 <span class="kreativ-page-badge"><i class="fa-solid fa-filter"></i> Search-driven discovery</span>
+                <span class="kreativ-page-badge"><i class="fa-solid fa-tags"></i> Title, category, and tag signals</span>
             </div>
         </div>
 
@@ -64,7 +65,12 @@ $result_count = isset( $wp_query->found_posts ) ? (int) $wp_query->found_posts :
             </div>
         <?php else : ?>
             <div class="kreativ-empty-state">
-                <p>Try another search or explore the <a href="<?php echo esc_url( home_url( '/category/fonts' ) ); ?>">Fonts archive</a>.</p>
+                <h2>No matching fonts yet.</h2>
+                <p>Try another keyword, adjust your search, or jump back into the main font library.</p>
+                <p>
+                    <a href="<?php echo esc_url( home_url( '/fonts' ) ); ?>" class="kreativ-hero-cta kreativ-hero-cta-primary">Browse Fonts</a>
+                    <a href="<?php echo esc_url( home_url( '/category/fonts?font_filter=latest' ) ); ?>" class="kreativ-hero-cta kreativ-hero-cta-secondary">Explore latest fonts</a>
+                </p>
             </div>
         <?php endif; ?>
     </section>
