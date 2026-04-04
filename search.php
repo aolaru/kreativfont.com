@@ -23,7 +23,7 @@ $result_count = isset( $wp_query->found_posts ) ? (int) $wp_query->found_posts :
 
             <p class="kreativ-page-summary">
                 <?php if ( have_posts() ) : ?>
-                    <?php echo esc_html( sprintf( '%d result%s ranked by font-name relevance, matching terms, and the broader library context.', $result_count, 1 === $result_count ? '' : 's' ) ); ?>
+                    <?php echo esc_html( sprintf( '%d result%s ranked by font-name relevance, structured font taxonomy, and broader library signals.', $result_count, 1 === $result_count ? '' : 's' ) ); ?>
                 <?php else : ?>
                     We could not find matching fonts or content. Try a different keyword or browse the main font library instead.
                 <?php endif; ?>
@@ -32,7 +32,7 @@ $result_count = isset( $wp_query->found_posts ) ? (int) $wp_query->found_posts :
             <div class="kreativ-page-badges">
                 <span class="kreativ-page-badge"><i class="fa-solid fa-font"></i> Fonts and resources</span>
                 <span class="kreativ-page-badge"><i class="fa-solid fa-filter"></i> Search-driven discovery</span>
-                <span class="kreativ-page-badge"><i class="fa-solid fa-tags"></i> Title, category, and tag signals</span>
+                <span class="kreativ-page-badge"><i class="fa-solid fa-tags"></i> Title, designer, foundry, style, mood, and use case</span>
             </div>
         </div>
 

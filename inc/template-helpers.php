@@ -76,7 +76,190 @@ function kreativ_filter_has_terms( $taxonomy, $slugs ) {
     return ! is_wp_error( $term_ids ) && ! empty( $term_ids );
 }
 
+function kreativ_get_font_taxonomy_branch_definitions() {
+    return array(
+        'foundry' => array(
+            'labels' => array( 'foundry' ),
+            'slugs'  => array( 'foundry' ),
+        ),
+        'font_style' => array(
+            'labels' => array( 'font style', 'style' ),
+            'slugs'  => array( 'font-style', 'style' ),
+        ),
+        'designer' => array(
+            'labels' => array( 'designer' ),
+            'slugs'  => array( 'designer' ),
+        ),
+        'font_mood' => array(
+            'labels' => array( 'font mood', 'mood' ),
+            'slugs'  => array( 'font-mood', 'mood' ),
+        ),
+        'font_use_case' => array(
+            'labels' => array( 'font use case', 'use case' ),
+            'slugs'  => array( 'font-use-case', 'font-use-cases', 'use-case', 'use-cases' ),
+        ),
+    );
+}
+
+function kreativ_get_font_branch_parent_term_ids( $branch_key ) {
+    static $cache = array();
+
+    if ( isset( $cache[ $branch_key ] ) ) {
+        return $cache[ $branch_key ];
+    }
+
+    $definitions = kreativ_get_font_taxonomy_branch_definitions();
+
+    if ( empty( $definitions[ $branch_key ] ) ) {
+        $cache[ $branch_key ] = array();
+        return $cache[ $branch_key ];
+    }
+
+    $definition = $definitions[ $branch_key ];
+    $parent_ids = array();
+
+    foreach ( $definition['slugs'] as $slug ) {
+        $term = get_term_by( 'slug', $slug, 'category' );
+
+        if ( $term && ! is_wp_error( $term ) ) {
+            $parent_ids[] = (int) $term->term_id;
+        }
+    }
+
+    foreach ( $definition['labels'] as $label ) {
+        $terms = get_terms(
+            array(
+                'taxonomy'   => 'category',
+                'name'       => $label,
+                'hide_empty' => false,
+                'fields'     => 'ids',
+            )
+        );
+
+        if ( ! is_wp_error( $terms ) ) {
+            $parent_ids = array_merge( $parent_ids, array_map( 'intval', $terms ) );
+        }
+    }
+
+    $cache[ $branch_key ] = array_values( array_unique( array_filter( $parent_ids ) ) );
+
+    return $cache[ $branch_key ];
+}
+
+function kreativ_get_post_category_branch_terms( $post = null, $branch_key = '' ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post || '' === $branch_key ) {
+        return array();
+    }
+
+    $parent_ids = kreativ_get_font_branch_parent_term_ids( $branch_key );
+
+    if ( empty( $parent_ids ) ) {
+        return array();
+    }
+
+    $terms = get_the_terms( $post->ID, 'category' );
+
+    if ( ! $terms || is_wp_error( $terms ) ) {
+        return array();
+    }
+
+    $matches = array();
+
+    foreach ( $terms as $term ) {
+        if ( in_array( (int) $term->term_id, $parent_ids, true ) ) {
+            continue;
+        }
+
+        $ancestors = get_ancestors( $term->term_id, 'category', 'taxonomy' );
+
+        if ( array_intersect( array_map( 'intval', $ancestors ), $parent_ids ) ) {
+            $matches[ $term->term_id ] = $term;
+        }
+    }
+
+    return array_values( $matches );
+}
+
+function kreativ_get_primary_branch_term( $post = null, $branch_key = '' ) {
+    $terms = kreativ_get_post_category_branch_terms( $post, $branch_key );
+
+    if ( empty( $terms ) ) {
+        return null;
+    }
+
+    return $terms[0];
+}
+
+function kreativ_filter_has_branch_terms( $branch_key, $child_slugs ) {
+    $parent_ids = kreativ_get_font_branch_parent_term_ids( $branch_key );
+
+    if ( empty( $parent_ids ) ) {
+        return false;
+    }
+
+    $child_slugs = array_map( 'sanitize_title', (array) $child_slugs );
+
+    foreach ( $child_slugs as $child_slug ) {
+        $term = get_term_by( 'slug', $child_slug, 'category' );
+
+        if ( ! $term || is_wp_error( $term ) ) {
+            continue;
+        }
+
+        $ancestors = get_ancestors( $term->term_id, 'category', 'taxonomy' );
+
+        if ( array_intersect( array_map( 'intval', $ancestors ), $parent_ids ) ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function kreativ_get_font_filter_tax_clause( $branch_key, $child_slugs, $fallback_tag_slugs = array() ) {
+    $clauses    = array();
+    $child_slugs = array_values( array_unique( array_filter( array_map( 'sanitize_title', (array) $child_slugs ) ) ) );
+
+    if ( ! empty( $child_slugs ) && kreativ_filter_has_branch_terms( $branch_key, $child_slugs ) ) {
+        $clauses[] = array(
+            'taxonomy' => 'category',
+            'field'    => 'slug',
+            'terms'    => $child_slugs,
+        );
+    }
+
+    $fallback_tag_slugs = array_values( array_unique( array_filter( array_map( 'sanitize_title', (array) $fallback_tag_slugs ) ) ) );
+
+    if ( ! empty( $fallback_tag_slugs ) && kreativ_filter_has_terms( 'post_tag', $fallback_tag_slugs ) ) {
+        $clauses[] = array(
+            'taxonomy' => 'post_tag',
+            'field'    => 'slug',
+            'terms'    => $fallback_tag_slugs,
+        );
+    }
+
+    if ( empty( $clauses ) ) {
+        return array();
+    }
+
+    if ( 1 === count( $clauses ) ) {
+        return $clauses[0];
+    }
+
+    return array_merge( array( 'relation' => 'OR' ), $clauses );
+}
+
 function kreativ_get_font_filters() {
+    $serif_clause      = kreativ_get_font_filter_tax_clause( 'font_style', array( 'serif' ), array( 'serif' ) );
+    $sans_serif_clause = kreativ_get_font_filter_tax_clause( 'font_style', array( 'sans-serif', 'sansserif' ), array( 'sans-serif', 'sansserif' ) );
+    $script_clause     = kreativ_get_font_filter_tax_clause( 'font_style', array( 'script' ), array( 'script' ) );
+    $display_clause    = kreativ_get_font_filter_tax_clause( 'font_style', array( 'display' ), array( 'display' ) );
+    $modern_clause     = kreativ_get_font_filter_tax_clause( 'font_mood', array( 'modern' ), array( 'modern' ) );
+    $vintage_clause    = kreativ_get_font_filter_tax_clause( 'font_mood', array( 'vintage' ), array( 'vintage' ) );
+    $elegant_clause    = kreativ_get_font_filter_tax_clause( 'font_mood', array( 'elegant' ), array( 'elegant' ) );
+
     $font_filters = array(
         'latest' => array(
             'label'     => 'Latest',
@@ -109,92 +292,50 @@ function kreativ_get_font_filters() {
             'label'     => 'Serif',
             'title'     => 'Serif Fonts',
             'orderby'   => 'date',
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'post_tag',
-                    'field'    => 'slug',
-                    'terms'    => array( 'serif' ),
-                ),
-            ),
-            'available' => kreativ_filter_has_terms( 'post_tag', array( 'serif' ) ),
+            'tax_query' => $serif_clause ? array( $serif_clause ) : array(),
+            'available' => ! empty( $serif_clause ),
         ),
         'sans-serif' => array(
             'label'     => 'Sans Serif',
             'title'     => 'Sans Serif Fonts',
             'orderby'   => 'date',
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'post_tag',
-                    'field'    => 'slug',
-                    'terms'    => array( 'sans-serif', 'sansserif' ),
-                ),
-            ),
-            'available' => kreativ_filter_has_terms( 'post_tag', array( 'sans-serif', 'sansserif' ) ),
+            'tax_query' => $sans_serif_clause ? array( $sans_serif_clause ) : array(),
+            'available' => ! empty( $sans_serif_clause ),
         ),
         'script' => array(
             'label'     => 'Script',
             'title'     => 'Script Fonts',
             'orderby'   => 'date',
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'post_tag',
-                    'field'    => 'slug',
-                    'terms'    => array( 'script' ),
-                ),
-            ),
-            'available' => kreativ_filter_has_terms( 'post_tag', array( 'script' ) ),
+            'tax_query' => $script_clause ? array( $script_clause ) : array(),
+            'available' => ! empty( $script_clause ),
         ),
         'display' => array(
             'label'     => 'Display',
             'title'     => 'Display Fonts',
             'orderby'   => 'date',
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'post_tag',
-                    'field'    => 'slug',
-                    'terms'    => array( 'display' ),
-                ),
-            ),
-            'available' => kreativ_filter_has_terms( 'post_tag', array( 'display' ) ),
+            'tax_query' => $display_clause ? array( $display_clause ) : array(),
+            'available' => ! empty( $display_clause ),
         ),
         'modern' => array(
             'label'     => 'Modern',
             'title'     => 'Modern Fonts',
             'orderby'   => 'date',
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'post_tag',
-                    'field'    => 'slug',
-                    'terms'    => array( 'modern' ),
-                ),
-            ),
-            'available' => kreativ_filter_has_terms( 'post_tag', array( 'modern' ) ),
+            'tax_query' => $modern_clause ? array( $modern_clause ) : array(),
+            'available' => ! empty( $modern_clause ),
         ),
         'vintage' => array(
             'label'     => 'Vintage',
             'title'     => 'Vintage Fonts',
             'orderby'   => 'date',
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'post_tag',
-                    'field'    => 'slug',
-                    'terms'    => array( 'vintage' ),
-                ),
-            ),
-            'available' => kreativ_filter_has_terms( 'post_tag', array( 'vintage' ) ),
+            'tax_query' => $vintage_clause ? array( $vintage_clause ) : array(),
+            'available' => ! empty( $vintage_clause ),
         ),
         'elegant' => array(
             'label'     => 'Elegant',
             'title'     => 'Elegant Fonts',
             'orderby'   => 'date',
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'post_tag',
-                    'field'    => 'slug',
-                    'terms'    => array( 'elegant' ),
-                ),
-            ),
-            'available' => kreativ_filter_has_terms( 'post_tag', array( 'elegant' ) ),
+            'tax_query' => $elegant_clause ? array( $elegant_clause ) : array(),
+            'available' => ! empty( $elegant_clause ),
         ),
     );
 
@@ -237,6 +378,31 @@ function kreativ_get_search_terms( $search_string ) {
     );
 
     return array_values( array_unique( $terms ) );
+}
+
+function kreativ_get_search_branch_match_map() {
+    return array(
+        'designer' => array(
+            'label' => 'Matched designer',
+            'boost' => 85,
+        ),
+        'foundry' => array(
+            'label' => 'Matched foundry',
+            'boost' => 80,
+        ),
+        'font_style' => array(
+            'label' => 'Matched style',
+            'boost' => 75,
+        ),
+        'font_mood' => array(
+            'label' => 'Matched mood',
+            'boost' => 65,
+        ),
+        'font_use_case' => array(
+            'label' => 'Matched use case',
+            'boost' => 65,
+        ),
+    );
 }
 
 function kreativ_tune_main_search_query( $query ) {
@@ -288,6 +454,40 @@ function kreativ_search_orderby( $orderby, $query ) {
             ) THEN 35 ELSE 0 END",
             '%' . $wpdb->esc_like( $search_term ) . '%'
         );
+    }
+
+    foreach ( kreativ_get_search_branch_match_map() as $branch_key => $branch_config ) {
+        $parent_ids = kreativ_get_font_branch_parent_term_ids( $branch_key );
+
+        if ( empty( $parent_ids ) ) {
+            continue;
+        }
+
+        $parent_ids_sql = implode( ',', array_map( 'intval', $parent_ids ) );
+
+        foreach ( $search_terms as $search_term ) {
+            $term_scores[] = $wpdb->prepare(
+                "CASE WHEN EXISTS (
+                    SELECT 1
+                    FROM {$wpdb->term_relationships} tr
+                    INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+                    INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
+                    WHERE tr.object_id = {$wpdb->posts}.ID
+                    AND tt.taxonomy = 'category'
+                    AND t.term_id NOT IN ({$parent_ids_sql})
+                    AND EXISTS (
+                        SELECT 1
+                        FROM {$wpdb->term_taxonomy} branch_tt
+                        WHERE branch_tt.taxonomy = 'category'
+                        AND branch_tt.term_id = tt.term_id
+                        AND branch_tt.parent IN ({$parent_ids_sql})
+                    )
+                    AND (t.name LIKE %s OR t.slug LIKE %s)
+                ) THEN {$branch_config['boost']} ELSE 0 END",
+                '%' . $wpdb->esc_like( $search_term ) . '%',
+                '%' . $wpdb->esc_like( sanitize_title( $search_term ) ) . '%'
+            );
+        }
     }
 
     $fonts_category_boost = "CASE WHEN EXISTS (
@@ -345,6 +545,34 @@ function kreativ_get_search_match_label( $post = null, $search_string = '' ) {
     }
 
     $search_terms = kreativ_get_search_terms( $search_string );
+    $branch_match_map = kreativ_get_search_branch_match_map();
+
+    foreach ( $branch_match_map as $branch_key => $branch_config ) {
+        $branch_terms = kreativ_get_post_category_branch_terms( $post, $branch_key );
+
+        if ( empty( $branch_terms ) ) {
+            continue;
+        }
+
+        foreach ( $branch_terms as $branch_term ) {
+            $term_name = strtolower( $branch_term->name );
+            $term_slug = strtolower( $branch_term->slug );
+
+            if ( false !== strpos( $term_name, $normalized_query ) || false !== strpos( $term_slug, sanitize_title( $normalized_query ) ) ) {
+                return $branch_config['label'];
+            }
+
+            foreach ( $search_terms as $search_term ) {
+                $search_term = strtolower( $search_term );
+                $search_slug = sanitize_title( $search_term );
+
+                if ( false !== strpos( $term_name, $search_term ) || false !== strpos( $term_slug, $search_slug ) ) {
+                    return $branch_config['label'];
+                }
+            }
+        }
+    }
+
     $terms        = get_the_terms( $post->ID, 'post_tag' );
 
     if ( $terms && ! is_wp_error( $terms ) ) {
@@ -580,18 +808,20 @@ function kreativ_get_font_credit_data( $post = null ) {
         );
     }
 
+    $designer_term = kreativ_get_primary_branch_term( $post, 'designer' );
+    $foundry_term  = kreativ_get_primary_branch_term( $post, 'foundry' );
+    $designer      = $designer_term ? $designer_term->name : '';
+    $foundry       = $foundry_term ? $foundry_term->name : '';
+
     $content = apply_filters( 'the_content', $post->post_content );
     $text    = wp_strip_all_tags( $content );
     $text    = preg_replace( '/\s+/', ' ', (string) $text );
 
-    $designer = '';
-    $foundry  = '';
-
-    if ( preg_match( '/\bdesigned by\s+([^.,;]+?)(?:\s+and\s+(?:published|released)\s+by\b|[.,;]|$)/i', $text, $matches ) ) {
+    if ( '' === $designer && preg_match( '/\bdesigned by\s+([^.,;]+?)(?:\s+and\s+(?:published|released)\s+by\b|[.,;]|$)/i', $text, $matches ) ) {
         $designer = trim( $matches[1] );
     }
 
-    if ( preg_match( '/\b(?:published|released)\s+by\s+([^.,;]+?)(?:\s+[,;]|\s+and\b|[.,;]|$)/i', $text, $matches ) ) {
+    if ( '' === $foundry && preg_match( '/\b(?:published|released)\s+by\s+([^.,;]+?)(?:\s+[,;]|\s+and\b|[.,;]|$)/i', $text, $matches ) ) {
         $foundry = trim( $matches[1] );
     }
 
@@ -611,12 +841,19 @@ function kreativ_get_single_font_eyebrow( $post = null ) {
         return 'Font';
     }
 
-    $tag_map = array(
+    $style_map = array(
         'serif'       => 'Serif Font',
         'sans-serif'  => 'Sans Serif Font',
         'sans serif'  => 'Sans Serif Font',
         'script'      => 'Script Font',
         'display'     => 'Display Font',
+        'slab-serif'  => 'Slab Serif Font',
+        'slab serif'  => 'Slab Serif Font',
+        'monospace'   => 'Monospace Font',
+        'blackletter' => 'Blackletter Font',
+        'symbol-dingbats' => 'Symbol & Dingbats Font',
+        'symbol & dingbats' => 'Symbol & Dingbats Font',
+        'variable'    => 'Variable Font',
         'handwritten' => 'Handwritten Font',
         'brush'       => 'Brush Font',
         'calligraphy' => 'Calligraphy Font',
@@ -625,10 +862,27 @@ function kreativ_get_single_font_eyebrow( $post = null ) {
         'elegant'     => 'Elegant Font',
     );
 
+    $style_term = kreativ_get_primary_branch_term( $post, 'font_style' );
+
+    if ( $style_term ) {
+        $style_key = strtolower( sanitize_title( $style_term->slug ) );
+        $style_name = strtolower( trim( $style_term->name ) );
+
+        if ( isset( $style_map[ $style_key ] ) ) {
+            return $style_map[ $style_key ];
+        }
+
+        if ( isset( $style_map[ $style_name ] ) ) {
+            return $style_map[ $style_name ];
+        }
+
+        return $style_term->name . ' Font';
+    }
+
     $terms = get_the_terms( $post->ID, 'post_tag' );
 
     if ( $terms && ! is_wp_error( $terms ) ) {
-        foreach ( $tag_map as $slug => $label ) {
+        foreach ( $style_map as $slug => $label ) {
             foreach ( $terms as $term ) {
                 $term_slug = strtolower( (string) $term->slug );
                 $term_name = strtolower( (string) $term->name );
@@ -642,7 +896,7 @@ function kreativ_get_single_font_eyebrow( $post = null ) {
 
     $summary = strtolower( kreativ_get_content_summary( $post, 28 ) );
 
-    foreach ( $tag_map as $slug => $label ) {
+    foreach ( $style_map as $slug => $label ) {
         if ( false !== strpos( $summary, $slug ) ) {
             return $label;
         }
