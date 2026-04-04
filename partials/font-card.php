@@ -24,6 +24,10 @@ $title_tag = isset( $title_tag ) && in_array( $title_tag, array( 'h2', 'h3', 'h4
             </div>
 
             <<?php echo esc_html( $title_tag ); ?>><?php echo esc_html( $title ); ?></<?php echo esc_html( $title_tag ); ?>>
+
+            <?php if ( ! empty( $context_note ) ) : ?>
+                <p class="kreativ-card-context-note"><?php echo esc_html( $context_note ); ?></p>
+            <?php endif; ?>
         </a>
     </div>
 </div>

@@ -100,6 +100,14 @@
     font-weight: 600;
 }
 
+.kreativ-card-context-note {
+    margin: 0.45rem 0 0;
+    color: #626d8c;
+    font-size: 0.83rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
 .kreativ-card-animate {
     opacity: 0;
     transform: translateY(12px);

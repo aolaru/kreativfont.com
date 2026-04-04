@@ -56,6 +56,7 @@ $result_count = isset( $wp_query->found_posts ) ? (int) $wp_query->found_posts :
                             'post_id'         => get_the_ID(),
                             'badge_text'      => 'Result',
                             'badge_slug'      => 'tag',
+                            'context_note'    => kreativ_get_search_match_label( get_the_ID(), $search_query ),
                             'column_classes'  => 'col-md-4 col-lg-3 col-sm-6',
                             'animation_class' => 'kreativ-card-animate',
                         )

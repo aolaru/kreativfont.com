@@ -316,6 +316,84 @@ function kreativ_search_orderby( $orderby, $query ) {
 }
 add_filter( 'posts_orderby', 'kreativ_search_orderby', 10, 2 );
 
+function kreativ_get_search_match_label( $post = null, $search_string = '' ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post ) {
+        return '';
+    }
+
+    $search_string = trim( (string) $search_string );
+
+    if ( '' === $search_string ) {
+        $search_string = get_search_query();
+    }
+
+    $search_string = trim( (string) $search_string );
+
+    if ( '' === $search_string ) {
+        return '';
+    }
+
+    $normalized_query = strtolower( $search_string );
+    $title            = strtolower( get_the_title( $post ) );
+    $excerpt          = strtolower( (string) get_the_excerpt( $post ) );
+    $content          = strtolower( wp_strip_all_tags( $post->post_content ) );
+
+    if ( false !== strpos( $title, $normalized_query ) ) {
+        return 'Matched title';
+    }
+
+    $search_terms = kreativ_get_search_terms( $search_string );
+    $terms        = get_the_terms( $post->ID, 'post_tag' );
+
+    if ( $terms && ! is_wp_error( $terms ) ) {
+        foreach ( $terms as $term ) {
+            $term_name = strtolower( $term->name );
+            $term_slug = strtolower( $term->slug );
+
+            if ( false !== strpos( $term_name, $normalized_query ) || false !== strpos( $term_slug, $normalized_query ) ) {
+                return 'Matched tag';
+            }
+
+            foreach ( $search_terms as $search_term ) {
+                $search_term = strtolower( $search_term );
+
+                if ( false !== strpos( $term_name, $search_term ) || false !== strpos( $term_slug, $search_term ) ) {
+                    return 'Matched tag';
+                }
+            }
+        }
+    }
+
+    $categories = get_the_terms( $post->ID, 'category' );
+
+    if ( $categories && ! is_wp_error( $categories ) ) {
+        foreach ( $categories as $category ) {
+            $cat_name = strtolower( $category->name );
+            $cat_slug = strtolower( $category->slug );
+
+            if ( false !== strpos( $cat_name, $normalized_query ) || false !== strpos( $cat_slug, $normalized_query ) ) {
+                return 'Matched category';
+            }
+
+            foreach ( $search_terms as $search_term ) {
+                $search_term = strtolower( $search_term );
+
+                if ( false !== strpos( $cat_name, $search_term ) || false !== strpos( $cat_slug, $search_term ) ) {
+                    return 'Matched category';
+                }
+            }
+        }
+    }
+
+    if ( false !== strpos( $excerpt, $normalized_query ) || false !== strpos( $content, $normalized_query ) ) {
+        return 'Matched description';
+    }
+
+    return 'Search result';
+}
+
 function kreativ_get_archive_query_args( $args = array() ) {
     $defaults = array(
         'sort'               => kreativ_get_archive_sort(),
