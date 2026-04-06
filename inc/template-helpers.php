@@ -405,6 +405,162 @@ function kreativ_get_search_branch_match_map() {
     );
 }
 
+function kreativ_get_search_suggestion_group_map() {
+    return array(
+        'designer' => array(
+            'label_key' => 'designer',
+            'link_type' => 'category',
+        ),
+        'foundry' => array(
+            'label_key' => 'foundry',
+            'link_type' => 'category',
+        ),
+        'font_style' => array(
+            'label_key' => 'style',
+            'link_type' => 'category',
+        ),
+        'font_mood' => array(
+            'label_key' => 'mood',
+            'link_type' => 'category',
+        ),
+        'font_use_case' => array(
+            'label_key' => 'useCase',
+            'link_type' => 'category',
+        ),
+    );
+}
+
+function kreativ_get_branch_terms_by_search( $branch_key, $search_string, $limit = 4 ) {
+    $parent_ids = kreativ_get_font_branch_parent_term_ids( $branch_key );
+
+    if ( empty( $parent_ids ) ) {
+        return array();
+    }
+
+    $search_string = trim( (string) $search_string );
+    $matching_ids  = array();
+    $terms         = get_terms(
+        array(
+            'taxonomy'   => 'category',
+            'hide_empty' => true,
+            'search'     => $search_string,
+            'number'     => max( 1, (int) $limit * 3 ),
+        )
+    );
+
+    if ( is_wp_error( $terms ) || empty( $terms ) ) {
+        return array();
+    }
+
+    foreach ( $terms as $term ) {
+        if ( in_array( (int) $term->term_id, $parent_ids, true ) ) {
+            continue;
+        }
+
+        $ancestors = get_ancestors( $term->term_id, 'category', 'taxonomy' );
+
+        if ( array_intersect( array_map( 'intval', $ancestors ), $parent_ids ) ) {
+            $matching_ids[] = (int) $term->term_id;
+        }
+    }
+
+    if ( empty( $matching_ids ) ) {
+        return array();
+    }
+
+    $matching_ids = array_slice( array_values( array_unique( $matching_ids ) ), 0, $limit );
+    $results      = array();
+
+    foreach ( $matching_ids as $term_id ) {
+        $term = get_term( $term_id, 'category' );
+
+        if ( $term && ! is_wp_error( $term ) ) {
+            $results[] = $term;
+        }
+    }
+
+    return $results;
+}
+
+function kreativ_get_font_title_suggestions( $search_string, $limit = 5 ) {
+    $query = new WP_Query(
+        array(
+            'post_type'              => 'post',
+            'post_status'            => 'publish',
+            'posts_per_page'         => max( 1, (int) $limit ),
+            'ignore_sticky_posts'    => true,
+            'no_found_rows'          => true,
+            'update_post_meta_cache' => false,
+            'update_post_term_cache' => false,
+            's'                      => $search_string,
+        )
+    );
+
+    if ( ! $query->have_posts() ) {
+        return array();
+    }
+
+    return $query->posts;
+}
+
+function kreativ_build_search_suggestions_response( $search_string ) {
+    $search_string = trim( (string) $search_string );
+    $response      = array(
+        'fonts'    => array(),
+        'designer' => array(),
+        'foundry'  => array(),
+        'style'    => array(),
+        'mood'     => array(),
+        'useCase'  => array(),
+    );
+
+    if ( '' === $search_string ) {
+        return $response;
+    }
+
+    foreach ( kreativ_get_font_title_suggestions( $search_string, 5 ) as $post ) {
+        $response['fonts'][] = array(
+            'label' => get_the_title( $post ),
+            'url'   => get_permalink( $post ),
+        );
+    }
+
+    foreach ( kreativ_get_search_suggestion_group_map() as $branch_key => $config ) {
+        $terms = kreativ_get_branch_terms_by_search( $branch_key, $search_string, 4 );
+
+        foreach ( $terms as $term ) {
+            $response[ $config['label_key'] ][] = array(
+                'label' => $term->name,
+                'url'   => get_category_link( $term ),
+            );
+        }
+    }
+
+    return $response;
+}
+
+function kreativ_handle_search_suggestions() {
+    check_ajax_referer( 'kreativ_search_suggest', 'nonce' );
+
+    $search_string = isset( $_GET['q'] ) ? sanitize_text_field( wp_unslash( $_GET['q'] ) ) : '';
+
+    if ( mb_strlen( $search_string ) < 2 ) {
+        wp_send_json_success(
+            array(
+                'groups' => kreativ_build_search_suggestions_response( '' ),
+            )
+        );
+    }
+
+    wp_send_json_success(
+        array(
+            'groups' => kreativ_build_search_suggestions_response( $search_string ),
+        )
+    );
+}
+add_action( 'wp_ajax_kreativ_search_suggest', 'kreativ_handle_search_suggestions' );
+add_action( 'wp_ajax_nopriv_kreativ_search_suggest', 'kreativ_handle_search_suggestions' );
+
 function kreativ_tune_main_search_query( $query ) {
     if ( is_admin() || ! $query->is_main_query() || ! $query->is_search() ) {
         return;

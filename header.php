@@ -125,9 +125,11 @@
                         <input id="searchi" type="search" name="s" value="<?php echo get_search_query(); ?>"
                                maxlength="128" placeholder="Search fonts, styles, foundries, or tools"
                                aria-label="Search Kreativ Font"
+                               autocomplete="off"
                                class="form-control form-control-sm kreativ-search-input">
                         <button type="submit" class="kreativ-search-submit">Search</button>
                     </form>
+                    <div class="kreativ-search-suggestions" hidden aria-live="polite"></div>
                 </div>
 
                 <div class="kreativ-hdr-right">
