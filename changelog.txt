@@ -26,6 +26,11 @@ Kreativ Font 2026
 - mobile header and off-canvas navigation behavior hardened
 - GitHub Actions deployment workflow added and switched to SFTP-based deployment
 - public updates page added for user-facing product changes
+- search relevance improved with stronger empty states and clearer match explanations on search result cards
+- structured font taxonomy started powering hero metadata, single-page classification, and search behavior
+- custom live search suggestions added for font titles, designers, foundries, styles, moods, and use cases
+- search results page updated to follow the same structured matching logic as live suggestions
+- single font hero layout received another polish pass for title and summary balance
 
 ----------------------------------
 

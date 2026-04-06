@@ -262,6 +262,18 @@
     max-width: 1040px;
 }
 
+.kreativ-updates-month + .kreativ-updates-month {
+    margin-top: 2.25rem;
+}
+
+.kreativ-updates-month-title {
+    margin: 0 0 1rem;
+    color: #1f2740;
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
 .kreativ-updates-list {
     display: grid;
     gap: 1.25rem;
@@ -728,6 +740,10 @@ body.dark-mode .kreativ-page-content {
 body.dark-mode .kreativ-update-card {
     background: linear-gradient(180deg, rgba(20, 26, 44, 0.96) 0%, rgba(18, 25, 44, 0.98) 100%);
     border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.dark-mode .kreativ-updates-month-title {
+    color: #eef2ff;
 }
 
 body.dark-mode .kreativ-update-date {

@@ -48,8 +48,6 @@ $result_count = (int) $search_data['total'];
     </section>
 
     <section class="kreativ-page-content">
-        <?php get_search_form(); ?>
-
         <?php if ( $result_query->have_posts() ) : ?>
             <div class="row kreativ-results-grid">
                 <?php while ( $result_query->have_posts() ) : $result_query->the_post(); ?>
