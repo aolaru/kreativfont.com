@@ -6,6 +6,7 @@ $paged        = max( 1, get_query_var( 'paged' ) );
 $search_data  = kreativ_get_structured_search_results( $search_query, $paged, 24 );
 $result_query = $search_data['query'];
 $result_count = (int) $search_data['total'];
+$refinement_groups = kreativ_get_search_refinement_groups( $search_query, 5 );
 ?>
 
 <div class="kreativ-page-shell">
@@ -49,6 +50,30 @@ $result_count = (int) $search_data['total'];
 
     <section class="kreativ-page-content">
         <?php if ( $result_query->have_posts() ) : ?>
+            <?php if ( ! empty( $refinement_groups ) ) : ?>
+                <section class="kreativ-search-refinements">
+                    <div class="kreativ-search-refinements-head">
+                        <h2>Refine this search</h2>
+                        <p>Jump into matching designers, foundries, styles, moods, or use cases.</p>
+                    </div>
+
+                    <div class="kreativ-search-refinement-groups">
+                        <?php foreach ( $refinement_groups as $group ) : ?>
+                            <div class="kreativ-search-refinement-group">
+                                <h3><?php echo esc_html( $group['label'] ); ?></h3>
+                                <div class="kreativ-search-refinement-pills">
+                                    <?php foreach ( $group['terms'] as $term ) : ?>
+                                        <a href="<?php echo esc_url( $term['url'] ); ?>" class="kreativ-search-refinement-pill">
+                                            <?php echo esc_html( $term['name'] ); ?>
+                                        </a>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </section>
+            <?php endif; ?>
+
             <div class="row kreativ-results-grid">
                 <?php while ( $result_query->have_posts() ) : $result_query->the_post(); ?>
                     <?php

@@ -562,6 +562,39 @@ function kreativ_get_search_branch_term_matches( $search_string, $limit = 4 ) {
     return $matches;
 }
 
+function kreativ_get_search_refinement_groups( $search_string, $limit = 5 ) {
+    $raw_matches = kreativ_get_search_branch_term_matches( $search_string, $limit );
+    $labels      = array(
+        'designer'      => 'Designers',
+        'foundry'       => 'Foundries',
+        'font_style'    => 'Styles',
+        'font_mood'     => 'Moods',
+        'font_use_case' => 'Use Cases',
+    );
+    $groups      = array();
+
+    foreach ( $labels as $branch_key => $label ) {
+        if ( empty( $raw_matches[ $branch_key ] ) ) {
+            continue;
+        }
+
+        $groups[ $branch_key ] = array(
+            'label' => $label,
+            'terms' => array_map(
+                static function ( $term ) {
+                    return array(
+                        'name' => $term->name,
+                        'url'  => get_category_link( $term ),
+                    );
+                },
+                $raw_matches[ $branch_key ]
+            ),
+        );
+    }
+
+    return $groups;
+}
+
 function kreativ_get_structured_search_results( $search_string, $paged = 1, $posts_per_page = 24 ) {
     $search_string   = trim( (string) $search_string );
     $paged           = max( 1, (int) $paged );
