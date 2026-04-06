@@ -552,6 +552,160 @@ function kreativ_build_search_suggestions_response( $search_string ) {
     return $response;
 }
 
+function kreativ_get_search_branch_term_matches( $search_string, $limit = 4 ) {
+    $matches = array();
+
+    foreach ( kreativ_get_search_suggestion_group_map() as $branch_key => $config ) {
+        $matches[ $branch_key ] = kreativ_get_branch_terms_by_search( $branch_key, $search_string, $limit );
+    }
+
+    return $matches;
+}
+
+function kreativ_get_structured_search_results( $search_string, $paged = 1, $posts_per_page = 24 ) {
+    $search_string   = trim( (string) $search_string );
+    $paged           = max( 1, (int) $paged );
+    $posts_per_page  = max( 1, (int) $posts_per_page );
+    $empty_query     = new WP_Query(
+        array(
+            'post_type'      => 'post',
+            'post__in'       => array( 0 ),
+            'posts_per_page' => $posts_per_page,
+            'paged'          => $paged,
+        )
+    );
+
+    if ( '' === $search_string ) {
+        return array(
+            'query' => $empty_query,
+            'total' => 0,
+        );
+    }
+
+    $scores    = array();
+    $sort_hints = array();
+    $text_query = new WP_Query(
+        array(
+            'post_type'              => 'post',
+            'post_status'            => 'publish',
+            'posts_per_page'         => 120,
+            'ignore_sticky_posts'    => true,
+            'no_found_rows'          => true,
+            'update_post_meta_cache' => false,
+            'update_post_term_cache' => false,
+            'fields'                 => 'ids',
+            's'                      => $search_string,
+            'kreativ_enhanced_search'=> true,
+        )
+    );
+
+    foreach ( $text_query->posts as $index => $post_id ) {
+        $scores[ $post_id ]     = ( $scores[ $post_id ] ?? 0 ) + max( 600 - ( $index * 8 ), 40 );
+        $sort_hints[ $post_id ] = $index;
+    }
+
+    $branch_terms = kreativ_get_search_branch_term_matches( $search_string, 5 );
+    $branch_map   = kreativ_get_search_branch_match_map();
+
+    foreach ( $branch_terms as $branch_key => $terms ) {
+        if ( empty( $terms ) || empty( $branch_map[ $branch_key ] ) ) {
+            continue;
+        }
+
+        $term_ids = array_map(
+            static function ( $term ) {
+                return (int) $term->term_id;
+            },
+            $terms
+        );
+
+        $branch_posts = get_posts(
+            array(
+                'post_type'              => 'post',
+                'post_status'            => 'publish',
+                'posts_per_page'         => 120,
+                'ignore_sticky_posts'    => true,
+                'no_found_rows'          => true,
+                'update_post_meta_cache' => false,
+                'update_post_term_cache' => false,
+                'fields'                 => 'ids',
+                'tax_query'              => array(
+                    array(
+                        'taxonomy' => 'category',
+                        'field'    => 'term_id',
+                        'terms'    => $term_ids,
+                    ),
+                ),
+            )
+        );
+
+        foreach ( $branch_posts as $index => $post_id ) {
+            $scores[ $post_id ] = ( $scores[ $post_id ] ?? 0 ) + max( $branch_map[ $branch_key ]['boost'] * 3 - ( $index * 2 ), 18 );
+
+            if ( ! isset( $sort_hints[ $post_id ] ) ) {
+                $sort_hints[ $post_id ] = 1000 + $index;
+            }
+        }
+    }
+
+    if ( empty( $scores ) ) {
+        return array(
+            'query' => $empty_query,
+            'total' => 0,
+        );
+    }
+
+    $post_ids = array_keys( $scores );
+
+    usort(
+        $post_ids,
+        static function ( $left, $right ) use ( $scores, $sort_hints ) {
+            $left_score  = $scores[ $left ] ?? 0;
+            $right_score = $scores[ $right ] ?? 0;
+
+            if ( $left_score === $right_score ) {
+                return ( $sort_hints[ $left ] ?? PHP_INT_MAX ) <=> ( $sort_hints[ $right ] ?? PHP_INT_MAX );
+            }
+
+            return $right_score <=> $left_score;
+        }
+    );
+
+    $total       = count( $post_ids );
+    $offset      = ( $paged - 1 ) * $posts_per_page;
+    $page_post_ids = array_slice( $post_ids, $offset, $posts_per_page );
+
+    if ( empty( $page_post_ids ) ) {
+        return array(
+            'query' => $empty_query,
+            'total' => $total,
+        );
+    }
+
+    $query = new WP_Query(
+        array(
+            'post_type'              => 'post',
+            'post_status'            => 'publish',
+            'posts_per_page'         => $posts_per_page,
+            'paged'                  => $paged,
+            'ignore_sticky_posts'    => true,
+            'post__in'               => $page_post_ids,
+            'orderby'                => 'post__in',
+            'no_found_rows'          => true,
+            'update_post_meta_cache' => false,
+            'update_post_term_cache' => true,
+        )
+    );
+
+    $query->found_posts   = $total;
+    $query->max_num_pages = (int) ceil( $total / $posts_per_page );
+
+    return array(
+        'query' => $query,
+        'total' => $total,
+    );
+}
+
 function kreativ_handle_search_suggestions() {
     check_ajax_referer( 'kreativ_search_suggest', 'nonce' );
 

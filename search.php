@@ -2,7 +2,10 @@
 
 <?php
 $search_query = get_search_query();
-$result_count = isset( $wp_query->found_posts ) ? (int) $wp_query->found_posts : 0;
+$paged        = max( 1, get_query_var( 'paged' ) );
+$search_data  = kreativ_get_structured_search_results( $search_query, $paged, 24 );
+$result_query = $search_data['query'];
+$result_count = (int) $search_data['total'];
 ?>
 
 <div class="kreativ-page-shell">
@@ -14,7 +17,7 @@ $result_count = isset( $wp_query->found_posts ) ? (int) $wp_query->found_posts :
             </div>
 
             <h1 class="kreativ-page-title">
-                <?php if ( have_posts() ) : ?>
+                <?php if ( $result_query->have_posts() ) : ?>
                     Results for "<?php echo esc_html( $search_query ); ?>"
                 <?php else : ?>
                     No results for "<?php echo esc_html( $search_query ); ?>"
@@ -22,7 +25,7 @@ $result_count = isset( $wp_query->found_posts ) ? (int) $wp_query->found_posts :
             </h1>
 
             <p class="kreativ-page-summary">
-                <?php if ( have_posts() ) : ?>
+                <?php if ( $result_query->have_posts() ) : ?>
                     <?php echo esc_html( sprintf( '%d result%s ranked by font-name relevance, structured font taxonomy, and broader library signals.', $result_count, 1 === $result_count ? '' : 's' ) ); ?>
                 <?php else : ?>
                     We could not find matching fonts or content. Try a different keyword or browse the main font library instead.
@@ -47,9 +50,9 @@ $result_count = isset( $wp_query->found_posts ) ? (int) $wp_query->found_posts :
     <section class="kreativ-page-content">
         <?php get_search_form(); ?>
 
-        <?php if ( have_posts() ) : ?>
+        <?php if ( $result_query->have_posts() ) : ?>
             <div class="row kreativ-results-grid">
-                <?php while ( have_posts() ) : the_post(); ?>
+                <?php while ( $result_query->have_posts() ) : $result_query->the_post(); ?>
                     <?php
                     kreativ_render_font_card(
                         array(
@@ -64,6 +67,20 @@ $result_count = isset( $wp_query->found_posts ) ? (int) $wp_query->found_posts :
                     ?>
                 <?php endwhile; ?>
             </div>
+
+            <div class="kreativ-pagination">
+                <?php
+                echo paginate_links(
+                    array(
+                        'total'     => $result_query->max_num_pages,
+                        'current'   => $paged,
+                        'mid_size'  => 2,
+                        'prev_text' => '&laquo; Previous',
+                        'next_text' => 'Next &raquo;',
+                    )
+                );
+                ?>
+            </div>
         <?php else : ?>
             <div class="kreativ-empty-state">
                 <h2>No matching fonts yet.</h2>
@@ -74,6 +91,8 @@ $result_count = isset( $wp_query->found_posts ) ? (int) $wp_query->found_posts :
                 </p>
             </div>
         <?php endif; ?>
+
+        <?php wp_reset_postdata(); ?>
     </section>
 </div>
 
