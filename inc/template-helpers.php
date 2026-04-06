@@ -519,9 +519,22 @@ function kreativ_build_search_suggestions_response( $search_string ) {
     }
 
     foreach ( kreativ_get_font_title_suggestions( $search_string, 5 ) as $post ) {
+        $font_credits = kreativ_get_font_credit_data( $post );
+        $context_bits = array();
+
+        if ( ! empty( $font_credits['designer'] ) ) {
+            $context_bits[] = 'Designer: ' . $font_credits['designer'];
+        }
+
+        if ( ! empty( $font_credits['foundry'] ) ) {
+            $context_bits[] = 'Foundry: ' . $font_credits['foundry'];
+        }
+
         $response['fonts'][] = array(
-            'label' => get_the_title( $post ),
-            'url'   => get_permalink( $post ),
+            'label'   => get_the_title( $post ),
+            'url'     => get_permalink( $post ),
+            'thumb'   => get_the_post_thumbnail_url( $post, 'thumbnail' ) ?: '',
+            'context' => implode( ' • ', $context_bits ),
         );
     }
 

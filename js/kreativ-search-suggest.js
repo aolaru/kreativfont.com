@@ -20,6 +20,38 @@
             return;
         }
 
+        function escapeHtml(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function escapeRegex(value) {
+            return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        function highlightMatch(value, searchValue) {
+            var text = String(value || '');
+            var terms = String(searchValue || '')
+                .trim()
+                .split(/\s+/)
+                .filter(Boolean)
+                .sort(function (a, b) {
+                    return b.length - a.length;
+                });
+
+            if (!terms.length) {
+                return escapeHtml(text);
+            }
+
+            var pattern = terms.map(escapeRegex).join('|');
+
+            return escapeHtml(text).replace(new RegExp('(' + pattern + ')', 'ig'), '<mark>$1</mark>');
+        }
+
         function getFocusableItems() {
             return Array.prototype.slice.call(panel.querySelectorAll('.kreativ-search-suggestion-item, .kreativ-search-suggestion-footer'));
         }
@@ -64,7 +96,24 @@
             input.setAttribute('aria-expanded', 'true');
         }
 
-        function buildGroup(title, items) {
+        function buildFontItem(item, searchValue) {
+            var thumb = item.thumb ? '<span class="kreativ-search-suggestion-thumb"><img src="' + escapeHtml(item.thumb) + '" alt="' + escapeHtml(item.label) + '"></span>' : '';
+            var context = item.context ? '<span class="kreativ-search-suggestion-meta">' + highlightMatch(item.context, searchValue) + '</span>' : '';
+            var label = '<span class="kreativ-search-suggestion-label">' + highlightMatch(item.label, searchValue) + '</span>';
+
+            return '<a class="kreativ-search-suggestion-item kreativ-search-suggestion-item-font" href="' + escapeHtml(item.url) + '">' +
+                thumb +
+                '<span class="kreativ-search-suggestion-copy">' + label + context + '</span>' +
+                '</a>';
+        }
+
+        function buildDefaultItem(item, searchValue) {
+            return '<a class="kreativ-search-suggestion-item" href="' + escapeHtml(item.url) + '">' +
+                '<span class="kreativ-search-suggestion-label">' + highlightMatch(item.label, searchValue) + '</span>' +
+                '</a>';
+        }
+
+        function buildGroup(title, items, searchValue, groupKey) {
             if (!items || !items.length) {
                 return '';
             }
@@ -74,9 +123,9 @@
             html += '<div class="kreativ-search-suggestion-list">';
 
             items.forEach(function (item) {
-                html += '<a class="kreativ-search-suggestion-item" href="' + item.url + '">';
-                html += '<span class="kreativ-search-suggestion-label">' + item.label + '</span>';
-                html += '</a>';
+                html += groupKey === 'fonts'
+                    ? buildFontItem(item, searchValue)
+                    : buildDefaultItem(item, searchValue);
             });
 
             html += '</div></section>';
@@ -86,12 +135,12 @@
         function renderSuggestions(groups, searchValue) {
             var parts = [];
 
-            parts.push(buildGroup(config.labels.fonts, groups.fonts || []));
-            parts.push(buildGroup(config.labels.designer, groups.designer || []));
-            parts.push(buildGroup(config.labels.foundry, groups.foundry || []));
-            parts.push(buildGroup(config.labels.style, groups.style || []));
-            parts.push(buildGroup(config.labels.mood, groups.mood || []));
-            parts.push(buildGroup(config.labels.useCase, groups.useCase || []));
+            parts.push(buildGroup(config.labels.fonts, groups.fonts || [], searchValue, 'fonts'));
+            parts.push(buildGroup(config.labels.designer, groups.designer || [], searchValue, 'designer'));
+            parts.push(buildGroup(config.labels.foundry, groups.foundry || [], searchValue, 'foundry'));
+            parts.push(buildGroup(config.labels.style, groups.style || [], searchValue, 'style'));
+            parts.push(buildGroup(config.labels.mood, groups.mood || [], searchValue, 'mood'));
+            parts.push(buildGroup(config.labels.useCase, groups.useCase || [], searchValue, 'useCase'));
 
             var body = parts.join('');
 
