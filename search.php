@@ -2,11 +2,13 @@
 
 <?php
 $search_query = get_search_query();
-$paged        = max( 1, get_query_var( 'paged' ) );
+$paged_query  = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : get_query_var( 'page' );
+$paged        = max( 1, (int) $paged_query );
 $search_data  = kreativ_get_structured_search_results( $search_query, $paged, 24 );
 $result_query = $search_data['query'];
 $result_count = (int) $search_data['total'];
 $refinement_groups = kreativ_get_search_refinement_groups( $search_query, 5 );
+$pagination_base = add_query_arg( 'paged', '%#%' );
 ?>
 
 <div class="kreativ-page-shell">
@@ -95,6 +97,8 @@ $refinement_groups = kreativ_get_search_refinement_groups( $search_query, 5 );
                 <?php
                 echo paginate_links(
                     array(
+                        'base'      => $pagination_base,
+                        'format'    => '',
                         'total'     => $result_query->max_num_pages,
                         'current'   => $paged,
                         'mid_size'  => 2,
