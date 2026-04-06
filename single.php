@@ -12,6 +12,8 @@ $share_title  = rawurlencode( get_the_title() );
 $share_email_subject = rawurlencode( get_the_title() . ' | Kreativ Font' );
 $share_email_body    = rawurlencode( get_the_title() . "\n\n" . get_permalink() );
 $share_thumb  = $hero_image ? rawurlencode( $hero_image ) : '';
+$taxonomy_groups = kreativ_get_single_taxonomy_groups( get_post() );
+$residual_tags   = kreativ_get_single_residual_tags( get_post() );
 
 if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', $page_summary ) ) {
     $page_summary = '';
@@ -97,13 +99,31 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
         </div>
 
         <div class="kreativ-post-footer">
-            <?php $post_tags = get_the_tags(); ?>
-            <?php $post_categories = get_the_category(); ?>
-            <?php if ( $post_tags ) : ?>
+            <?php if ( ! empty( $taxonomy_groups ) ) : ?>
+                <div class="kreativ-post-taxonomy-grid">
+                    <?php foreach ( $taxonomy_groups as $group ) : ?>
+                        <section class="kreativ-post-taxonomy-group">
+                            <span class="kreativ-post-taxonomy-label">
+                                <i class="<?php echo esc_attr( $group['icon'] ); ?>" aria-hidden="true"></i>
+                                <?php echo esc_html( $group['label'] ); ?>
+                            </span>
+                            <div class="kreativ-post-taxonomy-pills">
+                                <?php foreach ( $group['terms'] as $term ) : ?>
+                                    <a href="<?php echo esc_url( $term['url'] ); ?>" class="kreativ-post-taxonomy-pill">
+                                        <?php echo esc_html( $term['name'] ); ?>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        </section>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if ( $residual_tags ) : ?>
                 <div class="kreativ-post-tags">
                     <span class="kreativ-post-tags-label">Tags</span>
                     <div class="kreativ-post-tag-list">
-                        <?php foreach ( $post_tags as $post_tag ) : ?>
+                        <?php foreach ( $residual_tags as $post_tag ) : ?>
                             <a href="<?php echo esc_url( get_tag_link( $post_tag ) ); ?>" class="kreativ-post-tag-chip">
                                 <?php echo esc_html( $post_tag->name ); ?>
                             </a>
@@ -116,20 +136,6 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
                 <span class="kreativ-post-meta-item">
                     <i class="fa-solid fa-calendar" aria-hidden="true"></i>
                     <time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date( 'F j, Y' ) ); ?></time>
-                </span>
-                <?php if ( $post_categories ) : ?>
-                    <?php foreach ( $post_categories as $index => $post_category ) : ?>
-                        <a href="<?php echo esc_url( get_category_link( $post_category ) ); ?>" class="kreativ-post-meta-item">
-                            <?php if ( 0 === $index ) : ?>
-                                <i class="fa-solid fa-folder-open" aria-hidden="true"></i>
-                            <?php endif; ?>
-                            <?php echo esc_html( $post_category->name ); ?>
-                        </a>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-                <span class="kreativ-post-meta-item">
-                    <i class="fa-solid fa-user" aria-hidden="true"></i>
-                    <?php the_author(); ?>
                 </span>
                 <?php edit_post_link( 'Edit', '<span class="kreativ-post-meta-item kreativ-post-meta-edit">', '</span>' ); ?>
             </div>

@@ -580,6 +580,60 @@
     border-top: 1px solid rgba(74, 74, 255, 0.1);
 }
 
+.kreativ-post-taxonomy-grid {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.kreativ-post-taxonomy-group {
+    padding: 1rem 1.05rem;
+    border: 1px solid rgba(74, 74, 255, 0.1);
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(248, 249, 255, 0.82) 0%, rgba(255, 255, 255, 0.98) 100%);
+}
+
+.kreativ-post-taxonomy-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.75rem;
+    color: #3d43a4;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.kreativ-post-taxonomy-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.kreativ-post-taxonomy-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0.6rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid rgba(74, 74, 255, 0.12);
+    background: rgba(255, 255, 255, 0.92);
+    color: #2a3554;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.kreativ-post-taxonomy-pill:hover,
+.kreativ-post-taxonomy-pill:focus {
+    color: #2d2def;
+    text-decoration: none;
+    background: rgba(74, 74, 255, 0.08);
+    border-color: rgba(74, 74, 255, 0.18);
+    transform: translateY(-1px);
+}
+
 .kreativ-post-tags {
     display: grid;
     gap: 0.85rem;
@@ -785,17 +839,24 @@ body.dark-mode .kreativ-post-footer {
 }
 
 body.dark-mode .kreativ-share-label,
-body.dark-mode .kreativ-post-tags-label {
+body.dark-mode .kreativ-post-tags-label,
+body.dark-mode .kreativ-post-taxonomy-label {
     color: #f4f7ff !important;
 }
 
 body.dark-mode .kreativ-share-button,
 body.dark-mode .kreativ-post-tag-chip,
-body.dark-mode .kreativ-post-meta-item {
+body.dark-mode .kreativ-post-meta-item,
+body.dark-mode .kreativ-post-taxonomy-pill {
     background: rgba(20, 26, 44, 0.92) !important;
     border-color: rgba(255, 255, 255, 0.08) !important;
     color: #dfe6fb !important;
     box-shadow: none;
+}
+
+body.dark-mode .kreativ-post-taxonomy-group {
+    background: linear-gradient(180deg, rgba(20, 26, 44, 0.96) 0%, rgba(18, 25, 44, 0.98) 100%);
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 body.dark-mode .kreativ-page-content {

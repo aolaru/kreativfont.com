@@ -595,6 +595,106 @@ function kreativ_get_search_refinement_groups( $search_string, $limit = 5 ) {
     return $groups;
 }
 
+function kreativ_get_single_taxonomy_groups( $post = null ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post ) {
+        return array();
+    }
+
+    $group_map = array(
+        'designer' => array(
+            'label' => 'Designers',
+            'icon'  => 'fa-solid fa-pen-nib',
+        ),
+        'foundry' => array(
+            'label' => 'Foundries',
+            'icon'  => 'fa-solid fa-building',
+        ),
+        'font_style' => array(
+            'label' => 'Style',
+            'icon'  => 'fa-solid fa-font',
+        ),
+        'font_mood' => array(
+            'label' => 'Mood',
+            'icon'  => 'fa-solid fa-sparkles',
+        ),
+        'font_use_case' => array(
+            'label' => 'Use Cases',
+            'icon'  => 'fa-solid fa-layer-group',
+        ),
+    );
+
+    $groups = array();
+
+    foreach ( $group_map as $branch_key => $config ) {
+        $terms = kreativ_get_post_category_branch_terms( $post, $branch_key );
+
+        if ( empty( $terms ) ) {
+            continue;
+        }
+
+        $groups[ $branch_key ] = array(
+            'label' => $config['label'],
+            'icon'  => $config['icon'],
+            'terms' => array_map(
+                static function ( $term ) {
+                    return array(
+                        'name' => $term->name,
+                        'url'  => get_category_link( $term ),
+                    );
+                },
+                $terms
+            ),
+        );
+    }
+
+    return $groups;
+}
+
+function kreativ_get_single_residual_tags( $post = null ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post ) {
+        return array();
+    }
+
+    $tags = get_the_tags( $post->ID );
+
+    if ( ! $tags || is_wp_error( $tags ) ) {
+        return array();
+    }
+
+    $structured_names = array();
+    $structured_slugs = array();
+
+    foreach ( array_keys( kreativ_get_search_suggestion_group_map() ) as $branch_key ) {
+        $terms = kreativ_get_post_category_branch_terms( $post, $branch_key );
+
+        foreach ( $terms as $term ) {
+            $structured_names[] = strtolower( trim( $term->name ) );
+            $structured_slugs[] = strtolower( trim( $term->slug ) );
+        }
+    }
+
+    $structured_names = array_unique( $structured_names );
+    $structured_slugs = array_unique( $structured_slugs );
+    $residual_tags    = array();
+
+    foreach ( $tags as $tag ) {
+        $tag_name = strtolower( trim( $tag->name ) );
+        $tag_slug = strtolower( trim( $tag->slug ) );
+
+        if ( in_array( $tag_name, $structured_names, true ) || in_array( $tag_slug, $structured_slugs, true ) ) {
+            continue;
+        }
+
+        $residual_tags[] = $tag;
+    }
+
+    return $residual_tags;
+}
+
 function kreativ_get_structured_search_results( $search_string, $paged = 1, $posts_per_page = 24 ) {
     $search_string   = trim( (string) $search_string );
     $paged           = max( 1, (int) $paged );
