@@ -31,6 +31,10 @@
     <!-- Dynamic meta description -->
     <meta name="description" content="<?php echo esc_attr( $meta_description ); ?>">
 
+    <?php if ( is_search() ) : ?>
+        <meta name="robots" content="noindex,follow">
+    <?php endif; ?>
+
     <!-- SEO keywords (optional but harmless) -->
     <meta name="keywords" content="kreativ, fonts, templates, graphics, photos, sounds, typography, ai font identifier, creative marketplace, design assets">
 

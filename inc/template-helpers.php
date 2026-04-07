@@ -563,28 +563,97 @@ function kreativ_get_search_branch_term_matches( $search_string, $limit = 4 ) {
 }
 
 function kreativ_get_search_refinement_groups( $search_string, $limit = 5 ) {
-    $raw_matches = kreativ_get_search_branch_term_matches( $search_string, $limit );
-    $labels      = array(
-        'designer'      => 'Designers',
-        'foundry'       => 'Foundries',
-        'font_style'    => 'Styles',
-        'font_mood'     => 'Moods',
-        'font_use_case' => 'Use Cases',
+    return kreativ_get_search_refinement_groups_with_state( $search_string, $limit );
+}
+
+function kreativ_get_search_refinement_query_map() {
+    return array(
+        'designer' => array(
+            'label' => 'Designers',
+            'param' => 'designer',
+        ),
+        'foundry' => array(
+            'label' => 'Foundries',
+            'param' => 'foundry',
+        ),
+        'font_style' => array(
+            'label' => 'Styles',
+            'param' => 'style',
+        ),
+        'font_mood' => array(
+            'label' => 'Moods',
+            'param' => 'mood',
+        ),
+        'font_use_case' => array(
+            'label' => 'Use Cases',
+            'param' => 'use_case',
+        ),
     );
+}
+
+function kreativ_get_active_search_refinements() {
+    $active = array();
+
+    foreach ( kreativ_get_search_refinement_query_map() as $branch_key => $config ) {
+        if ( empty( $_GET[ $config['param'] ] ) ) {
+            continue;
+        }
+
+        $slug = sanitize_title( wp_unslash( $_GET[ $config['param'] ] ) );
+
+        if ( '' !== $slug ) {
+            $active[ $branch_key ] = $slug;
+        }
+    }
+
+    return $active;
+}
+
+function kreativ_get_search_refinement_base_args( $search_string, $active_refinements = array() ) {
+    $args = array(
+        's' => $search_string,
+    );
+
+    foreach ( kreativ_get_search_refinement_query_map() as $branch_key => $config ) {
+        if ( empty( $active_refinements[ $branch_key ] ) ) {
+            continue;
+        }
+
+        $args[ $config['param'] ] = $active_refinements[ $branch_key ];
+    }
+
+    return $args;
+}
+
+function kreativ_get_search_refinement_groups_with_state( $search_string, $limit = 5, $active_refinements = array() ) {
+    $raw_matches = kreativ_get_search_branch_term_matches( $search_string, $limit );
+    $labels      = kreativ_get_search_refinement_query_map();
     $groups      = array();
 
-    foreach ( $labels as $branch_key => $label ) {
+    foreach ( $labels as $branch_key => $config ) {
         if ( empty( $raw_matches[ $branch_key ] ) ) {
             continue;
         }
 
         $groups[ $branch_key ] = array(
-            'label' => $label,
+            'label' => $config['label'],
+            'param' => $config['param'],
             'terms' => array_map(
-                static function ( $term ) {
+                static function ( $term ) use ( $search_string, $active_refinements, $branch_key, $config ) {
+                    $base_args = kreativ_get_search_refinement_base_args( $search_string, $active_refinements );
+                    $is_active = ! empty( $active_refinements[ $branch_key ] ) && $active_refinements[ $branch_key ] === $term->slug;
+
+                    if ( $is_active ) {
+                        unset( $base_args[ $config['param'] ] );
+                    } else {
+                        $base_args[ $config['param'] ] = $term->slug;
+                    }
+
                     return array(
-                        'name' => $term->name,
-                        'url'  => get_category_link( $term ),
+                        'name'      => $term->name,
+                        'slug'      => $term->slug,
+                        'url'       => add_query_arg( $base_args, home_url( '/' ) ),
+                        'is_active' => $is_active,
                     );
                 },
                 $raw_matches[ $branch_key ]
@@ -593,6 +662,31 @@ function kreativ_get_search_refinement_groups( $search_string, $limit = 5 ) {
     }
 
     return $groups;
+}
+
+function kreativ_post_matches_search_refinements( $post_id, $active_refinements = array() ) {
+    foreach ( $active_refinements as $branch_key => $term_slug ) {
+        $terms = kreativ_get_post_category_branch_terms( $post_id, $branch_key );
+
+        if ( empty( $terms ) ) {
+            return false;
+        }
+
+        $matched = false;
+
+        foreach ( $terms as $term ) {
+            if ( $term->slug === $term_slug ) {
+                $matched = true;
+                break;
+            }
+        }
+
+        if ( ! $matched ) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 function kreativ_get_single_taxonomy_groups( $post = null ) {
@@ -695,7 +789,7 @@ function kreativ_get_single_residual_tags( $post = null ) {
     return $residual_tags;
 }
 
-function kreativ_get_structured_search_results( $search_string, $paged = 1, $posts_per_page = 24 ) {
+function kreativ_get_structured_search_results( $search_string, $paged = 1, $posts_per_page = 24, $active_refinements = array() ) {
     $search_string   = trim( (string) $search_string );
     $paged           = max( 1, (int) $paged );
     $posts_per_page  = max( 1, (int) $posts_per_page );
@@ -777,6 +871,15 @@ function kreativ_get_structured_search_results( $search_string, $paged = 1, $pos
 
             if ( ! isset( $sort_hints[ $post_id ] ) ) {
                 $sort_hints[ $post_id ] = 1000 + $index;
+            }
+        }
+    }
+
+    if ( ! empty( $active_refinements ) ) {
+        foreach ( array_keys( $scores ) as $post_id ) {
+            if ( ! kreativ_post_matches_search_refinements( $post_id, $active_refinements ) ) {
+                unset( $scores[ $post_id ] );
+                unset( $sort_hints[ $post_id ] );
             }
         }
     }

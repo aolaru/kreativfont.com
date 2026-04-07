@@ -4,11 +4,13 @@
 $search_query = get_search_query();
 $paged_query  = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : get_query_var( 'page' );
 $paged        = max( 1, (int) $paged_query );
-$search_data  = kreativ_get_structured_search_results( $search_query, $paged, 24 );
+$active_refinements = kreativ_get_active_search_refinements();
+$search_data  = kreativ_get_structured_search_results( $search_query, $paged, 24, $active_refinements );
 $result_query = $search_data['query'];
 $result_count = (int) $search_data['total'];
-$refinement_groups = kreativ_get_search_refinement_groups( $search_query, 5 );
-$pagination_base = add_query_arg( 'paged', '%#%' );
+$refinement_groups = kreativ_get_search_refinement_groups_with_state( $search_query, 5, $active_refinements );
+$pagination_base = add_query_arg( 'paged', '%#%', home_url( '/' ) );
+$pagination_args = kreativ_get_search_refinement_base_args( $search_query, $active_refinements );
 ?>
 
 <div class="kreativ-page-shell">
@@ -56,8 +58,34 @@ $pagination_base = add_query_arg( 'paged', '%#%' );
                 <section class="kreativ-search-refinements">
                     <div class="kreativ-search-refinements-head">
                         <h2>Refine this search</h2>
-                        <p>Jump into matching designers, foundries, styles, moods, or use cases.</p>
+                        <p>Narrow these results by designer, foundry, style, mood, or use case without leaving search.</p>
                     </div>
+
+                    <?php if ( ! empty( $active_refinements ) ) : ?>
+                        <div class="kreativ-search-refinement-active">
+                            <span class="kreativ-search-refinement-active-label">Active filters</span>
+                            <div class="kreativ-search-refinement-active-pills">
+                                <?php foreach ( kreativ_get_search_refinement_query_map() as $branch_key => $config ) : ?>
+                                    <?php if ( empty( $active_refinements[ $branch_key ] ) ) { continue; } ?>
+                                    <?php
+                                    $active_label = ucfirst( str_replace( '-', ' ', $active_refinements[ $branch_key ] ) );
+                                    foreach ( $refinement_groups[ $branch_key ]['terms'] ?? array() as $term_data ) {
+                                        if ( ! empty( $term_data['is_active'] ) ) {
+                                            $active_label = $term_data['name'];
+                                            break;
+                                        }
+                                    }
+                                    $clear_args = $pagination_args;
+                                    unset( $clear_args[ $config['param'] ] );
+                                    ?>
+                                    <a href="<?php echo esc_url( add_query_arg( $clear_args, home_url( '/' ) ) ); ?>" class="kreativ-search-refinement-pill is-active">
+                                        <?php echo esc_html( $config['label'] . ': ' . $active_label ); ?>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                            <a href="<?php echo esc_url( add_query_arg( 's', $search_query, home_url( '/' ) ) ); ?>" class="kreativ-search-refinement-clear">Clear filters</a>
+                        </div>
+                    <?php endif; ?>
 
                     <div class="kreativ-search-refinement-groups">
                         <?php foreach ( $refinement_groups as $group ) : ?>
@@ -65,7 +93,7 @@ $pagination_base = add_query_arg( 'paged', '%#%' );
                                 <h3><?php echo esc_html( $group['label'] ); ?></h3>
                                 <div class="kreativ-search-refinement-pills">
                                     <?php foreach ( $group['terms'] as $term ) : ?>
-                                        <a href="<?php echo esc_url( $term['url'] ); ?>" class="kreativ-search-refinement-pill">
+                                        <a href="<?php echo esc_url( $term['url'] ); ?>" class="kreativ-search-refinement-pill<?php echo ! empty( $term['is_active'] ) ? ' is-active' : ''; ?>">
                                             <?php echo esc_html( $term['name'] ); ?>
                                         </a>
                                     <?php endforeach; ?>
@@ -101,6 +129,7 @@ $pagination_base = add_query_arg( 'paged', '%#%' );
                         'format'    => '',
                         'total'     => $result_query->max_num_pages,
                         'current'   => $paged,
+                        'add_args'  => $pagination_args,
                         'mid_size'  => 2,
                         'prev_text' => '&laquo; Previous',
                         'next_text' => 'Next &raquo;',

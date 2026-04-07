@@ -424,6 +424,26 @@
     gap: 0.9rem;
 }
 
+.kreativ-search-refinement-active {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.kreativ-search-refinement-active-label {
+    color: #5d6786;
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.kreativ-search-refinement-active-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
 .kreativ-search-refinement-group h3 {
     margin: 0 0 0.45rem;
     color: #3d43a4;
@@ -460,6 +480,32 @@
     background: rgba(74, 74, 255, 0.08);
     border-color: rgba(74, 74, 255, 0.18);
     transform: translateY(-1px);
+}
+
+.kreativ-search-refinement-pill.is-active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #5b4dff 0%, #ff3c75 100%);
+    border-color: transparent;
+    box-shadow: 0 10px 24px rgba(91, 77, 255, 0.18);
+}
+
+.kreativ-search-refinement-pill.is-active:hover,
+.kreativ-search-refinement-pill.is-active:focus {
+    color: #ffffff;
+    background: linear-gradient(135deg, #5b4dff 0%, #ff3c75 100%);
+    border-color: transparent;
+}
+
+.kreativ-search-refinement-clear {
+    color: #3d43a4;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.kreativ-search-refinement-clear:hover,
+.kreativ-search-refinement-clear:focus {
+    color: #2d2def;
+    text-decoration: underline;
 }
 
 .kreativ-empty-state {
@@ -903,6 +949,10 @@ body.dark-mode .kreativ-search-refinement-group h3 {
     color: #b7c4ff;
 }
 
+body.dark-mode .kreativ-search-refinement-active-label {
+    color: #aab6d6;
+}
+
 body.dark-mode .kreativ-search-refinement-pill {
     background: rgba(31, 40, 64, 0.92);
     border-color: rgba(255, 255, 255, 0.08);
@@ -914,4 +964,21 @@ body.dark-mode .kreativ-search-refinement-pill:focus {
     color: #8ea0ff;
     background: rgba(74, 74, 255, 0.14);
     border-color: rgba(142, 160, 255, 0.2);
+}
+
+body.dark-mode .kreativ-search-refinement-pill.is-active,
+body.dark-mode .kreativ-search-refinement-pill.is-active:hover,
+body.dark-mode .kreativ-search-refinement-pill.is-active:focus {
+    color: #ffffff;
+    background: linear-gradient(135deg, #5b4dff 0%, #ff3c75 100%);
+    border-color: transparent;
+}
+
+body.dark-mode .kreativ-search-refinement-clear {
+    color: #b7c4ff;
+}
+
+body.dark-mode .kreativ-search-refinement-clear:hover,
+body.dark-mode .kreativ-search-refinement-clear:focus {
+    color: #ffffff;
 }
