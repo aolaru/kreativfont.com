@@ -362,6 +362,207 @@ function kreativ_get_active_font_filter( $font_filters ) {
     return $active_filter;
 }
 
+function kreativ_get_branch_key_for_category_term( $term ) {
+    $term = get_term( $term, 'category' );
+
+    if ( ! $term || is_wp_error( $term ) ) {
+        return '';
+    }
+
+    foreach ( array_keys( kreativ_get_font_taxonomy_branch_definitions() ) as $branch_key ) {
+        $parent_ids = kreativ_get_font_branch_parent_term_ids( $branch_key );
+
+        if ( empty( $parent_ids ) ) {
+            continue;
+        }
+
+        if ( in_array( (int) $term->term_id, $parent_ids, true ) ) {
+            return $branch_key;
+        }
+
+        $ancestors = get_ancestors( $term->term_id, 'category', 'taxonomy' );
+
+        if ( array_intersect( array_map( 'intval', $ancestors ), $parent_ids ) ) {
+            return $branch_key;
+        }
+    }
+
+    return '';
+}
+
+function kreativ_get_archive_branch_labels() {
+    return array(
+        'designer'      => 'Designers',
+        'foundry'       => 'Foundries',
+        'font_style'    => 'Styles',
+        'font_mood'     => 'Moods',
+        'font_use_case' => 'Use Cases',
+    );
+}
+
+function kreativ_get_archive_context_summary( $term, $archive_type = 'category', $result_count = 0, $active_filter = 'latest', $font_filters = array() ) {
+    $term = get_term( $term );
+
+    if ( ! $term || is_wp_error( $term ) ) {
+        return array(
+            'eyebrow'    => 'Archive',
+            'title'      => 'Explore the font library',
+            'summary'    => 'Browse curated type, refine your filters, and move quickly into better font decisions.',
+            'side_title' => 'Discovery stays fast when the archive stays focused.',
+            'side_copy'  => 'Use filters and related links to move through styles, moods, and use cases without falling back to generic browsing.',
+        );
+    }
+
+    $branch_key    = 'category' === $archive_type ? kreativ_get_branch_key_for_category_term( $term ) : '';
+    $branch_labels = kreativ_get_archive_branch_labels();
+    $filter_label  = ! empty( $font_filters[ $active_filter ]['label'] ) ? $font_filters[ $active_filter ]['label'] : 'Latest';
+    $count_phrase  = sprintf( '%d result%s', (int) $result_count, 1 === (int) $result_count ? '' : 's' );
+
+    if ( 'tag' === $archive_type ) {
+        return array(
+            'eyebrow'    => 'Tag archive',
+            'title'      => 'Explore fonts tagged ' . $term->name,
+            'summary'    => $count_phrase . ' connected to this tag. Use the filter bar and related discovery links to branch into more structured font paths.',
+            'side_title' => 'Tags are a loose entry point, not the whole discovery model.',
+            'side_copy'  => 'From here you can pivot into more structured filters like style, mood, use case, designer, or foundry.',
+        );
+    }
+
+    if ( isset( $branch_labels[ $branch_key ] ) ) {
+        $singular = rtrim( $branch_labels[ $branch_key ], 's' );
+
+        return array(
+            'eyebrow'    => $branch_labels[ $branch_key ] . ' archive',
+            'title'      => 'Explore ' . $term->name . ' across the font library',
+            'summary'    => $count_phrase . ' currently surfaced here. Filter by ' . strtolower( $filter_label ) . ' order and move through related discovery paths without leaving the archive.',
+            'side_title' => $term->name . ' sits inside the ' . strtolower( $singular ) . ' branch.',
+            'side_copy'  => 'Use sibling terms and homepage-style filters to move laterally through the library instead of browsing one post at a time.',
+        );
+    }
+
+    return array(
+        'eyebrow'    => 'Category archive',
+        'title'      => 'Browse ' . $term->name,
+        'summary'    => $count_phrase . ' available under this category. Use filters and related discovery links to tighten the view and keep browsing momentum.',
+        'side_title' => 'Use this archive as a discovery hub, not just a list.',
+        'side_copy'  => 'The archive now shares the same visual system and filter language as the homepage, search, and single pages.',
+    );
+}
+
+function kreativ_get_category_archive_related_groups( $term, $limit = 6 ) {
+    $term = get_term( $term, 'category' );
+
+    if ( ! $term || is_wp_error( $term ) ) {
+        return array();
+    }
+
+    $groups      = array();
+    $branch_key  = kreativ_get_branch_key_for_category_term( $term );
+    $branch_map  = kreativ_get_archive_branch_labels();
+
+    if ( $branch_key ) {
+        $parent_ids = kreativ_get_font_branch_parent_term_ids( $branch_key );
+        $parent_id  = 0;
+
+        foreach ( array_map( 'intval', get_ancestors( $term->term_id, 'category', 'taxonomy' ) ) as $ancestor_id ) {
+            if ( in_array( $ancestor_id, $parent_ids, true ) ) {
+                $parent_id = $ancestor_id;
+                break;
+            }
+        }
+
+        if ( ! $parent_id && in_array( (int) $term->term_id, $parent_ids, true ) ) {
+            $parent_id = (int) $term->term_id;
+        }
+
+        if ( $parent_id ) {
+            $siblings = get_terms(
+                array(
+                    'taxonomy'   => 'category',
+                    'parent'     => $parent_id,
+                    'hide_empty' => true,
+                    'number'     => $limit + 1,
+                    'orderby'    => 'count',
+                    'order'      => 'DESC',
+                )
+            );
+
+            if ( ! is_wp_error( $siblings ) ) {
+                $terms = array();
+
+                foreach ( $siblings as $sibling ) {
+                    if ( (int) $sibling->term_id === (int) $term->term_id ) {
+                        continue;
+                    }
+
+                    $terms[] = array(
+                        'name' => $sibling->name,
+                        'url'  => get_term_link( $sibling ),
+                    );
+
+                    if ( count( $terms ) >= $limit ) {
+                        break;
+                    }
+                }
+
+                if ( ! empty( $terms ) ) {
+                    $groups[] = array(
+                        'label' => 'Related ' . strtolower( $branch_map[ $branch_key ] ?? 'terms' ),
+                        'terms' => $terms,
+                    );
+                }
+            }
+        }
+    }
+
+    foreach ( kreativ_get_font_filters() as $filter_slug => $filter_config ) {
+        if ( in_array( $filter_slug, array( 'latest', 'popular', 'free' ), true ) ) {
+            continue;
+        }
+
+        if ( ! empty( $filter_config['tax_query'] ) ) {
+            $term_names = array();
+            foreach ( $filter_config['tax_query'] as $tax_clause ) {
+                if ( empty( $tax_clause['taxonomy'] ) || 'category' !== $tax_clause['taxonomy'] || empty( $tax_clause['terms'] ) ) {
+                    continue;
+                }
+                foreach ( (array) $tax_clause['terms'] as $clause_term_slug ) {
+                    $term_names[] = $clause_term_slug;
+                }
+            }
+        }
+    }
+
+    return $groups;
+}
+
+function kreativ_get_tag_archive_related_groups( $term_name, $limit = 6 ) {
+    $groups       = array();
+    $raw_matches  = kreativ_get_search_branch_term_matches( $term_name, $limit );
+    $branch_labels = kreativ_get_archive_branch_labels();
+
+    foreach ( $branch_labels as $branch_key => $label ) {
+        if ( empty( $raw_matches[ $branch_key ] ) ) {
+            continue;
+        }
+
+        $groups[] = array(
+            'label' => $label,
+            'terms' => array_map(
+                static function ( $term ) {
+                    return array(
+                        'name' => $term->name,
+                        'url'  => get_term_link( $term ),
+                    );
+                },
+                $raw_matches[ $branch_key ]
+            ),
+        );
+    }
+
+    return $groups;
+}
+
 function kreativ_get_search_terms( $search_string ) {
     $search_string = trim( (string) $search_string );
 

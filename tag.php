@@ -43,21 +43,34 @@ $query = new WP_Query(
         )
     )
 );
+$archive_context = kreativ_get_archive_context_summary( $tag, 'tag', (int) $query->found_posts, $active_font_filter, $font_filters );
+$related_groups  = kreativ_get_tag_archive_related_groups( $tag_name, 6 );
 ?>
 
-<!-- =====================================================
-     TAG HEADER
-===================================================== -->
 <div class="container kreativ-category-bg">
     <div class="kreativ-category-header">
-        <h1>
-            <i class="fa-solid fa-tag"></i>
-            Tag: <?php echo esc_html($tag_name); ?>
-        </h1>
+        <div class="kreativ-category-header-main">
+            <div class="kreativ-category-eyebrow">
+                <i class="fa-solid fa-tag"></i>
+                <?php echo esc_html( $archive_context['eyebrow'] ); ?>
+            </div>
 
-        <?php if ($tag_desc): ?>
-            <p><?php echo wp_kses_post($tag_desc); ?></p>
-        <?php endif; ?>
+            <h1><?php echo esc_html( $archive_context['title'] ); ?></h1>
+
+            <p><?php echo wp_kses_post( $tag_desc ? $tag_desc : esc_html( $archive_context['summary'] ) ); ?></p>
+
+            <div class="kreativ-category-meta-pills">
+                <span class="kreativ-category-meta-pill"><i class="fa-solid fa-grid-2"></i> <?php echo esc_html( sprintf( '%d result%s', (int) $query->found_posts, 1 === (int) $query->found_posts ? '' : 's' ) ); ?></span>
+                <span class="kreativ-category-meta-pill"><i class="fa-solid fa-filter"></i> <?php echo esc_html( $active_font_filter_config['label'] ); ?> filter</span>
+            </div>
+        </div>
+
+        <aside class="kreativ-category-header-side">
+            <div class="kreativ-category-side-card">
+                <h2><?php echo esc_html( $archive_context['side_title'] ); ?></h2>
+                <p><?php echo esc_html( $archive_context['side_copy'] ); ?></p>
+            </div>
+        </aside>
     </div>
 </div>
 
@@ -69,9 +82,28 @@ $query = new WP_Query(
     <?php endforeach; ?>
 </div>
 
-<!-- =====================================================
-     POSTS GRID
-===================================================== -->
+<?php if ( ! empty( $related_groups ) ) : ?>
+    <div class="container kreativ-archive-discovery">
+        <div class="kreativ-archive-discovery-head">
+            <h2>Related discovery</h2>
+            <p>Use structured taxonomy matches to pivot from this tag into cleaner browsing paths.</p>
+        </div>
+
+        <div class="kreativ-archive-discovery-groups">
+            <?php foreach ( $related_groups as $group ) : ?>
+                <div class="kreativ-archive-discovery-group">
+                    <h3><?php echo esc_html( $group['label'] ); ?></h3>
+                    <div class="kreativ-archive-discovery-pills">
+                        <?php foreach ( $group['terms'] as $term ) : ?>
+                            <a href="<?php echo esc_url( $term['url'] ); ?>" class="kreativ-archive-discovery-pill"><?php echo esc_html( $term['name'] ); ?></a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+<?php endif; ?>
+
 <div class="container kreativ-category-grid kreativ-category-bg">
     <div class="row">
 
