@@ -33,8 +33,14 @@
             return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
 
+        function decodeEntities(value) {
+            var textarea = document.createElement('textarea');
+            textarea.innerHTML = String(value || '');
+            return textarea.value;
+        }
+
         function highlightMatch(value, searchValue) {
-            var text = String(value || '');
+            var text = decodeEntities(value);
             var terms = String(searchValue || '')
                 .trim()
                 .split(/\s+/)
@@ -97,7 +103,8 @@
         }
 
         function buildFontItem(item, searchValue) {
-            var thumb = item.thumb ? '<span class="kreativ-search-suggestion-thumb"><img src="' + escapeHtml(item.thumb) + '" alt="' + escapeHtml(item.label) + '"></span>' : '';
+            var thumbLabel = decodeEntities(item.label);
+            var thumb = item.thumb ? '<span class="kreativ-search-suggestion-thumb"><img src="' + escapeHtml(item.thumb) + '" alt="' + escapeHtml(thumbLabel) + '"></span>' : '';
             var context = item.context ? '<span class="kreativ-search-suggestion-meta">' + highlightMatch(item.context, searchValue) + '</span>' : '';
             var label = '<span class="kreativ-search-suggestion-label">' + highlightMatch(item.label, searchValue) + '</span>';
 
