@@ -219,36 +219,17 @@ function kreativ_filter_has_branch_terms( $branch_key, $child_slugs ) {
 }
 
 function kreativ_get_font_filter_tax_clause( $branch_key, $child_slugs, $fallback_tag_slugs = array() ) {
-    $clauses    = array();
     $child_slugs = array_values( array_unique( array_filter( array_map( 'sanitize_title', (array) $child_slugs ) ) ) );
 
     if ( ! empty( $child_slugs ) && kreativ_filter_has_branch_terms( $branch_key, $child_slugs ) ) {
-        $clauses[] = array(
+        return array(
             'taxonomy' => 'category',
             'field'    => 'slug',
             'terms'    => $child_slugs,
         );
     }
 
-    $fallback_tag_slugs = array_values( array_unique( array_filter( array_map( 'sanitize_title', (array) $fallback_tag_slugs ) ) ) );
-
-    if ( ! empty( $fallback_tag_slugs ) && kreativ_filter_has_terms( 'post_tag', $fallback_tag_slugs ) ) {
-        $clauses[] = array(
-            'taxonomy' => 'post_tag',
-            'field'    => 'slug',
-            'terms'    => $fallback_tag_slugs,
-        );
-    }
-
-    if ( empty( $clauses ) ) {
-        return array();
-    }
-
-    if ( 1 === count( $clauses ) ) {
-        return $clauses[0];
-    }
-
-    return array_merge( array( 'relation' => 'OR' ), $clauses );
+    return array();
 }
 
 function kreativ_get_font_filters() {
@@ -1210,7 +1191,7 @@ function kreativ_search_orderby( $orderby, $query ) {
                 INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
                 INNER JOIN {$wpdb->terms} t ON tt.term_id = t.term_id
                 WHERE tr.object_id = {$wpdb->posts}.ID
-                AND tt.taxonomy IN ('category', 'post_tag')
+                AND tt.taxonomy = 'category'
                 AND t.name LIKE %s
             ) THEN 35 ELSE 0 END",
             '%' . $wpdb->esc_like( $search_term ) . '%'
@@ -1329,27 +1310,6 @@ function kreativ_get_search_match_label( $post = null, $search_string = '' ) {
 
                 if ( false !== strpos( $term_name, $search_term ) || false !== strpos( $term_slug, $search_slug ) ) {
                     return $branch_config['label'];
-                }
-            }
-        }
-    }
-
-    $terms        = get_the_terms( $post->ID, 'post_tag' );
-
-    if ( $terms && ! is_wp_error( $terms ) ) {
-        foreach ( $terms as $term ) {
-            $term_name = strtolower( $term->name );
-            $term_slug = strtolower( $term->slug );
-
-            if ( false !== strpos( $term_name, $normalized_query ) || false !== strpos( $term_slug, $normalized_query ) ) {
-                return 'Matched tag';
-            }
-
-            foreach ( $search_terms as $search_term ) {
-                $search_term = strtolower( $search_term );
-
-                if ( false !== strpos( $term_name, $search_term ) || false !== strpos( $term_slug, $search_term ) ) {
-                    return 'Matched tag';
                 }
             }
         }
@@ -1638,21 +1598,6 @@ function kreativ_get_single_font_eyebrow( $post = null ) {
         }
 
         return $style_term->name . ' Font';
-    }
-
-    $terms = get_the_terms( $post->ID, 'post_tag' );
-
-    if ( $terms && ! is_wp_error( $terms ) ) {
-        foreach ( $style_map as $slug => $label ) {
-            foreach ( $terms as $term ) {
-                $term_slug = strtolower( (string) $term->slug );
-                $term_name = strtolower( (string) $term->name );
-
-                if ( $term_slug === $slug || $term_name === $slug ) {
-                    return $label;
-                }
-            }
-        }
     }
 
     $summary = strtolower( kreativ_get_content_summary( $post, 28 ) );

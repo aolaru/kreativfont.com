@@ -147,7 +147,7 @@ $related_groups  = kreativ_get_category_archive_related_groups( $category, 6 );
                     <div class="kreativ-archive-empty-actions">
                         <a href="<?php echo esc_url( home_url( '/fonts' ) ); ?>" class="kreativ-font-filter active">Browse Fonts</a>
                         <a href="<?php echo esc_url( get_term_link( $category ) ); ?>" class="kreativ-font-filter">Try another filter</a>
-                        <a href="<?php echo esc_url( home_url( '/category/fonts?font_filter=latest' ) ); ?>" class="kreativ-font-filter">Explore latest fonts</a>
+                        <a href="<?php echo esc_url( add_query_arg( 'font_filter', 'latest', home_url( '/fonts' ) ) ); ?>" class="kreativ-font-filter">Explore latest fonts</a>
                     </div>
                 </div>
             </div>

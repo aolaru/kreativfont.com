@@ -32,7 +32,7 @@
         <?php get_search_form(); ?>
 
         <div class="kreativ-empty-state">
-            <p><a href="<?php echo esc_url( home_url( '/category/fonts' ) ); ?>">Browse Fonts</a> or return to the <a href="<?php echo esc_url( home_url( '/' ) ); ?>">homepage</a>.</p>
+            <p><a href="<?php echo esc_url( home_url( '/fonts' ) ); ?>">Browse Fonts</a> or return to the <a href="<?php echo esc_url( home_url( '/' ) ); ?>">homepage</a>.</p>
         </div>
 
         <section class="kreativ-related-posts">

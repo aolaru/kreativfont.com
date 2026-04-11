@@ -38,7 +38,7 @@ $active_font_filter_config = $font_filters[ $active_font_filter ];
         </p>
 
         <div class="kreativ-hero-actions">
-            <a href="/category/fonts" class="kreativ-hero-cta kreativ-hero-cta-primary">
+            <a href="<?php echo esc_url( home_url( '/fonts' ) ); ?>" class="kreativ-hero-cta kreativ-hero-cta-primary">
                 <i class="fa-solid fa-compass"></i>
                 Browse Fonts
             </a>
@@ -137,7 +137,11 @@ foreach ( $home_sections as $slug => $title ) :
                 <?php endif; ?>
                 <?php echo esc_html( $title ); ?>
             </h2>
-            <a href="<?php echo esc_url( '/category/' . $slug ); ?>" class="kf-view-all">View All &rsaquo;</a>
+            <?php
+            $section_url = 'fonts' === $slug ? home_url( '/fonts' ) : home_url( '/category/' . $slug );
+            $section_url = add_query_arg( 'font_filter', $active_font_filter, $section_url );
+            ?>
+            <a href="<?php echo esc_url( $section_url ); ?>" class="kf-view-all">View All &rsaquo;</a>
         </div>
 
         <div class="kreativ-font-filter-bar">

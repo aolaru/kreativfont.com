@@ -10,7 +10,7 @@
 						<h2>Explore</h2>
 						<a href="https://kreativfont.com/fonts">Fonts</a>
 						<a href="https://kreativfont.com/tools">Font Tools</a>
-						<a href="/category/free">Free Fonts</a>
+						<a href="<?php echo esc_url( add_query_arg( 'font_filter', 'free', home_url( '/fonts' ) ) ); ?>">Free Fonts</a>
 						<a href="/blog">Blog</a>
 					</div>
 

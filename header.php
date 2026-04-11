@@ -31,12 +31,12 @@
     <!-- Dynamic meta description -->
     <meta name="description" content="<?php echo esc_attr( $meta_description ); ?>">
 
-    <?php if ( is_search() ) : ?>
+    <?php if ( is_search() || is_page_template( 'template-filter-market.php' ) ) : ?>
         <meta name="robots" content="noindex,follow">
     <?php endif; ?>
 
-    <!-- SEO keywords (optional but harmless) -->
-    <meta name="keywords" content="kreativ, fonts, templates, graphics, photos, sounds, typography, ai font identifier, creative marketplace, design assets">
+    <!-- SEO keywords -->
+    <meta name="keywords" content="kreativ font, fonts, typography, font tools, font identifier, font pairing, font name generator, curated fonts">
 
     <!-- Canonical URL for SEO -->
     <?php if ( is_singular() ) : ?>
@@ -44,7 +44,7 @@
     <?php endif; ?>
 
     <!-- Open Graph / Twitter Meta -->
-    <meta property="og:site_name" content="KREATIV">
+    <meta property="og:site_name" content="Kreativ Font">
     <meta property="og:title" content="<?php echo esc_attr( $document_title ); ?>">
     <meta property="og:description" content="<?php echo esc_attr( $meta_description ); ?>">
     <meta property="og:url" content="<?php echo esc_url( $current_url ); ?>">
@@ -56,7 +56,7 @@
     <meta name="twitter:image" content="<?php echo esc_url( $logo_url ); ?>">
 
     <!-- PWA: Web App metadata -->
-    <meta name="application-name" content="KREATIV">
+    <meta name="application-name" content="Kreativ Font">
     <meta name="theme-color" content="#ffffff">
 
     <!-- Favicon -->
@@ -97,7 +97,7 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "name": "KREATIV",
+      "name": "Kreativ Font",
       "url": "<?php echo esc_url( $site_url ); ?>",
       "logo": "<?php echo esc_url( $theme_uri . '/img/logo-512.png' ); ?>",
       "sameAs": [

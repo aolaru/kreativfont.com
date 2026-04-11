@@ -143,7 +143,7 @@ $pagination_args = kreativ_get_search_refinement_base_args( $search_query, $acti
                 <p>Try another keyword, adjust your search, or jump back into the main font library.</p>
                 <p>
                     <a href="<?php echo esc_url( home_url( '/fonts' ) ); ?>" class="kreativ-hero-cta kreativ-hero-cta-primary">Browse Fonts</a>
-                    <a href="<?php echo esc_url( home_url( '/category/fonts?font_filter=latest' ) ); ?>" class="kreativ-hero-cta kreativ-hero-cta-secondary">Explore latest fonts</a>
+                    <a href="<?php echo esc_url( add_query_arg( 'font_filter', 'latest', home_url( '/fonts' ) ) ); ?>" class="kreativ-hero-cta kreativ-hero-cta-secondary">Explore latest fonts</a>
                 </p>
             </div>
         <?php endif; ?>

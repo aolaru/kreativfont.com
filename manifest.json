@@ -1,7 +1,7 @@
 {
-  "name": "KREATIV",
-  "short_name": "KREATIV",
-  "description": "Your all-in-one creative hub for fonts, sounds, AI tools, and design resources.",
+  "name": "Kreativ Font",
+  "short_name": "KFont",
+  "description": "Curated fonts and practical font tools for identification, pairing, and discovery.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

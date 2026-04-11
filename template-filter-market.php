@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: Kreativ Market Home
+Template Name: Legacy Market Archive
 */
 get_header();
 
@@ -21,13 +21,13 @@ $market_sections         = array(
     <div class="kreativ-hero-main">
         <div class="kreativ-hero-eyebrow">
             <i class="fa-solid fa-store" aria-hidden="true"></i>
-            Kreativ market overview
+            Legacy archive
         </div>
 
-        <h1 class="kreativ-hero-title">Browse the full Kreativ library across every resource type.</h1>
+        <h1 class="kreativ-hero-title">Legacy multi-resource archive preserved for reference only.</h1>
 
         <p class="kreativ-hero-subtitle">
-            This legacy market page still surfaces the broader catalog, from fonts to graphics and templates, while the main site stays focused on type and font tools.
+            This template preserves the older broader-catalog view, but the active product is now focused on fonts and font tools.
         </p>
     </div>
 
@@ -35,10 +35,10 @@ $market_sections         = array(
         <div class="kreativ-hero-panel">
             <span class="kreativ-hero-panel-label">
                 <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
-                Still available
+                Legacy surface
             </span>
-            <h2 class="kreativ-hero-panel-title">A broader resource view without maintaining a second visual system.</h2>
-            <p class="kreativ-hero-panel-copy">This template now reuses the same shared cards and section styles as the rest of the theme instead of carrying its own parallel markup and CSS.</p>
+            <h2 class="kreativ-hero-panel-title">Kept available for backward compatibility, not as a primary product path.</h2>
+            <p class="kreativ-hero-panel-copy">It reuses the shared visual system, but should be treated as a legacy archive rather than an active site direction.</p>
         </div>
     </div>
 
@@ -77,7 +77,16 @@ $market_sections         = array(
                 <?php endif; ?>
                 <?php echo esc_html( $title ); ?>
             </h2>
-            <a href="<?php echo esc_url( '/category/' . $slug ); ?>" class="kf-view-all">View All &rsaquo;</a>
+            <?php
+            if ( 'fonts' === $slug ) {
+                $section_url = home_url( '/fonts' );
+            } elseif ( 'free' === $slug ) {
+                $section_url = add_query_arg( 'font_filter', 'free', home_url( '/fonts' ) );
+            } else {
+                $section_url = home_url( '/category/' . $slug );
+            }
+            ?>
+            <a href="<?php echo esc_url( $section_url ); ?>" class="kf-view-all">View All &rsaquo;</a>
         </div>
 
         <div class="row">
