@@ -121,7 +121,7 @@
                     <h1 class="kreativ-logo">
 						<a href="<?php echo esc_url( $site_url ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
 							<img src="<?php echo esc_url( $theme_uri . '/img/logo-96.png' ); ?>"
-								 alt="KREATIV Logo"
+								 alt="Kreativ Font logo"
 								 class="kreativ-logo-icon">
 							<span class="kreativ-logo-lockup">
 								<span class="kreativ-logo-text">Kreativ Font</span>
@@ -166,7 +166,7 @@
 			<h2 class="kreativ-logo offcanvas-show">
 				<a href="<?php echo esc_url( $site_url ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
 					<img src="<?php echo esc_url( $theme_uri . '/img/logo-96.png' ); ?>"
-						 alt="KREATIV Logo"
+						 alt="Kreativ Font logo"
 						 class="kreativ-logo-icon">
 					<span class="kreativ-logo-lockup">
 						<span class="kreativ-logo-text">Kreativ Font</span>

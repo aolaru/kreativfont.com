@@ -462,6 +462,7 @@
 .kreativ-search-refinement-pill {
     display: inline-flex;
     align-items: center;
+    gap: 0.35rem;
     min-height: 40px;
     padding: 0.6rem 0.9rem;
     border-radius: 999px;
@@ -471,6 +472,11 @@
     font-weight: 700;
     text-decoration: none;
     transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.kreativ-search-refinement-pill-count {
+    opacity: 0.72;
+    font-weight: 600;
 }
 
 .kreativ-search-refinement-pill:hover,

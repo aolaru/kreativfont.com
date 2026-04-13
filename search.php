@@ -94,7 +94,8 @@ $pagination_args = kreativ_get_search_refinement_base_args( $search_query, $acti
                                 <div class="kreativ-search-refinement-pills">
                                     <?php foreach ( $group['terms'] as $term ) : ?>
                                         <a href="<?php echo esc_url( $term['url'] ); ?>" class="kreativ-search-refinement-pill<?php echo ! empty( $term['is_active'] ) ? ' is-active' : ''; ?>">
-                                            <?php echo esc_html( $term['name'] ); ?>
+                                            <span class="kreativ-search-refinement-pill-label"><?php echo esc_html( $term['name'] ); ?></span>
+                                            <span class="kreativ-search-refinement-pill-count">(<?php echo esc_html( (string) $term['count'] ); ?>)</span>
                                         </a>
                                     <?php endforeach; ?>
                                 </div>
