@@ -121,7 +121,10 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
 
             <?php if ( $residual_tags ) : ?>
                 <div class="kreativ-post-tags">
-                    <span class="kreativ-post-tags-label">Tags</span>
+                    <div class="kreativ-post-tags-heading">
+                        <span class="kreativ-post-tags-label">Additional tags</span>
+                        <p class="kreativ-post-tags-note">Secondary labels kept for legacy browsing and extra context.</p>
+                    </div>
                     <div class="kreativ-post-tag-list">
                         <?php foreach ( $residual_tags as $post_tag ) : ?>
                             <a href="<?php echo esc_url( get_tag_link( $post_tag ) ); ?>" class="kreativ-post-tag-chip">
