@@ -76,6 +76,21 @@ function kreativ_filter_has_terms( $taxonomy, $slugs ) {
     return ! is_wp_error( $term_ids ) && ! empty( $term_ids );
 }
 
+function kreativ_get_free_fonts_category_slugs() {
+    $preferred_slugs = array( 'free-fonts', 'free' );
+    $available_slugs = array();
+
+    foreach ( $preferred_slugs as $slug ) {
+        $term = get_term_by( 'slug', $slug, 'category' );
+
+        if ( $term && ! is_wp_error( $term ) ) {
+            $available_slugs[] = $slug;
+        }
+    }
+
+    return array_values( array_unique( $available_slugs ) );
+}
+
 function kreativ_get_font_taxonomy_branch_definitions() {
     return array(
         'foundry' => array(
@@ -240,6 +255,7 @@ function kreativ_get_font_filters() {
     $modern_clause     = kreativ_get_font_filter_tax_clause( 'font_mood', array( 'modern' ), array( 'modern' ) );
     $vintage_clause    = kreativ_get_font_filter_tax_clause( 'font_mood', array( 'vintage' ), array( 'vintage' ) );
     $elegant_clause    = kreativ_get_font_filter_tax_clause( 'font_mood', array( 'elegant' ), array( 'elegant' ) );
+    $free_fonts_slugs  = kreativ_get_free_fonts_category_slugs();
 
     $font_filters = array(
         'latest' => array(
@@ -260,14 +276,14 @@ function kreativ_get_font_filters() {
             'label'     => 'Free',
             'title'     => 'Free Fonts',
             'orderby'   => 'date',
-            'tax_query' => array(
+            'tax_query' => $free_fonts_slugs ? array(
                 array(
                     'taxonomy' => 'category',
                     'field'    => 'slug',
-                    'terms'    => array( 'free' ),
+                    'terms'    => $free_fonts_slugs,
                 ),
-            ),
-            'available' => kreativ_filter_has_terms( 'category', array( 'free' ) ),
+            ) : array(),
+            'available' => ! empty( $free_fonts_slugs ),
         ),
         'serif' => array(
             'label'     => 'Serif',
@@ -1413,11 +1429,15 @@ function kreativ_get_archive_query_args( $args = array() ) {
     }
 
     if ( 'free' === $args['sort'] ) {
-        $args['tax_query'][] = array(
-            'taxonomy' => 'category',
-            'field'    => 'slug',
-            'terms'    => array( 'free' ),
-        );
+        $free_fonts_slugs = kreativ_get_free_fonts_category_slugs();
+
+        if ( $free_fonts_slugs ) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'category',
+                'field'    => 'slug',
+                'terms'    => $free_fonts_slugs,
+            );
+        }
     }
 
     return array(
