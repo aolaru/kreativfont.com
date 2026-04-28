@@ -118,8 +118,11 @@ if ( 'latest' === $active_font_filter && $free_fonts_slugs ) {
     $home_sections[] = array(
         'slug'       => 'fonts',
         'title'      => 'Latest Commercial Fonts',
+        'eyebrow'    => 'Commercial picks',
+        'summary'    => 'Fresh premium releases for branding, packaging, editorial work, and sharper client-facing font choices.',
         'view_all'   => home_url( '/fonts' ),
         'show_filters' => true,
+        'posts_per_page' => 16,
         'tax_query'  => array(
             array(
                 'taxonomy' => 'category',
@@ -138,8 +141,11 @@ if ( 'latest' === $active_font_filter && $free_fonts_slugs ) {
     $home_sections[] = array(
         'slug'       => 'fonts',
         'title'      => 'Latest Free Fonts',
+        'eyebrow'    => 'Free to use',
+        'summary'    => 'New free fonts collected for quick experimentation, downloads, and lower-friction creative exploration.',
         'view_all'   => add_query_arg( 'font_filter', 'free', home_url( '/fonts' ) ),
         'show_filters' => false,
+        'posts_per_page' => 12,
         'tax_query'  => array(
             array(
                 'taxonomy' => 'category',
@@ -157,8 +163,11 @@ if ( 'latest' === $active_font_filter && $free_fonts_slugs ) {
     $home_sections[] = array(
         'slug'       => 'fonts',
         'title'      => $active_font_filter_config['title'],
+        'eyebrow'    => 'Browse the library',
+        'summary'    => 'Explore the current font stream by style, mood, and discovery intent without leaving the homepage.',
         'view_all'   => add_query_arg( 'font_filter', $active_font_filter, home_url( '/fonts' ) ),
         'show_filters' => true,
+        'posts_per_page' => 24,
         'tax_query'  => array_merge(
             array(
                 array(
@@ -179,12 +188,20 @@ foreach ( $home_sections as $section ) :
     <div class="container kreativ-section kreativ-section-<?php echo esc_attr( $slug ); ?>">
 
         <div class="kreativ-section-header">
-            <h2 class="kreativ-section-title">
-                <?php if ( $icon ) : ?>
-                    <i class="<?php echo esc_attr( $icon ); ?>"></i>
+            <div class="kreativ-section-heading">
+                <?php if ( ! empty( $section['eyebrow'] ) ) : ?>
+                    <span class="kreativ-section-eyebrow"><?php echo esc_html( $section['eyebrow'] ); ?></span>
                 <?php endif; ?>
-                <?php echo esc_html( $section['title'] ); ?>
-            </h2>
+                <h2 class="kreativ-section-title">
+                    <?php if ( $icon ) : ?>
+                        <i class="<?php echo esc_attr( $icon ); ?>"></i>
+                    <?php endif; ?>
+                    <?php echo esc_html( $section['title'] ); ?>
+                </h2>
+                <?php if ( ! empty( $section['summary'] ) ) : ?>
+                    <p class="kreativ-section-summary"><?php echo esc_html( $section['summary'] ); ?></p>
+                <?php endif; ?>
+            </div>
             <a href="<?php echo esc_url( $section['view_all'] ); ?>" class="kf-view-all">View All &rsaquo;</a>
         </div>
 
@@ -201,7 +218,7 @@ foreach ( $home_sections as $section ) :
         <div class="row">
             <?php
             $query = new WP_Query( array(
-                'posts_per_page'         => 24,
+                'posts_per_page'         => $section['posts_per_page'],
                 'post_status'            => 'publish',
                 'ignore_sticky_posts'    => true,
                 'no_found_rows'          => true,
