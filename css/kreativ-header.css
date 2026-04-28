@@ -709,8 +709,10 @@ body.dark-mode .kreativ-search-suggestions mark {
     }
 
     .kreativ-header .navbar-collapse.offcanvas-collapse {
-        bottom: 0;
+        bottom: auto;
         width: 100%;
+        height: calc(100vh - 72px);
+        max-height: calc(100vh - 72px);
         display: none !important;
         visibility: hidden;
         opacity: 0;
@@ -810,6 +812,7 @@ body.dark-mode .kreativ-search-suggestions mark {
 
     .kreativ-header .navbar-collapse.offcanvas-collapse {
         top: 72px;
+        height: calc(100vh - 72px);
         max-height: calc(100vh - 72px);
         padding: 0.9rem 0.9rem 1.5rem;
     }
