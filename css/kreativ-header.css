@@ -720,6 +720,12 @@ body.dark-mode .kreativ-search-suggestions mark {
         transform: translateY(-0.75rem);
         transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
         z-index: 7050;
+        padding: 1rem 1rem 1.6rem;
+        gap: 1.1rem;
+        background: rgba(255, 255, 255, 0.995);
+        backdrop-filter: blur(24px);
+        border-top: 1px solid rgba(74, 74, 255, 0.08);
+        box-shadow: 0 24px 48px rgba(18, 22, 34, 0.14);
     }
 
     .kreativ-header .navbar-collapse.offcanvas-collapse.open {
@@ -743,6 +749,7 @@ body.dark-mode .kreativ-search-suggestions mark {
 
     .offcanvas-collapse .kreativ-search {
         order: 1;
+        margin: 0;
     }
 
     .offcanvas-collapse .kreativ-hdr-right {
@@ -754,14 +761,28 @@ body.dark-mode .kreativ-search-suggestions mark {
         flex-direction: column;
         align-items: stretch;
         width: 100%;
+        gap: 0.65rem;
     }
 
     .offcanvas-collapse .navbar-nav li {
         width: 100%;
     }
 
+    .offcanvas-collapse .navbar-nav li.menu-item a {
+        width: 100%;
+        justify-content: flex-start;
+        min-height: 52px;
+        padding: 0.9rem 1rem;
+        border-radius: 16px;
+        background: rgba(248, 249, 255, 0.96);
+        border: 1px solid rgba(74, 74, 255, 0.1);
+        box-shadow: 0 10px 22px rgba(74, 74, 255, 0.06);
+    }
+
     .offcanvas-collapse .kreativ-search-form {
         width: 100%;
+        border-radius: 20px;
+        box-shadow: 0 12px 30px rgba(74, 74, 255, 0.08);
     }
 
     .kreativ-logo.offcanvas-show {
@@ -857,6 +878,13 @@ body.dark-mode .kreativ-search-suggestions mark {
         width: 100%;
         justify-self: stretch;
     }
+
+    .offcanvas-collapse .navbar-nav li.menu-item a {
+        min-height: 50px;
+        padding: 0.82rem 0.92rem;
+        border-radius: 15px;
+        font-size: 0.92rem;
+    }
 }
 
 body.dark-mode .kreativ-header {
@@ -906,8 +934,14 @@ body.dark-mode .kreativ-header .navbar-toggler {
 
 @media (max-width: 991.98px) {
     body.dark-mode .kreativ-header .navbar-collapse.offcanvas-collapse {
-        background: rgba(12, 16, 28, 0.98);
+        background: rgba(12, 16, 28, 0.995);
         border-top-color: rgba(255, 255, 255, 0.08);
         box-shadow: 0 22px 46px rgba(0, 0, 0, 0.35);
+    }
+
+    body.dark-mode .offcanvas-collapse .navbar-nav li.menu-item a {
+        background: rgba(20, 26, 44, 0.92);
+        border-color: rgba(255, 255, 255, 0.08);
+        box-shadow: none;
     }
 }
