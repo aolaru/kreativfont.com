@@ -690,6 +690,10 @@ body.dark-mode .kreativ-search-suggestions mark {
 
 /* Mobile header corrections */
 @media (max-width: 991.98px) {
+    body {
+        padding-top: 0 !important;
+    }
+
     .kreativ-header {
         position: sticky;
         top: 0;
