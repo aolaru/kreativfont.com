@@ -4,8 +4,24 @@ Template Name: Legacy Market Archive
 */
 get_header();
 
-$kreativ_category_labels = kreativ_get_category_labels();
-$kreativ_fa_icons        = kreativ_get_category_icons();
+$kreativ_category_labels = array(
+    'fonts'            => 'Fonts',
+    'templates-themes' => 'Templates',
+    'graphics'         => 'Graphics',
+    'photos'           => 'Photos',
+    'videos'           => 'Videos',
+    'sounds'           => 'Sounds',
+    'free'             => 'Freebies',
+);
+$kreativ_fa_icons        = array(
+    'fonts'            => 'fa-solid fa-font',
+    'templates-themes' => 'fa-solid fa-layer-group',
+    'graphics'         => 'fa-solid fa-pen-nib',
+    'photos'           => 'fa-solid fa-camera',
+    'videos'           => 'fa-solid fa-film',
+    'sounds'           => 'fa-solid fa-music',
+    'free'             => 'fa-solid fa-gift',
+);
 $market_sections         = array(
     'fonts'            => 'Latest Fonts',
     'templates-themes' => 'Latest Templates',
@@ -115,7 +131,7 @@ $market_sections         = array(
                         array(
                             'post_id'      => get_the_ID(),
                             'badge_text'   => $kreativ_category_labels[ $slug ] ?? ucfirst( $slug ),
-                            'badge_slug'   => $slug,
+                            'badge_slug'   => in_array( $slug, array( 'fonts', 'free' ), true ) ? $slug : 'tag',
                         )
                     );
                 endwhile;

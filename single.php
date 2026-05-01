@@ -4,7 +4,6 @@
 <?php
 $page_summary = kreativ_get_content_summary( get_post(), 24 );
 $font_credits = kreativ_get_font_credit_data( get_post() );
-$categories   = get_the_category();
 $primary_cat  = kreativ_get_single_font_eyebrow( get_post() );
 $hero_image   = has_post_thumbnail() ? get_the_post_thumbnail_url( get_the_ID(), 'large' ) : '';
 $share_url    = rawurlencode( get_permalink() );
@@ -14,6 +13,7 @@ $share_email_body    = rawurlencode( get_the_title() . "\n\n" . get_permalink() 
 $share_thumb  = $hero_image ? rawurlencode( $hero_image ) : '';
 $taxonomy_groups = kreativ_get_single_taxonomy_groups( get_post() );
 $residual_tags   = kreativ_get_single_residual_tags( get_post() );
+$breadcrumb_items = kreativ_get_single_breadcrumb_items( get_post() );
 
 if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', $page_summary ) ) {
     $page_summary = '';
@@ -64,8 +64,10 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
 
         <p class="kreativ-post-breadcrumb">
             <a href="<?php echo esc_url( home_url( '/' ) ); ?>">Home</a>
-            <span>/</span>
-            <?php the_category( ' / ' ); ?>
+            <?php foreach ( $breadcrumb_items as $breadcrumb_item ) : ?>
+                <span>/</span>
+                <a href="<?php echo esc_url( $breadcrumb_item['url'] ); ?>"><?php echo esc_html( $breadcrumb_item['label'] ); ?></a>
+            <?php endforeach; ?>
         </p>
 
         <article class="kreativ-post-content">

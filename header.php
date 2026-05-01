@@ -77,9 +77,6 @@
 
     <?php wp_head(); ?>
 
-    <!-- Cloudflare Web Analytics -->
-    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "ab7a9c1b54714400a0112acefa6e4479"}'></script>
-
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-4E74M6PB1Y"></script>
     <script>

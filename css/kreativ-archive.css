@@ -18,12 +18,8 @@
 
 /* CATEGORY-SPECIFIC GRADIENTS */
 body.kreativ-cat-fonts            { --kreativ-cat-gradient: linear-gradient(135deg, #f8f9ff 0%, #eef1ff 100%); }
-body.kreativ-cat-templates-themes { --kreativ-cat-gradient: linear-gradient(135deg, #f5fcfc 0%, #eefdfd 100%); }
-body.kreativ-cat-graphics         { --kreativ-cat-gradient: linear-gradient(135deg, #fff4ed 0%, #fff9f6 100%); }
-body.kreativ-cat-photos           { --kreativ-cat-gradient: linear-gradient(135deg, #fff9dd 0%, #fffdf3 100%); }
-body.kreativ-cat-videos           { --kreativ-cat-gradient: linear-gradient(135deg, #ffe9e9 0%, #fff6f6 100%); }
-body.kreativ-cat-sounds           { --kreativ-cat-gradient: linear-gradient(135deg, #f9ecff 0%, #fcf7ff 100%); }
 body.kreativ-cat-free             { --kreativ-cat-gradient: linear-gradient(135deg, #dff8e4 0%, #effff4 100%); }
+body.kreativ-cat-free-fonts       { --kreativ-cat-gradient: linear-gradient(135deg, #dff8e4 0%, #effff4 100%); }
 
 /* ================================================================
    CATEGORY HEADER

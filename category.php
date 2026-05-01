@@ -15,13 +15,9 @@ $cat_desc = category_description();
 
 /* Homepage-style icons */
 $kreativ_fa_icons = [
-    'fonts'            => 'fa-solid fa-font',
-    'templates-themes' => 'fa-solid fa-layer-group',
-    'graphics'         => 'fa-solid fa-pen-nib',
-    'photos'           => 'fa-solid fa-camera',
-    'videos'           => 'fa-solid fa-film',
-    'sounds'           => 'fa-solid fa-music',
-    'free'             => 'fa-solid fa-gift',
+    'fonts'      => 'fa-solid fa-font',
+    'free-fonts' => 'fa-solid fa-gift',
+    'free'       => 'fa-solid fa-gift',
 ];
 $cat_icon = $kreativ_fa_icons[$cat_slug] ?? 'fa-solid fa-folder-open';
 

@@ -18,25 +18,17 @@ function kf_is_new_post( $post_id ) {
 
 function kreativ_get_category_labels() {
     return array(
-        'fonts'            => 'Fonts',
-        'templates-themes' => 'Templates',
-        'graphics'         => 'Graphics',
-        'photos'           => 'Photos',
-        'videos'           => 'Videos',
-        'sounds'           => 'Sounds',
-        'free'             => 'Freebies',
+        'fonts'      => 'Fonts',
+        'free-fonts' => 'Free Fonts',
+        'free'       => 'Free Fonts',
     );
 }
 
 function kreativ_get_category_icons() {
     return array(
-        'fonts'            => 'fa-solid fa-font',
-        'templates-themes' => 'fa-solid fa-layer-group',
-        'graphics'         => 'fa-solid fa-pen-nib',
-        'photos'           => 'fa-solid fa-camera',
-        'videos'           => 'fa-solid fa-film',
-        'sounds'           => 'fa-solid fa-music',
-        'free'             => 'fa-solid fa-gift',
+        'fonts'      => 'fa-solid fa-font',
+        'free-fonts' => 'fa-solid fa-gift',
+        'free'       => 'fa-solid fa-gift',
     );
 }
 
@@ -1071,6 +1063,38 @@ function kreativ_get_single_taxonomy_groups( $post = null ) {
     }
 
     return $groups;
+}
+
+function kreativ_get_single_breadcrumb_items( $post = null ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post ) {
+        return array();
+    }
+
+    $items = array(
+        array(
+            'label' => 'Fonts',
+            'url'   => home_url( '/fonts' ),
+        ),
+    );
+
+    foreach ( array( 'font_style', 'foundry', 'designer' ) as $branch_key ) {
+        $term = kreativ_get_primary_branch_term( $post, $branch_key );
+
+        if ( ! $term ) {
+            continue;
+        }
+
+        $items[] = array(
+            'label' => $term->name,
+            'url'   => get_category_link( $term ),
+        );
+
+        break;
+    }
+
+    return $items;
 }
 
 function kreativ_get_single_residual_tags( $post = null ) {
