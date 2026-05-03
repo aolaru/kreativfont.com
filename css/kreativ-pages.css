@@ -708,31 +708,6 @@
     border-top: 1px dashed rgba(74, 74, 255, 0.14);
 }
 
-.kreativ-post-secondary-discovery summary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #4d5876;
-    font-size: 0.9rem;
-    font-weight: 800;
-    cursor: pointer;
-    list-style: none;
-}
-
-.kreativ-post-secondary-discovery summary::-webkit-details-marker {
-    display: none;
-}
-
-.kreativ-post-secondary-discovery summary i {
-    color: #4a4aff;
-    font-size: 0.75rem;
-    transition: transform 0.18s ease;
-}
-
-.kreativ-post-secondary-discovery[open] summary i {
-    transform: rotate(180deg);
-}
-
 .kreativ-post-tags {
     display: grid;
     gap: 0.7rem;
@@ -975,10 +950,6 @@ body.dark-mode .kreativ-post-tags-note {
 
 body.dark-mode .kreativ-post-secondary-discovery {
     border-color: rgba(153, 164, 255, 0.16);
-}
-
-body.dark-mode .kreativ-post-secondary-discovery summary {
-    color: #dfe6fb;
 }
 
 body.dark-mode .kreativ-share-button,

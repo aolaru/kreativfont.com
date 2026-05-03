@@ -124,12 +124,7 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
             <?php endif; ?>
 
             <?php if ( ! empty( $secondary_taxonomy_groups ) || $residual_tags ) : ?>
-                <details class="kreativ-post-secondary-discovery">
-                    <summary>
-                        <span>More discovery labels</span>
-                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-                    </summary>
-
+                <div class="kreativ-post-secondary-discovery">
                     <?php if ( ! empty( $secondary_taxonomy_groups ) ) : ?>
                         <div class="kreativ-post-taxonomy-grid kreativ-post-taxonomy-grid-secondary">
                             <?php foreach ( $secondary_taxonomy_groups as $group ) : ?>
@@ -165,7 +160,7 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
                             </div>
                         </div>
                     <?php endif; ?>
-                </details>
+                </div>
             <?php endif; ?>
 
             <div class="kreativ-post-meta">
