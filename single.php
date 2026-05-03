@@ -14,6 +14,8 @@ $share_thumb  = $hero_image ? rawurlencode( $hero_image ) : '';
 $taxonomy_groups = kreativ_get_single_taxonomy_groups( get_post() );
 $residual_tags   = kreativ_get_single_residual_tags( get_post() );
 $breadcrumb_items = kreativ_get_single_breadcrumb_items( get_post() );
+$primary_taxonomy_groups = array_intersect_key( $taxonomy_groups, array_flip( array( 'font_style', 'designer', 'foundry' ) ) );
+$secondary_taxonomy_groups = array_diff_key( $taxonomy_groups, $primary_taxonomy_groups );
 
 if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', $page_summary ) ) {
     $page_summary = '';
@@ -101,9 +103,9 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
         </div>
 
         <div class="kreativ-post-footer">
-            <?php if ( ! empty( $taxonomy_groups ) ) : ?>
-                <div class="kreativ-post-taxonomy-grid">
-                    <?php foreach ( $taxonomy_groups as $group ) : ?>
+            <?php if ( ! empty( $primary_taxonomy_groups ) ) : ?>
+                <div class="kreativ-post-taxonomy-grid kreativ-post-taxonomy-grid-primary">
+                    <?php foreach ( $primary_taxonomy_groups as $group ) : ?>
                         <section class="kreativ-post-taxonomy-group">
                             <span class="kreativ-post-taxonomy-label">
                                 <i class="<?php echo esc_attr( $group['icon'] ); ?>" aria-hidden="true"></i>
@@ -121,20 +123,49 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
                 </div>
             <?php endif; ?>
 
-            <?php if ( $residual_tags ) : ?>
-                <div class="kreativ-post-tags">
-                    <div class="kreativ-post-tags-heading">
-                        <span class="kreativ-post-tags-label">Additional tags</span>
-                        <p class="kreativ-post-tags-note">Secondary labels kept for legacy browsing and extra context.</p>
-                    </div>
-                    <div class="kreativ-post-tag-list">
-                        <?php foreach ( $residual_tags as $post_tag ) : ?>
-                            <a href="<?php echo esc_url( get_tag_link( $post_tag ) ); ?>" class="kreativ-post-tag-chip">
-                                <?php echo esc_html( $post_tag->name ); ?>
-                            </a>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
+            <?php if ( ! empty( $secondary_taxonomy_groups ) || $residual_tags ) : ?>
+                <details class="kreativ-post-secondary-discovery">
+                    <summary>
+                        <span>More discovery labels</span>
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                    </summary>
+
+                    <?php if ( ! empty( $secondary_taxonomy_groups ) ) : ?>
+                        <div class="kreativ-post-taxonomy-grid kreativ-post-taxonomy-grid-secondary">
+                            <?php foreach ( $secondary_taxonomy_groups as $group ) : ?>
+                                <section class="kreativ-post-taxonomy-group">
+                                    <span class="kreativ-post-taxonomy-label">
+                                        <i class="<?php echo esc_attr( $group['icon'] ); ?>" aria-hidden="true"></i>
+                                        <?php echo esc_html( $group['label'] ); ?>
+                                    </span>
+                                    <div class="kreativ-post-taxonomy-pills">
+                                        <?php foreach ( $group['terms'] as $term ) : ?>
+                                            <a href="<?php echo esc_url( $term['url'] ); ?>" class="kreativ-post-taxonomy-pill">
+                                                <?php echo esc_html( $term['name'] ); ?>
+                                            </a>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </section>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ( $residual_tags ) : ?>
+                        <div class="kreativ-post-tags">
+                            <div class="kreativ-post-tags-heading">
+                                <span class="kreativ-post-tags-label">Additional tags</span>
+                                <p class="kreativ-post-tags-note">Secondary labels kept for legacy browsing and extra context.</p>
+                            </div>
+                            <div class="kreativ-post-tag-list">
+                                <?php foreach ( $residual_tags as $post_tag ) : ?>
+                                    <a href="<?php echo esc_url( get_tag_link( $post_tag ) ); ?>" class="kreativ-post-tag-chip">
+                                        <?php echo esc_html( $post_tag->name ); ?>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </details>
             <?php endif; ?>
 
             <div class="kreativ-post-meta">

@@ -1016,6 +1016,10 @@ function kreativ_get_single_taxonomy_groups( $post = null ) {
     }
 
     $group_map = array(
+        'font_style' => array(
+            'label' => 'Style',
+            'icon'  => 'fa-solid fa-font',
+        ),
         'designer' => array(
             'label' => 'Designers',
             'icon'  => 'fa-solid fa-pen-nib',
@@ -1023,10 +1027,6 @@ function kreativ_get_single_taxonomy_groups( $post = null ) {
         'foundry' => array(
             'label' => 'Foundries',
             'icon'  => 'fa-solid fa-building',
-        ),
-        'font_style' => array(
-            'label' => 'Style',
-            'icon'  => 'fa-solid fa-font',
         ),
         'font_mood' => array(
             'label' => 'Mood',
