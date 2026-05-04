@@ -7,11 +7,11 @@
     overflow: hidden;
     display: grid;
     grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.9fr);
-    gap: 1.7rem;
-    padding: 3rem;
+    gap: 1.45rem;
+    padding: 2.6rem;
     background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.92) 0%, rgba(246, 247, 255, 0.97) 44%, rgba(236, 239, 255, 1) 100%);
     border-radius: 30px;
-    margin-bottom: 2.75rem;
+    margin-bottom: 2.35rem;
     box-shadow: 0 26px 60px rgba(74, 74, 255, 0.08);
 }
 
@@ -71,7 +71,7 @@
 
 .kreativ-hero-subtitle {
     font-size: 1.03rem;
-    margin-bottom: 1.35rem;
+    margin-bottom: 1.2rem;
     color: #444d66;
     max-width: 610px;
     line-height: 1.55;
@@ -81,7 +81,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.9rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.1rem;
 }
 
 .kreativ-hero-cta {
@@ -174,60 +174,21 @@
     line-height: 1.5;
 }
 
-.kreativ-hero-mini-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.85rem;
-}
-
-.kreativ-hero-mini-card {
-    padding: 0.88rem 0.92rem;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.86);
-    border: 1px solid rgba(74, 74, 255, 0.08);
-}
-
-.kreativ-hero-mini-label {
-    display: block;
-    color: #70789a;
-    font-size: 0.76rem;
-    font-weight: 800;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    margin-bottom: 0.35rem;
-}
-
-.kreativ-hero-mini-value {
-    display: block;
-    color: #121622;
-    font-size: 1.5rem;
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 0.22rem;
-}
-
-.kreativ-hero-mini-copy {
-    margin: 0;
-    color: #535c7c;
-    font-size: 0.88rem;
-    line-height: 1.38;
-}
-
 .kreativ-hero-tools {
     grid-column: 1 / -1;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: 0.8rem;
+    gap: 0.65rem;
     flex-wrap: wrap;
     margin-bottom: 0;
-    padding-top: 0.35rem;
+    padding-top: 0.15rem;
 }
 
 .kreativ-hero-tools-label {
     font-weight: 700;
-    font-size: 0.96rem;
-    padding: 0.65rem 0.2rem;
+    font-size: 0.9rem;
+    padding: 0.55rem 0.15rem;
     color: #4a4aff;
 }
 
@@ -235,19 +196,19 @@
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.68rem 1.05rem;
-    background: #fff;
+    padding: 0.58rem 0.88rem;
+    background: rgba(255, 255, 255, 0.74);
     border-radius: 12px;
     border: 1px solid #e2e4ea;
     text-decoration: none;
     color: #1a1a1a;
     transition: 0.25s ease;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
 .kreativ-hero-tool-card i {
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: #4a4aff;
 }
 
@@ -276,14 +237,12 @@ body.dark-mode .kreativ-card-title a {
 }
 
 body.dark-mode .kreativ-hero-subtitle,
-body.dark-mode .kreativ-hero-mini-copy,
 body.dark-mode .kreativ-section-link,
 body.dark-mode .kreativ-section-summary {
     color: #aeb9d6;
 }
 
 body.dark-mode .kreativ-hero-note,
-body.dark-mode .kreativ-hero-mini-card,
 body.dark-mode .kreativ-hero-tool-card,
 body.dark-mode .kreativ-section-eyebrow {
     background: rgba(20, 26, 44, 0.92);
@@ -303,31 +262,23 @@ body.dark-mode .kreativ-hero-panel {
     box-shadow: 0 24px 44px rgba(0, 0, 0, 0.32);
 }
 
-body.dark-mode .kreativ-hero-mini-label {
-    color: #95a0bf;
-}
-
-body.dark-mode .kreativ-hero-mini-value {
-    color: #ffffff;
-}
-
 body.dark-mode .kreativ-font-card .card,
 body.dark-mode .kreativ-font-card {
     background: transparent;
 }
 
 .kreativ-section {
-    padding: 1.1rem 0 0.85rem;
+    padding: 0.95rem 0 0.7rem;
     background: var(--kf-gradient);
     border-radius: 22px;
-    margin-bottom: 2.4rem;
+    margin-bottom: 2.05rem;
 }
 
 .kreativ-section-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
     gap: 1rem;
 }
 
@@ -392,7 +343,7 @@ body.dark-mode .kreativ-font-card {
     flex-wrap: wrap;
     justify-content: center;
     gap: 0.75rem;
-    margin: 0 0 1.5rem;
+    margin: 0 0 1.25rem;
 }
 
 .kreativ-font-filter {
@@ -434,13 +385,13 @@ body.dark-mode .kreativ-font-card {
 }
 
 .kreativ-section .row {
-    margin-left: -10px;
-    margin-right: -10px;
+    margin-left: -8px;
+    margin-right: -8px;
 }
 
 .kreativ-section .col-md-3,
 .kreativ-section .col-sm-6 {
-    padding: 10px;
+    padding: 8px;
 }
 
 .kreativ-card-action {
@@ -473,10 +424,6 @@ body.dark-mode .kreativ-font-card {
 
     .kreativ-hero-cta {
         width: 100%;
-    }
-
-    .kreativ-hero-mini-grid {
-        grid-template-columns: 1fr;
     }
 
     .kreativ-hero-panel {

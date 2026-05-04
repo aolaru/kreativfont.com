@@ -387,6 +387,107 @@
     filter: saturate(1.02);
 }
 
+.kreativ-font-cta {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1.2rem;
+    align-items: center;
+    margin: 2rem 0;
+    padding: 1.25rem;
+    border: 1px solid rgba(74, 74, 255, 0.12);
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(248, 249, 255, 0.96) 0%, rgba(255, 246, 250, 0.98) 100%);
+    box-shadow: 0 18px 42px rgba(18, 22, 34, 0.07);
+}
+
+.kreativ-font-cta-free {
+    background: linear-gradient(135deg, rgba(240, 255, 246, 0.96) 0%, rgba(248, 249, 255, 0.98) 100%);
+}
+
+.kreativ-font-cta-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.55rem;
+    color: #3d43a4;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.kreativ-font-cta h2 {
+    margin: 0 0 0.45rem;
+    color: #111827;
+    font-size: clamp(1.35rem, 2vw, 1.85rem);
+    line-height: 1.1;
+}
+
+.kreativ-font-cta p {
+    margin: 0;
+    max-width: 62ch;
+    color: #53607f;
+    font-size: 1rem;
+    line-height: 1.55;
+}
+
+.kreativ-font-cta-actions {
+    display: grid;
+    gap: 0.65rem;
+    justify-items: stretch;
+    min-width: 210px;
+}
+
+.kreativ-font-cta-button,
+.kreativ-post-content .kreativ-font-cta-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: 50px;
+    padding: 0.85rem 1.15rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #4a4aff 0%, #ff3366 100%);
+    color: #ffffff;
+    font-weight: 900;
+    line-height: 1.1;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 0 15px 30px rgba(74, 74, 255, 0.18);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.kreativ-font-cta-free .kreativ-font-cta-button,
+.kreativ-post-content .kreativ-font-cta-free .kreativ-font-cta-button {
+    background: linear-gradient(135deg, #18a058 0%, #4a4aff 100%);
+}
+
+.kreativ-font-cta-button:hover,
+.kreativ-font-cta-button:focus,
+.kreativ-post-content .kreativ-font-cta-button:hover,
+.kreativ-post-content .kreativ-font-cta-button:focus {
+    color: #ffffff;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 20px 36px rgba(74, 74, 255, 0.23);
+    filter: saturate(1.03);
+}
+
+.kreativ-font-cta-secondary {
+    display: inline-flex;
+    justify-content: center;
+    color: #4d5876;
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.kreativ-font-cta-secondary:hover,
+.kreativ-font-cta-secondary:focus {
+    color: #2d2def;
+    text-decoration: none;
+}
+
 .kreativ-page-shell.kreativ-tool-page .kreativ-page-content {
     border: 1px solid rgba(74, 74, 255, 0.08);
 }
@@ -864,6 +965,15 @@
         padding: 0.8rem;
     }
 
+    .kreativ-font-cta {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+
+    .kreativ-font-cta-actions {
+        min-width: 0;
+    }
+
     .kreativ-update-card {
         padding: 1.15rem 1rem;
     }
@@ -946,6 +1056,25 @@ body.dark-mode .kreativ-post-taxonomy-label {
 
 body.dark-mode .kreativ-post-tags-note {
     color: #8996c8;
+}
+
+body.dark-mode .kreativ-font-cta {
+    background: linear-gradient(135deg, rgba(20, 26, 44, 0.96) 0%, rgba(30, 24, 45, 0.98) 100%);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.26);
+}
+
+body.dark-mode .kreativ-font-cta-free {
+    background: linear-gradient(135deg, rgba(18, 40, 34, 0.96) 0%, rgba(20, 26, 44, 0.98) 100%);
+}
+
+body.dark-mode .kreativ-font-cta h2 {
+    color: #f4f7ff;
+}
+
+body.dark-mode .kreativ-font-cta p,
+body.dark-mode .kreativ-font-cta-secondary {
+    color: #aeb9da;
 }
 
 body.dark-mode .kreativ-post-secondary-discovery {

@@ -51,8 +51,6 @@ $free_fonts_slugs = function_exists( 'kreativ_get_free_fonts_category_slugs' ) ?
 
         <div class="kreativ-hero-notes">
             <span class="kreativ-hero-note"><i class="fa-solid fa-layer-group"></i> 4000+ curated fonts</span>
-            <span class="kreativ-hero-note"><i class="fa-solid fa-bolt"></i> Practical tools, not filler</span>
-            <span class="kreativ-hero-note"><i class="fa-solid fa-sparkles"></i> Discovery and utility in one place</span>
         </div>
     </div>
 
@@ -66,19 +64,6 @@ $free_fonts_slugs = function_exists( 'kreativ_get_free_fonts_category_slugs' ) ?
             <p class="kreativ-hero-panel-copy">Kreativ brings curation and utility together, so discovery does not stop at inspiration and tools do not live in a separate silo.</p>
         </div>
 
-        <div class="kreativ-hero-mini-grid">
-            <div class="kreativ-hero-mini-card">
-                <span class="kreativ-hero-mini-label">Browse</span>
-                <span class="kreativ-hero-mini-value">4000+</span>
-                <p class="kreativ-hero-mini-copy">curated fonts collected for discovery, comparison, and inspiration</p>
-            </div>
-
-            <div class="kreativ-hero-mini-card">
-                <span class="kreativ-hero-mini-label">Use</span>
-                <span class="kreativ-hero-mini-value">4</span>
-                <p class="kreativ-hero-mini-copy">core tools available right from the homepage</p>
-            </div>
-        </div>
     </div>
 
     <div class="kreativ-hero-tools">
@@ -122,7 +107,7 @@ if ( 'latest' === $active_font_filter && $free_fonts_slugs ) {
         'summary'    => 'Fresh premium releases for branding, packaging, editorial work, and sharper client-facing font choices.',
         'view_all'   => home_url( '/fonts' ),
         'show_filters' => true,
-        'posts_per_page' => 16,
+        'posts_per_page' => 12,
         'tax_query'  => array(
             array(
                 'taxonomy' => 'category',

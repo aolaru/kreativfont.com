@@ -6,6 +6,7 @@ $kreativ_includes = array(
     '/inc/cleanup.php',
     '/inc/login.php',
     '/inc/admin.php',
+    '/inc/shortcodes.php',
     '/inc/template-helpers.php',
 );
 
