@@ -4,16 +4,30 @@ Template Name: Updates Page
 */
 
 $kreativ_updates = array(
+    'May 2026' => array(
+        'title'   => 'Homepage and single-page flow simplified',
+        'summary' => 'May started with a simplification pass focused on making the site easier to scan, easier to maintain, and more consistent for future font posts.',
+        'items'   => array(
+            'The homepage was simplified with a cleaner hero, quieter tool links, tighter spacing, and fewer latest commercial font cards.',
+            'A reusable font CTA component was added so commercial and free font posts can use consistent purchase and download blocks.',
+            'Single font metadata was simplified so style, designer, and foundry stay primary while mood, use cases, and additional tags are presented with less visual weight.',
+            'Legacy catalog styling and single-page breadcrumb behavior were cleaned up so the theme is more consistently focused on fonts and font tools.',
+        ),
+    ),
     'April 2026' => array(
         'title'   => 'Search, taxonomy, and single-page clarity improved together',
-        'summary' => 'April focused on turning the site into a stronger font-discovery product, with better search behavior, stronger structured metadata, and more deliberate single-page presentation.',
+        'summary' => 'April focused on turning the site into a stronger font-discovery product, with better search behavior, stronger structured metadata, clearer browsing paths, and more deliberate single-page presentation.',
         'items'   => array(
             'A custom live suggestion dropdown was added to the header search.',
             'Suggestions now include font titles, designers, foundries, styles, moods, and use cases.',
             'Search result cards now explain what matched, and the full results page now follows the same structured matching logic as the live suggestions.',
+            'Search refinements were added so results can be narrowed by structured font taxonomy without leaving the results page.',
+            'The homepage now separates latest commercial fonts from latest free fonts, making browsing clearer as free-font publishing increases.',
             'Single-page hero metadata now prefers structured designer and foundry information.',
             'Single-page classification now prefers font style branches instead of generic category guesses.',
-            'Single-page navigation labels were corrected, and the hero title and summary widths were rebalanced.',
+            'Single font pages now show cleaner structured metadata for style, designer, foundry, mood, use cases, and secondary tags.',
+            'Mobile navigation was rebuilt and polished so the menu opens correctly above page content and the header no longer leaves extra spacing.',
+            'Single-page navigation labels were corrected, and hero title and summary widths were rebalanced.',
         ),
     ),
     'March 2026' => array(

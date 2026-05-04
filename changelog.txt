@@ -1,4 +1,8 @@
 Kreativ Font 2026
+- May 2026: homepage simplified with cleaner hero density, quieter tools row, tighter spacing, and fewer latest commercial font cards
+- May 2026: reusable font CTA shortcode/component added for consistent commercial purchase and free download blocks
+- May 2026: single font metadata footer simplified with primary style/designer/foundry context and lower-weight secondary labels
+- May 2026: remaining legacy catalog styling and single-page breadcrumb behavior cleaned up around the fonts-first product direction
 - broader modernization and fonts-first product direction carried forward from late 2025 into the March 2026 rebuild phase
 - repository initialized on GitHub for ongoing theme development
 - added a GitHub README for the private WordPress theme
@@ -30,6 +34,10 @@ Kreativ Font 2026
 - structured font taxonomy started powering hero metadata, single-page classification, and search behavior
 - custom live search suggestions added for font titles, designers, foundries, styles, moods, and use cases
 - search results page updated to follow the same structured matching logic as live suggestions
+- search refinements added for structured font taxonomy, with refinement counts and in-page filtering
+- homepage latest stream split into latest commercial fonts and latest free fonts
+- single font pages updated with structured taxonomy groups for style, designer, foundry, mood, use cases, and secondary tags
+- mobile header/off-canvas navigation overlap and spacing issues fixed
 - single font hero layout received another polish pass for title and summary balance
 
 ----------------------------------
