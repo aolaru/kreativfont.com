@@ -92,6 +92,84 @@ $free_fonts_slugs = function_exists( 'kreativ_get_free_fonts_category_slugs' ) ?
 </div>
 
 
+<!-- =====================================================
+     CURATED COLLECTIONS
+===================================================== -->
+<?php
+$kreativ_collection_links = array(
+    array(
+        'title' => 'Best Modern Sans Serif Fonts',
+        'url'   => home_url( '/best-modern-sans-serif-fonts' ),
+        'icon'  => 'fa-solid fa-circle-half-stroke',
+        'copy'  => 'Clean sans serif picks for modern interfaces, brands, and editorial systems.',
+    ),
+    array(
+        'title' => 'Best Elegant Serif Fonts',
+        'url'   => home_url( '/best-elegant-serif-fonts' ),
+        'icon'  => 'fa-solid fa-feather-pointed',
+        'copy'  => 'Refined serif choices for luxury, fashion, publishing, and premium branding.',
+    ),
+    array(
+        'title' => 'Best Logo Fonts',
+        'url'   => home_url( '/best-logo-fonts' ),
+        'icon'  => 'fa-solid fa-signature',
+        'copy'  => 'Typeface shortcuts for marks, identities, wordmarks, and brand systems.',
+    ),
+    array(
+        'title' => 'Best Fonts for Branding',
+        'url'   => home_url( '/best-fonts-for-branding' ),
+        'icon'  => 'fa-solid fa-bullseye',
+        'copy'  => 'Fonts selected around identity work, client projects, and visual positioning.',
+    ),
+    array(
+        'title' => 'Best Wedding Fonts',
+        'url'   => home_url( '/best-wedding-fonts' ),
+        'icon'  => 'fa-solid fa-ring',
+        'copy'  => 'Elegant, romantic, and decorative fonts for invitations and event design.',
+    ),
+    array(
+        'title' => 'Best Poster Fonts',
+        'url'   => home_url( '/best-poster-fonts' ),
+        'icon'  => 'fa-solid fa-rectangle-ad',
+        'copy'  => 'Display-ready fonts for campaigns, posters, covers, and bold compositions.',
+    ),
+    array(
+        'title' => 'Best Minimal Fonts',
+        'url'   => home_url( '/best-minimal-fonts' ),
+        'icon'  => 'fa-solid fa-minus',
+        'copy'  => 'Quiet, reduced, and practical fonts for clean visual systems.',
+    ),
+);
+?>
+
+<section class="container kreativ-section kreativ-collections-section">
+    <div class="kreativ-section-header">
+        <div class="kreativ-section-heading">
+            <span class="kreativ-section-eyebrow">Curated collections</span>
+            <h2 class="kreativ-section-title">
+                <i class="fa-solid fa-compass"></i>
+                Explore fonts by intent
+            </h2>
+            <p class="kreativ-section-summary">Focused dynamic pages built from style, mood, and use-case branches.</p>
+        </div>
+    </div>
+
+    <div class="kreativ-collections-grid">
+        <?php foreach ( $kreativ_collection_links as $collection ) : ?>
+            <a href="<?php echo esc_url( $collection['url'] ); ?>" class="kreativ-collection-card">
+                <span class="kreativ-collection-icon">
+                    <i class="<?php echo esc_attr( $collection['icon'] ); ?>" aria-hidden="true"></i>
+                </span>
+                <span class="kreativ-collection-content">
+                    <strong><?php echo esc_html( $collection['title'] ); ?></strong>
+                    <span><?php echo esc_html( $collection['copy'] ); ?></span>
+                </span>
+            </a>
+        <?php endforeach; ?>
+    </div>
+</section>
+
+
 
 <!-- =====================================================
      LATEST BY CATEGORY

@@ -338,6 +338,68 @@ body.dark-mode .kreativ-font-card {
     transform: translateX(3px);
 }
 
+.kreativ-collections-section {
+    padding: 1.2rem;
+}
+
+.kreativ-collections-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.85rem;
+}
+
+.kreativ-collection-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.85rem;
+    align-items: flex-start;
+    min-height: 100%;
+    padding: 1rem;
+    border: 1px solid rgba(74, 74, 255, 0.12);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.84);
+    color: #1a2137;
+    text-decoration: none;
+    box-shadow: 0 12px 30px rgba(64, 70, 130, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.kreativ-collection-card:hover {
+    border-color: rgba(74, 74, 255, 0.28);
+    color: #161b32;
+    text-decoration: none;
+    transform: translateY(-3px);
+    box-shadow: 0 18px 38px rgba(64, 70, 130, 0.12);
+}
+
+.kreativ-collection-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #5a46ff 0%, #ef2f75 100%);
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(74, 74, 255, 0.22);
+}
+
+.kreativ-collection-content {
+    display: grid;
+    gap: 0.32rem;
+}
+
+.kreativ-collection-content strong {
+    font-size: 1rem;
+    line-height: 1.22;
+}
+
+.kreativ-collection-content span {
+    color: #606a86;
+    font-size: 0.88rem;
+    line-height: 1.45;
+}
+
 .kreativ-font-filter-bar {
     display: flex;
     flex-wrap: wrap;
@@ -454,6 +516,20 @@ body.dark-mode .kreativ-font-card {
         flex-direction: column;
         align-items: stretch;
         margin-bottom: 1rem;
+    }
+
+    .kreativ-collections-section {
+        padding: 1rem;
+    }
+
+    .kreativ-collections-grid {
+        grid-template-columns: 1fr;
+        gap: 0.65rem;
+    }
+
+    .kreativ-collection-card {
+        padding: 0.9rem;
+        border-radius: 16px;
     }
 
     .kreativ-font-filter-bar {

@@ -1782,3 +1782,184 @@ function kreativ_render_font_card( $args = array() ) {
 
     kreativ_render_partial( 'partials/font-card.php', $font_card_args );
 }
+
+function kreativ_get_dynamic_font_collection_query_args( $config = array() ) {
+    $defaults = array(
+        'posts_per_page' => 24,
+        'orderby'        => array( 'date' => 'DESC' ),
+        'free_mode'      => '',
+        'branch_filters' => array(),
+    );
+
+    $config    = wp_parse_args( $config, $defaults );
+    $tax_query = array(
+        'relation' => 'AND',
+        array(
+            'taxonomy' => 'category',
+            'field'    => 'slug',
+            'terms'    => array( 'fonts' ),
+        ),
+    );
+
+    $free_fonts_slugs = kreativ_get_free_fonts_category_slugs();
+
+    if ( 'include' === $config['free_mode'] ) {
+        if ( empty( $free_fonts_slugs ) ) {
+            return array(
+                'post_type'      => 'post',
+                'post_status'    => 'publish',
+                'posts_per_page' => (int) $config['posts_per_page'],
+                'post__in'       => array( 0 ),
+            );
+        }
+
+        $tax_query[] = array(
+            'taxonomy' => 'category',
+            'field'    => 'slug',
+            'terms'    => $free_fonts_slugs,
+        );
+    }
+
+    if ( 'exclude' === $config['free_mode'] && ! empty( $free_fonts_slugs ) ) {
+        $tax_query[] = array(
+            'taxonomy' => 'category',
+            'field'    => 'slug',
+            'terms'    => $free_fonts_slugs,
+            'operator' => 'NOT IN',
+        );
+    }
+
+    $requested_branch_filters = 0;
+    $matched_branch_filters   = 0;
+
+    foreach ( (array) $config['branch_filters'] as $branch_filter ) {
+        if ( empty( $branch_filter['branch'] ) || empty( $branch_filter['slugs'] ) ) {
+            continue;
+        }
+
+        $requested_branch_filters++;
+        $clause = kreativ_get_font_filter_tax_clause( $branch_filter['branch'], $branch_filter['slugs'] );
+
+        if ( ! empty( $clause ) ) {
+            $matched_branch_filters++;
+            $tax_query[] = $clause;
+        }
+    }
+
+    if ( $requested_branch_filters > $matched_branch_filters ) {
+        return array(
+            'post_type'      => 'post',
+            'post_status'    => 'publish',
+            'posts_per_page' => (int) $config['posts_per_page'],
+            'post__in'       => array( 0 ),
+        );
+    }
+
+    return array(
+        'post_type'           => 'post',
+        'post_status'         => 'publish',
+        'posts_per_page'      => (int) $config['posts_per_page'],
+        'ignore_sticky_posts' => true,
+        'orderby'            => $config['orderby'],
+        'tax_query'          => $tax_query,
+    );
+}
+
+function kreativ_render_dynamic_font_collection_page( $config = array() ) {
+    $defaults = array(
+        'eyebrow'        => 'Font collection',
+        'eyebrow_icon'   => 'fa-solid fa-font',
+        'title'          => get_the_title(),
+        'summary'        => '',
+        'side_title'     => 'A focused shortcut into the font library.',
+        'side_copy'      => 'This page updates automatically from the current Kreativ Font taxonomy and published font posts.',
+        'badges'         => array(),
+        'badge_text'     => 'Fonts',
+        'badge_slug'     => 'fonts',
+        'context_note'   => '',
+        'empty_title'    => 'No matching fonts yet.',
+        'empty_copy'     => 'This collection will populate automatically when matching font posts are published.',
+        'posts_per_page' => 24,
+        'orderby'        => array( 'date' => 'DESC' ),
+        'free_mode'      => '',
+        'branch_filters' => array(),
+    );
+
+    $config = wp_parse_args( $config, $defaults );
+    $query  = new WP_Query( kreativ_get_dynamic_font_collection_query_args( $config ) );
+
+    get_header();
+    ?>
+
+    <div class="kreativ-page-shell kreativ-dynamic-collection-page">
+        <section class="kreativ-page-hero">
+            <div class="kreativ-page-hero-main">
+                <div class="kreativ-page-eyebrow">
+                    <i class="<?php echo esc_attr( $config['eyebrow_icon'] ); ?>" aria-hidden="true"></i>
+                    <?php echo esc_html( $config['eyebrow'] ); ?>
+                </div>
+
+                <h1 class="kreativ-page-title"><?php echo esc_html( $config['title'] ); ?></h1>
+
+                <?php if ( ! empty( $config['summary'] ) ) : ?>
+                    <p class="kreativ-page-summary"><?php echo esc_html( $config['summary'] ); ?></p>
+                <?php endif; ?>
+
+                <?php if ( ! empty( $config['badges'] ) ) : ?>
+                    <div class="kreativ-page-badges">
+                        <?php foreach ( $config['badges'] as $badge ) : ?>
+                            <span class="kreativ-page-badge">
+                                <?php if ( ! empty( $badge['icon'] ) ) : ?>
+                                    <i class="<?php echo esc_attr( $badge['icon'] ); ?>" aria-hidden="true"></i>
+                                <?php endif; ?>
+                                <?php echo esc_html( $badge['text'] ?? '' ); ?>
+                            </span>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <div class="kreativ-page-hero-side">
+                <div class="kreativ-page-side-card">
+                    <h2><?php echo esc_html( $config['side_title'] ); ?></h2>
+                    <p><?php echo esc_html( $config['side_copy'] ); ?></p>
+                </div>
+            </div>
+        </section>
+
+        <section class="kreativ-page-content">
+            <?php if ( $query->have_posts() ) : ?>
+                <div class="row kreativ-results-grid">
+                    <?php while ( $query->have_posts() ) : $query->the_post(); ?>
+                        <?php
+                        kreativ_render_font_card(
+                            array(
+                                'post_id'         => get_the_ID(),
+                                'badge_text'      => $config['badge_text'],
+                                'badge_slug'      => $config['badge_slug'],
+                                'context_note'    => $config['context_note'],
+                                'column_classes'  => 'col-md-4 col-lg-3 col-sm-6',
+                                'animation_class' => 'kreativ-card-animate',
+                            )
+                        );
+                        ?>
+                    <?php endwhile; ?>
+                </div>
+            <?php else : ?>
+                <div class="kreativ-empty-state">
+                    <h2><?php echo esc_html( $config['empty_title'] ); ?></h2>
+                    <p><?php echo esc_html( $config['empty_copy'] ); ?></p>
+                    <p>
+                        <a href="<?php echo esc_url( home_url( '/fonts' ) ); ?>" class="kreativ-hero-cta kreativ-hero-cta-primary">Browse Fonts</a>
+                        <a href="<?php echo esc_url( add_query_arg( 'font_filter', 'latest', home_url( '/fonts' ) ) ); ?>" class="kreativ-hero-cta kreativ-hero-cta-secondary">Explore Latest Fonts</a>
+                    </p>
+                </div>
+            <?php endif; ?>
+
+            <?php wp_reset_postdata(); ?>
+        </section>
+    </div>
+
+    <?php
+    get_footer();
+}
