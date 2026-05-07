@@ -1783,6 +1783,105 @@ function kreativ_render_font_card( $args = array() ) {
     kreativ_render_partial( 'partials/font-card.php', $font_card_args );
 }
 
+function kreativ_get_font_collection_links() {
+    $collections = array(
+        array(
+            'slug'     => 'trending-commercial-fonts',
+            'title'    => 'Trending Commercial Fonts',
+            'icon'     => 'fa-solid fa-chart-line',
+            'copy'     => 'Premium commercial font picks ranked by current library and activity signals.',
+            'featured' => true,
+        ),
+        array(
+            'slug'     => 'best-free-fonts-commercial-use',
+            'title'    => 'Best Free Fonts for Commercial Use',
+            'icon'     => 'fa-solid fa-gift',
+            'copy'     => 'Free font downloads with commercial-use context and licensing reminders.',
+            'featured' => true,
+        ),
+        array(
+            'slug'     => 'best-vintage-script-fonts',
+            'title'    => 'Best Vintage Script Fonts',
+            'icon'     => 'fa-solid fa-pen-nib',
+            'copy'     => 'Script fonts with a vintage mood for nostalgic branding and display work.',
+            'featured' => true,
+        ),
+        array(
+            'slug'     => 'best-modern-sans-serif-fonts',
+            'title'    => 'Best Modern Sans Serif Fonts',
+            'icon'     => 'fa-solid fa-circle-half-stroke',
+            'copy'     => 'Clean sans serif picks for modern interfaces, brands, and editorial systems.',
+            'featured' => true,
+        ),
+        array(
+            'slug'     => 'best-elegant-serif-fonts',
+            'title'    => 'Best Elegant Serif Fonts',
+            'icon'     => 'fa-solid fa-feather-pointed',
+            'copy'     => 'Refined serif choices for luxury, fashion, publishing, and premium branding.',
+            'featured' => false,
+        ),
+        array(
+            'slug'     => 'best-logo-fonts',
+            'title'    => 'Best Logo Fonts',
+            'icon'     => 'fa-solid fa-signature',
+            'copy'     => 'Typeface shortcuts for marks, identities, wordmarks, and brand systems.',
+            'featured' => false,
+        ),
+        array(
+            'slug'     => 'best-fonts-for-branding',
+            'title'    => 'Best Fonts for Branding',
+            'icon'     => 'fa-solid fa-bullseye',
+            'copy'     => 'Fonts selected around identity work, client projects, and visual positioning.',
+            'featured' => false,
+        ),
+        array(
+            'slug'     => 'best-wedding-fonts',
+            'title'    => 'Best Wedding Fonts',
+            'icon'     => 'fa-solid fa-ring',
+            'copy'     => 'Elegant, romantic, and decorative fonts for invitations and event design.',
+            'featured' => false,
+        ),
+        array(
+            'slug'     => 'best-poster-fonts',
+            'title'    => 'Best Poster Fonts',
+            'icon'     => 'fa-solid fa-rectangle-ad',
+            'copy'     => 'Display-ready fonts for campaigns, posters, covers, and bold compositions.',
+            'featured' => false,
+        ),
+        array(
+            'slug'     => 'best-minimal-fonts',
+            'title'    => 'Best Minimal Fonts',
+            'icon'     => 'fa-solid fa-minus',
+            'copy'     => 'Quiet, reduced, and practical fonts for clean visual systems.',
+            'featured' => false,
+        ),
+    );
+
+    foreach ( $collections as $index => $collection ) {
+        $collections[ $index ]['url']        = home_url( '/collections/' . $collection['slug'] );
+        $collections[ $index ]['legacy_url'] = home_url( '/' . $collection['slug'] );
+    }
+
+    return $collections;
+}
+
+function kreativ_redirect_legacy_font_collection_urls() {
+    if ( is_admin() || empty( $_SERVER['REQUEST_URI'] ) ) {
+        return;
+    }
+
+    $request_path = wp_parse_url( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ), PHP_URL_PATH );
+    $request_path = untrailingslashit( '/' . ltrim( (string) $request_path, '/' ) );
+
+    foreach ( kreativ_get_font_collection_links() as $collection ) {
+        if ( '/' . $collection['slug'] === $request_path ) {
+            wp_safe_redirect( $collection['url'], 301 );
+            exit;
+        }
+    }
+}
+add_action( 'template_redirect', 'kreativ_redirect_legacy_font_collection_urls' );
+
 function kreativ_get_dynamic_font_collection_query_args( $config = array() ) {
     $defaults = array(
         'posts_per_page' => 24,

@@ -73,7 +73,7 @@ function kreativ_enqueue_theme_assets() {
         kreativ_asset_version( '/css/kreativ-cards.css' )
     );
 
-    if ( is_page_template( 'template-filter-all.php' ) || is_page_template( 'template-filter-market.php' ) || is_page_template( 'template-filter-free.php' ) ) {
+    if ( is_page_template( 'template-filter-all.php' ) || is_page_template( 'template-filter-market.php' ) || is_page_template( 'template-filter-free.php' ) || is_page_template( 'page-collections.php' ) || is_page( 'collections' ) ) {
         wp_enqueue_style(
             'kreativ-home',
             get_template_directory_uri() . '/css/kreativ-home.css',
