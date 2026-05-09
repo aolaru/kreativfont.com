@@ -488,6 +488,29 @@
     text-decoration: none;
 }
 
+.kreativ-ad-slot {
+    display: block;
+    width: 100%;
+    max-width: 920px;
+    min-height: 120px;
+    margin: 2rem auto;
+    padding: 0.85rem;
+    border: 1px solid rgba(74, 74, 255, 0.08);
+    border-radius: 18px;
+    background: rgba(248, 249, 255, 0.58);
+    text-align: center;
+}
+
+.kreativ-ad-label {
+    display: block;
+    margin-bottom: 0.6rem;
+    color: #818aa7;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
 .kreativ-collection-intro {
     display: grid;
     gap: 1rem;
@@ -1315,7 +1338,8 @@ body.dark-mode .kreativ-single-collections {
 
 body.dark-mode .kreativ-collection-intro-points li,
 body.dark-mode .kreativ-collection-related-links a,
-body.dark-mode .kreativ-single-collection-card {
+body.dark-mode .kreativ-single-collection-card,
+body.dark-mode .kreativ-ad-slot {
     background: rgba(20, 26, 44, 0.92);
     border-color: rgba(255, 255, 255, 0.08);
     color: #dfe6fb;

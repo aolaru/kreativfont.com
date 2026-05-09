@@ -90,3 +90,49 @@ function kreativ_font_cta_shortcode( $atts = array(), $content = null, $shortcod
 }
 add_shortcode( 'kreativ_font_cta', 'kreativ_font_cta_shortcode' );
 add_shortcode( 'kreativ_font_download', 'kreativ_font_cta_shortcode' );
+
+function kreativ_adsense_shortcode( $atts = array() ) {
+    $atts = shortcode_atts(
+        array(
+            'slot'   => '',
+            'format' => 'auto',
+            'layout' => '',
+            'class'  => '',
+        ),
+        $atts,
+        'kreativ_adsense'
+    );
+
+    $slot = preg_replace( '/[^0-9]/', '', (string) $atts['slot'] );
+
+    if ( '' === $slot ) {
+        return '';
+    }
+
+    $format = sanitize_key( $atts['format'] );
+    $format = $format ? $format : 'auto';
+    $layout = sanitize_key( $atts['layout'] );
+    $class  = sanitize_html_class( $atts['class'] );
+
+    ob_start();
+    ?>
+    <aside class="kreativ-ad-slot <?php echo esc_attr( $class ); ?>" aria-label="Advertisement">
+        <span class="kreativ-ad-label">Advertisement</span>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-4706844277814411"
+             data-ad-slot="<?php echo esc_attr( $slot ); ?>"
+             data-ad-format="<?php echo esc_attr( $format ); ?>"
+             <?php if ( $layout ) : ?>
+                data-ad-layout="<?php echo esc_attr( $layout ); ?>"
+             <?php endif; ?>
+             data-full-width-responsive="true"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </aside>
+    <?php
+
+    return trim( ob_get_clean() );
+}
+add_shortcode( 'kreativ_adsense', 'kreativ_adsense_shortcode' );

@@ -77,17 +77,21 @@
 
     <?php wp_head(); ?>
 
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4E74M6PB1Y"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-4E74M6PB1Y');
-    </script>
+	    <!-- Google Analytics -->
+	    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4E74M6PB1Y"></script>
+	    <script>
+	        window.dataLayer = window.dataLayer || [];
+	        function gtag(){dataLayer.push(arguments);}
+	        gtag('js', new Date());
+	        gtag('config', 'G-4E74M6PB1Y');
+	    </script>
 
-    <!-- Affiliate / CJ Script (async for performance) -->
-    <script async src="https://www.anrdoezrs.net/am/100743026/include/allCj/generate/onLoad/impressions/page/am.js"></script>
+	    <!-- Google AdSense -->
+	    <meta name="google-adsense-account" content="ca-pub-4706844277814411">
+	    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4706844277814411" crossorigin="anonymous"></script>
+
+	    <!-- Affiliate / CJ Script (async for performance) -->
+	    <script async src="https://www.anrdoezrs.net/am/100743026/include/allCj/generate/onLoad/impressions/page/am.js"></script>
 
     <!-- Schema.org Organization -->
     <script type="application/ld+json">
@@ -112,8 +116,8 @@
 <header class="kreativ-header">
     <div class="container">
         <nav class="navbar navbar-expand-lg">
-            <div class="navbar-collapse offcanvas-collapse">
-                
+	            <div class="navbar-collapse offcanvas-collapse">
+
                 <div class="kreativ-hdr-left">
                     <h1 class="kreativ-logo">
 						<a href="<?php echo esc_url( $site_url ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
@@ -127,7 +131,7 @@
 						</a>
 					</h1>
 
-                </div>				
+	                </div>
 
                 <div class="kreativ-search">
                     <form method="get" id="searchform" class="kreativ-search-form" action="<?php echo esc_url( $site_url ); ?>" role="search" aria-label="Search Kreativ Font">
