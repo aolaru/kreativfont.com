@@ -11,6 +11,14 @@ kreativ_render_dynamic_font_collection_page(
         'summary'        => 'A dynamic collection of script fonts with a vintage mood, built from the structured Font Style and Font Mood branches.',
         'side_title'     => 'Useful when style and mood matter together.',
         'side_copy'      => 'This page combines the Script style branch with the Vintage mood branch, so the results stay tighter than a broad tag archive.',
+        'intro_title'    => 'Vintage script fonts work best when the mood is intentional.',
+        'intro_copy'     => 'Use this collection for nostalgic marks, packaging, labels, wedding pieces, and display work where a hand-lettered or retro voice is part of the concept.',
+        'intro_points'   => array(
+            'Good for labels, invitations, retro brands, and packaging.',
+            'Combines Script style with Vintage mood.',
+            'Best for display use, not long-form reading.',
+        ),
+        'related_slugs'  => array( 'best-wedding-fonts', 'best-logo-fonts', 'best-poster-fonts' ),
         'badges'         => array(
             array(
                 'icon' => 'fa-solid fa-pen-nib',

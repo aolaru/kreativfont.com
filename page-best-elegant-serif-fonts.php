@@ -11,6 +11,14 @@ kreativ_render_dynamic_font_collection_page(
         'summary'        => 'A dynamic collection of elegant serif fonts for luxury identities, editorial layouts, fashion systems, packaging, and polished brand work.',
         'side_title'     => 'Refined serifs for premium work.',
         'side_copy'      => 'This page combines the Serif style branch with the Elegant mood branch, so the results stay useful for high-end visual decisions.',
+        'intro_title'    => 'Elegant serifs are useful when the design needs authority and polish.',
+        'intro_copy'     => 'This collection focuses on serif fonts that feel refined enough for premium brands, magazines, beauty, fashion, restaurants, packaging, and editorial identity work.',
+        'intro_points'   => array(
+            'Good for luxury, fashion, editorial, and packaging.',
+            'Combines Serif style with Elegant mood.',
+            'Best when tone matters as much as readability.',
+        ),
+        'related_slugs'  => array( 'trending-commercial-fonts', 'best-fonts-for-branding', 'best-wedding-fonts' ),
         'badges'         => array(
             array(
                 'icon' => 'fa-solid fa-font',

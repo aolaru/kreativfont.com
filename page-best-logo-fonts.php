@@ -11,6 +11,14 @@ kreativ_render_dynamic_font_collection_page(
         'summary'        => 'A dynamic collection of fonts suited for logos, wordmarks, identity systems, and distinctive brand marks.',
         'side_title'     => 'Fast entry point for identity work.',
         'side_copy'      => 'This page pulls from the Logo use-case branch, keeping the collection aligned with branding and mark-making intent.',
+        'intro_title'    => 'Logo fonts need distinct shape, not just readability.',
+        'intro_copy'     => 'Use this collection for wordmarks, brand marks, and identity concepts where the font needs to carry personality before the full visual system exists.',
+        'intro_points'   => array(
+            'Good for wordmarks, marks, and identity exploration.',
+            'Pulls from the Logo use-case branch.',
+            'Look for memorable shapes and strong spacing.',
+        ),
+        'related_slugs'  => array( 'best-fonts-for-branding', 'best-modern-sans-serif-fonts', 'best-vintage-script-fonts' ),
         'badges'         => array(
             array(
                 'icon' => 'fa-solid fa-signature',

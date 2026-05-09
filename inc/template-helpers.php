@@ -1865,6 +1865,18 @@ function kreativ_get_font_collection_links() {
     return $collections;
 }
 
+function kreativ_get_font_collection_link_by_slug( $slug ) {
+    $slug = sanitize_title( $slug );
+
+    foreach ( kreativ_get_font_collection_links() as $collection ) {
+        if ( $slug === $collection['slug'] ) {
+            return $collection;
+        }
+    }
+
+    return array();
+}
+
 function kreativ_redirect_legacy_font_collection_urls() {
     if ( is_admin() || empty( $_SERVER['REQUEST_URI'] ) ) {
         return;
@@ -1881,6 +1893,162 @@ function kreativ_redirect_legacy_font_collection_urls() {
     }
 }
 add_action( 'template_redirect', 'kreativ_redirect_legacy_font_collection_urls' );
+
+function kreativ_post_has_category_slugs( $post = null, $slugs = array() ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post ) {
+        return false;
+    }
+
+    $slugs = array_filter( array_map( 'sanitize_title', (array) $slugs ) );
+
+    if ( empty( $slugs ) ) {
+        return false;
+    }
+
+    $terms = get_the_terms( $post->ID, 'category' );
+
+    if ( ! $terms || is_wp_error( $terms ) ) {
+        return false;
+    }
+
+    foreach ( $terms as $term ) {
+        if ( in_array( $term->slug, $slugs, true ) ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function kreativ_post_has_branch_term_slugs( $post = null, $branch_key = '', $slugs = array() ) {
+    $terms = kreativ_get_post_category_branch_terms( $post, $branch_key );
+    $slugs = array_filter( array_map( 'sanitize_title', (array) $slugs ) );
+
+    if ( empty( $terms ) || empty( $slugs ) ) {
+        return false;
+    }
+
+    foreach ( $terms as $term ) {
+        if ( in_array( $term->slug, $slugs, true ) ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function kreativ_get_single_related_font_collections( $post = null, $limit = 4 ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post ) {
+        return array();
+    }
+
+    $related = array();
+    $add_collection = static function( $slug ) use ( &$related ) {
+        if ( isset( $related[ $slug ] ) ) {
+            return;
+        }
+
+        $collection = kreativ_get_font_collection_link_by_slug( $slug );
+
+        if ( ! empty( $collection ) ) {
+            $related[ $slug ] = $collection;
+        }
+    };
+
+    $is_free = kreativ_post_has_category_slugs( $post, kreativ_get_free_fonts_category_slugs() );
+
+    if ( $is_free ) {
+        $add_collection( 'best-free-fonts-commercial-use' );
+    } else {
+        $add_collection( 'trending-commercial-fonts' );
+    }
+
+    if (
+        kreativ_post_has_branch_term_slugs( $post, 'font_style', array( 'sans-serif', 'sansserif' ) )
+        && kreativ_post_has_branch_term_slugs( $post, 'font_mood', array( 'modern' ) )
+    ) {
+        $add_collection( 'best-modern-sans-serif-fonts' );
+    }
+
+    if (
+        kreativ_post_has_branch_term_slugs( $post, 'font_style', array( 'script' ) )
+        && kreativ_post_has_branch_term_slugs( $post, 'font_mood', array( 'vintage' ) )
+    ) {
+        $add_collection( 'best-vintage-script-fonts' );
+    }
+
+    if (
+        kreativ_post_has_branch_term_slugs( $post, 'font_style', array( 'serif' ) )
+        && kreativ_post_has_branch_term_slugs( $post, 'font_mood', array( 'elegant' ) )
+    ) {
+        $add_collection( 'best-elegant-serif-fonts' );
+    }
+
+    if ( kreativ_post_has_branch_term_slugs( $post, 'font_mood', array( 'minimal' ) ) ) {
+        $add_collection( 'best-minimal-fonts' );
+    }
+
+    foreach ( array(
+        'logo'     => 'best-logo-fonts',
+        'branding' => 'best-fonts-for-branding',
+        'wedding'  => 'best-wedding-fonts',
+        'poster'   => 'best-poster-fonts',
+    ) as $use_case_slug => $collection_slug ) {
+        if ( kreativ_post_has_branch_term_slugs( $post, 'font_use_case', array( $use_case_slug ) ) ) {
+            $add_collection( $collection_slug );
+        }
+    }
+
+    return array_slice( array_values( $related ), 0, max( 1, (int) $limit ) );
+}
+
+function kreativ_get_single_font_quick_download_data( $post = null ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post || ! kreativ_post_has_category_slugs( $post, kreativ_get_free_fonts_category_slugs() ) ) {
+        return array();
+    }
+
+    $content = (string) $post->post_content;
+    $download_url = '';
+    $source_url   = '';
+
+    if ( preg_match( '/\\[kreativ_font_download[^\\]]*\\surl=(["\\\'])(.*?)\\1/i', $content, $match ) ) {
+        $download_url = esc_url_raw( html_entity_decode( $match[2], ENT_QUOTES, get_bloginfo( 'charset' ) ) );
+    }
+
+    if ( preg_match_all( '/<a\\s[^>]*href=(["\\\'])(.*?)\\1[^>]*>(.*?)<\\/a>/is', $content, $matches, PREG_SET_ORDER ) ) {
+        foreach ( $matches as $match ) {
+            $href = esc_url_raw( html_entity_decode( wp_strip_all_tags( $match[2] ), ENT_QUOTES, get_bloginfo( 'charset' ) ) );
+            $text = strtolower( wp_strip_all_tags( html_entity_decode( $match[3], ENT_QUOTES, get_bloginfo( 'charset' ) ) ) );
+
+            if ( '' === $href ) {
+                continue;
+            }
+
+            if ( ! $download_url && ( false !== strpos( strtolower( $href ), '.zip' ) || false !== strpos( $text, 'download' ) || false !== strpos( $text, 'zip' ) ) ) {
+                $download_url = $href;
+            }
+
+            if ( ! $source_url && false !== strpos( strtolower( $href ), 'fonts.google.com' ) ) {
+                $source_url = $href;
+            }
+        }
+    }
+
+    if ( ! $download_url && ! $source_url ) {
+        return array();
+    }
+
+    return array(
+        'download_url' => $download_url,
+        'source_url'   => $source_url,
+    );
+}
 
 function kreativ_get_dynamic_font_collection_query_args( $config = array() ) {
     $defaults = array(
@@ -1976,6 +2144,10 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
         'badge_text'     => 'Fonts',
         'badge_slug'     => 'fonts',
         'context_note'   => '',
+        'intro_title'    => '',
+        'intro_copy'     => '',
+        'intro_points'   => array(),
+        'related_slugs'  => array(),
         'empty_title'    => 'No matching fonts yet.',
         'empty_copy'     => 'This collection will populate automatically when matching font posts are published.',
         'posts_per_page' => 24,
@@ -2027,6 +2199,41 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
         </section>
 
         <section class="kreativ-page-content">
+            <?php if ( ! empty( $config['intro_title'] ) || ! empty( $config['intro_copy'] ) || ! empty( $config['intro_points'] ) || ! empty( $config['related_slugs'] ) ) : ?>
+                <section class="kreativ-collection-intro">
+                    <div class="kreativ-collection-intro-copy">
+                        <?php if ( ! empty( $config['intro_title'] ) ) : ?>
+                            <h2><?php echo esc_html( $config['intro_title'] ); ?></h2>
+                        <?php endif; ?>
+
+                        <?php if ( ! empty( $config['intro_copy'] ) ) : ?>
+                            <p><?php echo esc_html( $config['intro_copy'] ); ?></p>
+                        <?php endif; ?>
+                    </div>
+
+                    <?php if ( ! empty( $config['intro_points'] ) ) : ?>
+                        <ul class="kreativ-collection-intro-points">
+                            <?php foreach ( $config['intro_points'] as $point ) : ?>
+                                <li><i class="fa-solid fa-check" aria-hidden="true"></i> <?php echo esc_html( $point ); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+
+                    <?php if ( ! empty( $config['related_slugs'] ) ) : ?>
+                        <div class="kreativ-collection-related-links">
+                            <span>Related collections</span>
+                            <?php foreach ( $config['related_slugs'] as $related_slug ) : ?>
+                                <?php $related_collection = kreativ_get_font_collection_link_by_slug( $related_slug ); ?>
+                                <?php if ( empty( $related_collection ) ) { continue; } ?>
+                                <a href="<?php echo esc_url( $related_collection['url'] ); ?>">
+                                    <?php echo esc_html( $related_collection['title'] ); ?>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </section>
+            <?php endif; ?>
+
             <?php if ( $query->have_posts() ) : ?>
                 <div class="row kreativ-results-grid">
                     <?php while ( $query->have_posts() ) : $query->the_post(); ?>

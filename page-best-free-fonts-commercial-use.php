@@ -11,6 +11,14 @@ kreativ_render_dynamic_font_collection_page(
         'summary'        => 'A dynamic shortcut to free font posts that are useful for commercial projects, experiments, and lower-friction creative work.',
         'side_title'     => 'Free fonts still need license checks.',
         'side_copy'      => 'This page pulls from the Free Fonts category. Always verify the included license before using a font in client or commercial work.',
+        'intro_title'    => 'Free fonts are useful when licensing is clear.',
+        'intro_copy'     => 'This collection is designed for quick testing, mockups, and production cases where a free font can work. Always confirm the included license before using any typeface in paid or public-facing work.',
+        'intro_points'   => array(
+            'Good for experiments, prototypes, and lower-budget projects.',
+            'Prioritizes posts from the Free Fonts category.',
+            'Check the license before commercial launch.',
+        ),
+        'related_slugs'  => array( 'best-modern-sans-serif-fonts', 'best-logo-fonts', 'best-fonts-for-branding' ),
         'badges'         => array(
             array(
                 'icon' => 'fa-solid fa-gift',

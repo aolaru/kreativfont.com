@@ -11,6 +11,14 @@ kreativ_render_dynamic_font_collection_page(
         'summary'        => 'A dynamic collection of poster fonts for campaigns, covers, announcements, display typography, and high-impact compositions.',
         'side_title'     => 'Built for expressive display decisions.',
         'side_copy'      => 'This page pulls from the Poster use-case branch, keeping the collection useful for loud, visual, and campaign-driven typography.',
+        'intro_title'    => 'Poster fonts need impact before detail.',
+        'intro_copy'     => 'Use this collection for layouts where type has to carry the composition: posters, covers, announcements, social graphics, and campaign headlines.',
+        'intro_points'   => array(
+            'Good for display typography and campaign visuals.',
+            'Pulls from the Poster use-case branch.',
+            'Prioritize scale, contrast, and immediate recognition.',
+        ),
+        'related_slugs'  => array( 'best-logo-fonts', 'best-vintage-script-fonts', 'trending-commercial-fonts' ),
         'badges'         => array(
             array(
                 'icon' => 'fa-solid fa-rectangle-ad',

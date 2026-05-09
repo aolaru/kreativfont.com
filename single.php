@@ -16,6 +16,8 @@ $residual_tags   = kreativ_get_single_residual_tags( get_post() );
 $breadcrumb_items = kreativ_get_single_breadcrumb_items( get_post() );
 $primary_taxonomy_groups = array_intersect_key( $taxonomy_groups, array_flip( array( 'font_style', 'designer', 'foundry' ) ) );
 $secondary_taxonomy_groups = array_diff_key( $taxonomy_groups, $primary_taxonomy_groups );
+$related_collections = kreativ_get_single_related_font_collections( get_post(), 4 );
+$quick_download      = kreativ_get_single_font_quick_download_data( get_post() );
 
 if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', $page_summary ) ) {
     $page_summary = '';
@@ -72,9 +74,64 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
             <?php endforeach; ?>
         </p>
 
+        <?php if ( ! empty( $quick_download ) ) : ?>
+            <aside class="kreativ-single-quick-download">
+                <div>
+                    <span class="kreativ-single-quick-label">
+                        <i class="fa-solid fa-download" aria-hidden="true"></i>
+                        Quick download
+                    </span>
+                    <h2>Get the font package before reading the full details.</h2>
+                    <p>Use the full page below for specimen, license notes, and package details before production work.</p>
+                </div>
+
+                <div class="kreativ-single-quick-actions">
+                    <?php if ( ! empty( $quick_download['download_url'] ) ) : ?>
+                        <a href="<?php echo esc_url( $quick_download['download_url'] ); ?>" class="kreativ-font-cta-button" target="_blank" rel="nofollow noopener">
+                            Download ZIP
+                            <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+                        </a>
+                    <?php endif; ?>
+
+                    <?php if ( ! empty( $quick_download['source_url'] ) ) : ?>
+                        <a href="<?php echo esc_url( $quick_download['source_url'] ); ?>" class="kreativ-font-cta-secondary" target="_blank" rel="nofollow noopener">
+                            View source
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </aside>
+        <?php endif; ?>
+
         <article class="kreativ-post-content">
             <?php the_content(); ?>
         </article>
+
+        <?php if ( ! empty( $related_collections ) ) : ?>
+            <section class="kreativ-single-collections" aria-labelledby="kreativ-single-collections-title">
+                <div class="kreativ-single-collections-head">
+                    <span class="kreativ-single-collections-label">
+                        <i class="fa-solid fa-compass" aria-hidden="true"></i>
+                        More ways to browse
+                    </span>
+                    <h2 id="kreativ-single-collections-title">Related font collections</h2>
+                    <p>Continue from this font into focused collections built from style, mood, use case, and licensing context.</p>
+                </div>
+
+                <div class="kreativ-single-collections-grid">
+                    <?php foreach ( $related_collections as $collection ) : ?>
+                        <a href="<?php echo esc_url( $collection['url'] ); ?>" class="kreativ-single-collection-card">
+                            <span class="kreativ-single-collection-icon">
+                                <i class="<?php echo esc_attr( $collection['icon'] ); ?>" aria-hidden="true"></i>
+                            </span>
+                            <span>
+                                <strong><?php echo esc_html( $collection['title'] ); ?></strong>
+                                <small><?php echo esc_html( $collection['copy'] ); ?></small>
+                            </span>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+        <?php endif; ?>
 
         <div class="kreativ-share-bar">
             <span class="kreativ-share-label">Share</span>

@@ -6,25 +6,33 @@
 				</div>
 
 				<div class="kreativ-footer-links">
-					<div class="kreativ-footer-group">
-						<h2>Explore</h2>
-						<a href="https://kreativfont.com/fonts">Fonts</a>
-						<a href="https://kreativfont.com/tools">Font Tools</a>
-						<a href="<?php echo esc_url( add_query_arg( 'font_filter', 'free', home_url( '/fonts' ) ) ); ?>">Free Fonts</a>
-						<a href="/blog">Blog</a>
-					</div>
+						<div class="kreativ-footer-group">
+							<h2>Explore</h2>
+							<a href="https://kreativfont.com/fonts">Fonts</a>
+							<a href="<?php echo esc_url( home_url( '/collections' ) ); ?>">Collections</a>
+							<a href="https://kreativfont.com/tools">Font Tools</a>
+							<a href="<?php echo esc_url( add_query_arg( 'font_filter', 'free', home_url( '/fonts' ) ) ); ?>">Free Fonts</a>
+							<a href="/blog">Blog</a>
+						</div>
 
-					<div class="kreativ-footer-group">
-						<h2>Info</h2>
+						<div class="kreativ-footer-group">
+							<h2>Info</h2>
 						<a href="/blog/about">About</a>
 						<a href="/updates">Updates</a>
 						<a href="/blog/contact">Contact</a>
 						<a href="/blog/terms-of-use">Terms of Use</a>
-						<a href="/blog/privacy-policy">Privacy Policy</a>
-					</div>
+							<a href="/blog/privacy-policy">Privacy Policy</a>
+						</div>
 
-					<div class="kreativ-footer-group">
-						<h2>Network</h2>
+						<div class="kreativ-footer-group">
+							<h2>Collections</h2>
+							<a href="<?php echo esc_url( home_url( '/collections/trending-commercial-fonts' ) ); ?>">Trending Commercial</a>
+							<a href="<?php echo esc_url( home_url( '/collections/best-free-fonts-commercial-use' ) ); ?>">Free Commercial Use</a>
+							<a href="<?php echo esc_url( home_url( '/collections/best-modern-sans-serif-fonts' ) ); ?>">Modern Sans Serif</a>
+						</div>
+
+						<div class="kreativ-footer-group">
+							<h2>Network</h2>
 						<a href="https://kreativtools.com/" target="_blank" rel="noopener">Kreativ Tools</a>
 						<a href="https://kreativsound.com" target="_blank" rel="noopener">Kreativ Sound</a>
 						<a href="https://kreativwp.com" target="_blank" rel="noopener">Kreativ WP</a>

@@ -11,6 +11,14 @@ kreativ_render_dynamic_font_collection_page(
         'summary'        => 'A dynamic collection of fonts for brand systems, client identities, campaign work, packaging, and broader visual positioning.',
         'side_title'     => 'A practical collection for client-facing work.',
         'side_copy'      => 'This page pulls from the Branding use-case branch, so it stays focused on fonts with identity and positioning value.',
+        'intro_title'    => 'Brand fonts need to work beyond one mockup.',
+        'intro_copy'     => 'Use this collection when the typeface needs to support a broader identity system: logos, headlines, packaging, social posts, websites, and campaign material.',
+        'intro_points'   => array(
+            'Good for client identity systems and campaigns.',
+            'Pulls from the Branding use-case branch.',
+            'Prioritize flexibility, family depth, and recognizability.',
+        ),
+        'related_slugs'  => array( 'best-logo-fonts', 'trending-commercial-fonts', 'best-modern-sans-serif-fonts' ),
         'badges'         => array(
             array(
                 'icon' => 'fa-solid fa-bullseye',
