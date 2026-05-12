@@ -1,4 +1,18 @@
-<?php get_header(); ?>
+<?php
+get_header();
+
+$kreativ_404_collections = array();
+
+foreach ( kreativ_get_font_collection_links() as $collection ) {
+    if ( ! empty( $collection['featured'] ) ) {
+        $kreativ_404_collections[] = $collection;
+    }
+
+    if ( 4 <= count( $kreativ_404_collections ) ) {
+        break;
+    }
+}
+?>
 
 <div class="kreativ-page-shell">
     <section class="kreativ-page-hero">
@@ -8,22 +22,22 @@
                 404 error
             </div>
 
-            <h1 class="kreativ-page-title">Nothing found</h1>
+            <h1 class="kreativ-page-title">Page not found</h1>
 
             <p class="kreativ-page-summary">
-                The page you were looking for does not exist or may have moved. Search again or jump back into the main font library.
+                The page you were looking for may have moved. Search the font library or jump into one of the main browsing paths.
             </p>
 
             <div class="kreativ-page-badges">
-                <span class="kreativ-page-badge"><i class="fa-solid fa-magnifying-glass"></i> Search the site</span>
-                <span class="kreativ-page-badge"><i class="fa-solid fa-house"></i> Return to browsing</span>
+                <a class="kreativ-page-badge" href="<?php echo esc_url( home_url( '/fonts' ) ); ?>"><i class="fa-solid fa-font" aria-hidden="true"></i> Browse Fonts</a>
+                <a class="kreativ-page-badge" href="<?php echo esc_url( home_url( '/collections' ) ); ?>"><i class="fa-solid fa-compass" aria-hidden="true"></i> View Collections</a>
             </div>
         </div>
 
         <div class="kreativ-page-hero-side">
             <div class="kreativ-page-side-card">
-                <h2>Keep the dead end useful.</h2>
-                <p>The 404 page should route people back into search and discovery instead of feeling like a generic fallback.</p>
+                <h2>Let's find the right font instead.</h2>
+                <p>Use search, browse the main library, or start from a focused collection.</p>
             </div>
         </div>
     </section>
@@ -31,16 +45,45 @@
     <section class="kreativ-page-content">
         <?php get_search_form(); ?>
 
-        <div class="kreativ-empty-state">
-            <p><a href="<?php echo esc_url( home_url( '/fonts' ) ); ?>">Browse Fonts</a> or return to the <a href="<?php echo esc_url( home_url( '/' ) ); ?>">homepage</a>.</p>
-        </div>
+        <?php if ( ! empty( $kreativ_404_collections ) ) : ?>
+            <section class="kreativ-404-section">
+                <div class="kreativ-section-header">
+                    <div class="kreativ-section-heading">
+                        <span class="kreativ-section-eyebrow">Recommended paths</span>
+                        <h2 class="kreativ-section-title">
+                            <i class="fa-solid fa-compass" aria-hidden="true"></i>
+                            Browse by intent
+                        </h2>
+                        <p class="kreativ-section-summary">Start from one of the main dynamic collections instead of guessing the old URL.</p>
+                    </div>
+                </div>
+
+                <div class="kreativ-collections-grid">
+                    <?php foreach ( $kreativ_404_collections as $collection ) : ?>
+                        <a href="<?php echo esc_url( $collection['url'] ); ?>" class="kreativ-collection-card">
+                            <span class="kreativ-collection-icon">
+                                <i class="<?php echo esc_attr( $collection['icon'] ); ?>" aria-hidden="true"></i>
+                            </span>
+                            <span class="kreativ-collection-content">
+                                <strong><?php echo esc_html( $collection['title'] ); ?></strong>
+                                <span><?php echo esc_html( $collection['copy'] ); ?></span>
+                            </span>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+        <?php endif; ?>
 
         <section class="kreativ-related-posts">
             <div class="kreativ-section-header">
-                <h2 class="kreativ-section-title">
-                    <i class="fa-solid fa-compass" aria-hidden="true"></i>
-                    Explore More
-                </h2>
+                <div class="kreativ-section-heading">
+                    <span class="kreativ-section-eyebrow">Fresh from the library</span>
+                    <h2 class="kreativ-section-title">
+                        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+                        Recently Added Fonts
+                    </h2>
+                    <p class="kreativ-section-summary">A few recent font posts to help you continue browsing.</p>
+                </div>
             </div>
 
             <div class="row">
@@ -48,7 +91,7 @@
                 $suggested_query = new WP_Query(
                     array(
                         'post_type'           => 'post',
-                        'posts_per_page'      => 8,
+                        'posts_per_page'      => 4,
                         'ignore_sticky_posts' => true,
                     )
                 );
