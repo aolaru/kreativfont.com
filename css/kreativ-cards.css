@@ -26,6 +26,8 @@
 
 .kreativ-card-media img {
     width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
     display: block;
     transition: transform 0.3s ease;
 }
@@ -111,4 +113,38 @@
 
 .kreativ-card-animate:nth-child(4) {
     animation-delay: 0.15s;
+}
+
+@media (max-width: 767px) {
+    .kreativ-font-card {
+        padding: 0.72rem;
+        border-radius: 12px;
+    }
+
+    .kreativ-font-card h3 {
+        margin-top: 0.58rem;
+        font-size: 0.92rem;
+        line-height: 1.28;
+    }
+
+    .kf-badge,
+    .kf-badge-new {
+        top: 0.55rem;
+        font-size: 0.62rem;
+    }
+
+    .kf-badge {
+        left: 0.55rem;
+        padding: 0.16rem 0.48rem;
+    }
+
+    .kf-badge-new {
+        right: 0.55rem;
+        padding: 0.16rem 0.42rem;
+    }
+
+    .kreativ-card-context-note {
+        margin-top: 0.32rem;
+        font-size: 0.78rem;
+    }
 }

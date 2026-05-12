@@ -17,7 +17,7 @@ $breadcrumb_items = kreativ_get_single_breadcrumb_items( get_post() );
 $primary_taxonomy_groups = array_intersect_key( $taxonomy_groups, array_flip( array( 'font_style', 'designer', 'foundry' ) ) );
 $secondary_taxonomy_groups = array_diff_key( $taxonomy_groups, $primary_taxonomy_groups );
 $related_collections = kreativ_get_single_related_font_collections( get_post(), 4 );
-$quick_download      = kreativ_get_single_font_quick_download_data( get_post() );
+$primary_action      = kreativ_get_single_font_primary_action_data( get_post() );
 
 if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', $page_summary ) ) {
     $page_summary = '';
@@ -74,28 +74,28 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
             <?php endforeach; ?>
         </p>
 
-        <?php if ( ! empty( $quick_download ) ) : ?>
-            <aside class="kreativ-single-quick-download">
+        <?php if ( ! empty( $primary_action ) ) : ?>
+            <aside class="kreativ-single-quick-download kreativ-single-quick-download-<?php echo esc_attr( $primary_action['type'] ); ?>">
                 <div>
                     <span class="kreativ-single-quick-label">
-                        <i class="fa-solid fa-download" aria-hidden="true"></i>
-                        Quick download
+                        <i class="<?php echo esc_attr( $primary_action['icon'] ); ?>" aria-hidden="true"></i>
+                        <?php echo esc_html( $primary_action['eyebrow'] ); ?>
                     </span>
-                    <h2>Get the font package before reading the full details.</h2>
-                    <p>Use the full page below for specimen, license notes, and package details before production work.</p>
+                    <h2><?php echo esc_html( $primary_action['title'] ); ?></h2>
+                    <p><?php echo esc_html( $primary_action['copy'] ); ?></p>
                 </div>
 
                 <div class="kreativ-single-quick-actions">
-                    <?php if ( ! empty( $quick_download['download_url'] ) ) : ?>
-                        <a href="<?php echo esc_url( $quick_download['download_url'] ); ?>" class="kreativ-font-cta-button" target="_blank" rel="nofollow noopener">
-                            Download ZIP
-                            <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+                    <?php if ( ! empty( $primary_action['primary_url'] ) ) : ?>
+                        <a href="<?php echo esc_url( $primary_action['primary_url'] ); ?>" class="kreativ-font-cta-button" target="_blank" rel="<?php echo esc_attr( $primary_action['primary_rel'] ); ?>">
+                            <?php echo esc_html( $primary_action['primary_label'] ); ?>
+                            <i class="<?php echo esc_attr( $primary_action['primary_icon'] ); ?>" aria-hidden="true"></i>
                         </a>
                     <?php endif; ?>
 
-                    <?php if ( ! empty( $quick_download['source_url'] ) ) : ?>
-                        <a href="<?php echo esc_url( $quick_download['source_url'] ); ?>" class="kreativ-font-cta-secondary" target="_blank" rel="nofollow noopener">
-                            View source
+                    <?php if ( ! empty( $primary_action['secondary_url'] ) ) : ?>
+                        <a href="<?php echo esc_url( $primary_action['secondary_url'] ); ?>" class="kreativ-font-cta-secondary"<?php echo ! empty( $primary_action['secondary_blank'] ) ? ' target="_blank"' : ''; ?><?php echo ! empty( $primary_action['secondary_rel'] ) ? ' rel="' . esc_attr( $primary_action['secondary_rel'] ) . '"' : ''; ?>>
+                            <?php echo esc_html( $primary_action['secondary_label'] ); ?>
                         </a>
                     <?php endif; ?>
                 </div>

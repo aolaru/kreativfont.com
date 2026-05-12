@@ -2006,11 +2006,16 @@ function kreativ_get_single_related_font_collections( $post = null, $limit = 4 )
         $add_collection( 'best-minimal-fonts' );
     }
 
+    if ( kreativ_post_has_branch_term_slugs( $post, 'font_mood', array( 'luxury' ) ) ) {
+        $add_collection( 'best-luxury-fonts' );
+    }
+
     foreach ( array(
-        'logo'     => 'best-logo-fonts',
-        'branding' => 'best-fonts-for-branding',
-        'wedding'  => 'best-wedding-fonts',
-        'poster'   => 'best-poster-fonts',
+        'logo'      => 'best-logo-fonts',
+        'branding'  => 'best-fonts-for-branding',
+        'wedding'   => 'best-wedding-fonts',
+        'poster'    => 'best-poster-fonts',
+        'packaging' => 'best-packaging-fonts',
     ) as $use_case_slug => $collection_slug ) {
         if ( kreativ_post_has_branch_term_slugs( $post, 'font_use_case', array( $use_case_slug ) ) ) {
             $add_collection( $collection_slug );
@@ -2062,6 +2067,110 @@ function kreativ_get_single_font_quick_download_data( $post = null ) {
         'download_url' => $download_url,
         'source_url'   => $source_url,
     );
+}
+
+function kreativ_get_single_font_primary_action_data( $post = null ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post ) {
+        return array();
+    }
+
+    $is_free = kreativ_post_has_category_slugs( $post, kreativ_get_free_fonts_category_slugs() );
+
+    if ( $is_free ) {
+        $download_data = kreativ_get_single_font_quick_download_data( $post );
+
+        if ( empty( $download_data ) ) {
+            return array();
+        }
+
+        $primary_url     = $download_data['download_url'] ?? '';
+        $primary_label   = 'Download ZIP';
+        $primary_icon    = 'fa-solid fa-arrow-down';
+        $action_title    = 'Download the font ZIP before reading the full details.';
+        $secondary_url   = $download_data['source_url'] ?? '';
+        $secondary_label = 'View source';
+
+        if ( '' === $primary_url && '' !== $secondary_url ) {
+            $primary_url     = $secondary_url;
+            $primary_label   = 'View source';
+            $primary_icon    = 'fa-solid fa-arrow-up-right-from-square';
+            $action_title    = 'View the official font source before reading the full details.';
+            $secondary_url   = '';
+            $secondary_label = '';
+        }
+
+        return array(
+            'type'            => 'free',
+            'eyebrow'         => 'Free font package',
+            'icon'            => 'fa-solid fa-download',
+            'title'           => $action_title,
+            'copy'            => 'Use the page below for specimen, license notes, and package details before production work.',
+            'primary_url'     => $primary_url,
+            'primary_label'   => $primary_label,
+            'primary_icon'    => $primary_icon,
+            'primary_rel'     => 'nofollow noopener',
+            'secondary_url'   => $secondary_url,
+            'secondary_label' => $secondary_label,
+            'secondary_rel'   => 'nofollow noopener',
+            'secondary_blank' => true,
+        );
+    }
+
+    if ( ! preg_match_all( '/\\[kreativ_font_cta\\b([^\\]]*)\\]/i', (string) $post->post_content, $matches, PREG_SET_ORDER ) ) {
+        return array();
+    }
+
+    foreach ( $matches as $match ) {
+        $atts = shortcode_parse_atts( $match[1] );
+
+        if ( ! is_array( $atts ) ) {
+            continue;
+        }
+
+        $type = sanitize_key( $atts['type'] ?? 'commercial' );
+
+        if ( 'free' === $type ) {
+            continue;
+        }
+
+        $url = esc_url_raw( $atts['url'] ?? '' );
+
+        if ( '' === $url ) {
+            continue;
+        }
+
+        $secondary_url   = esc_url_raw( $atts['secondary_url'] ?? '' );
+        $secondary_label = sanitize_text_field( $atts['secondary_label'] ?? '' );
+
+        if ( '' === $secondary_url ) {
+            $secondary_url   = add_query_arg( 'font_filter', 'free', home_url( '/fonts' ) );
+            $secondary_label = 'Browse free fonts';
+        }
+
+        $site_host      = wp_parse_url( home_url( '/' ), PHP_URL_HOST );
+        $secondary_host = wp_parse_url( $secondary_url, PHP_URL_HOST );
+        $secondary_blank = $secondary_host && $site_host !== $secondary_host;
+
+        return array(
+            'type'            => 'commercial',
+            'eyebrow'         => 'License this font',
+            'icon'            => 'fa-solid fa-cart-shopping',
+            'title'           => sanitize_text_field( $atts['title'] ?? 'View pricing and licensing for this font.' ),
+            'copy'            => sanitize_text_field( $atts['note'] ?? 'Use the official marketplace or foundry source for legal personal or commercial licensing.' ),
+            'primary_url'     => $url,
+            'primary_label'   => sanitize_text_field( $atts['label'] ?? 'View / Purchase Font' ),
+            'primary_icon'    => 'fa-solid fa-arrow-up-right-from-square',
+            'primary_rel'     => 'nofollow sponsored noopener',
+            'secondary_url'   => $secondary_url,
+            'secondary_label' => '' === $secondary_label ? 'Browse similar fonts' : $secondary_label,
+            'secondary_rel'   => $secondary_blank ? 'nofollow noopener' : '',
+            'secondary_blank' => $secondary_blank,
+        );
+    }
+
+    return array();
 }
 
 function kreativ_get_dynamic_font_collection_query_args( $config = array() ) {
@@ -2172,6 +2281,37 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
 
     $config = wp_parse_args( $config, $defaults );
     $query  = new WP_Query( kreativ_get_dynamic_font_collection_query_args( $config ) );
+    $meta_description = $config['summary'] ? $config['summary'] : $config['intro_copy'];
+    $meta_description = wp_trim_words( wp_strip_all_tags( (string) $meta_description ), 30, '...' );
+    $collection_items = array();
+
+    foreach ( array_slice( $query->posts, 0, 12 ) as $index => $collection_post ) {
+        $collection_items[] = array(
+            '@type'    => 'ListItem',
+            'position' => $index + 1,
+            'name'     => get_the_title( $collection_post ),
+            'url'      => get_permalink( $collection_post ),
+        );
+    }
+
+    $GLOBALS['kreativ_meta_description_override'] = $meta_description;
+    $GLOBALS['kreativ_collection_page_schema']    = array(
+        '@context'    => 'https://schema.org',
+        '@type'       => 'CollectionPage',
+        'name'        => $config['title'],
+        'description' => $meta_description,
+        'url'         => get_permalink() ? get_permalink() : home_url( add_query_arg( array(), $GLOBALS['wp']->request ?? '' ) ),
+        'isPartOf'    => array(
+            '@type' => 'WebSite',
+            'name'  => 'Kreativ Font',
+            'url'   => home_url( '/' ),
+        ),
+        'mainEntity'  => array(
+            '@type'           => 'ItemList',
+            'numberOfItems'   => count( $collection_items ),
+            'itemListElement' => $collection_items,
+        ),
+    );
 
     get_header();
     ?>
@@ -2245,6 +2385,11 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
+
+                    <div class="kreativ-collection-actions">
+                        <a href="<?php echo esc_url( home_url( '/fonts' ) ); ?>">Browse all fonts</a>
+                        <a href="<?php echo esc_url( home_url( '/collections' ) ); ?>">View all collections</a>
+                    </div>
                 </section>
             <?php endif; ?>
 
