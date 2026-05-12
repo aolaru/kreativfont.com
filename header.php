@@ -79,22 +79,6 @@
 
     <?php wp_head(); ?>
 
-	    <!-- Google Analytics -->
-	    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4E74M6PB1Y"></script>
-	    <script>
-	        window.dataLayer = window.dataLayer || [];
-	        function gtag(){dataLayer.push(arguments);}
-	        gtag('js', new Date());
-	        gtag('config', 'G-4E74M6PB1Y');
-	    </script>
-
-	    <!-- Google AdSense -->
-	    <meta name="google-adsense-account" content="ca-pub-4706844277814411">
-	    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4706844277814411" crossorigin="anonymous"></script>
-
-	    <!-- Affiliate / CJ Script (async for performance) -->
-	    <script async src="https://www.anrdoezrs.net/am/100743026/include/allCj/generate/onLoad/impressions/page/am.js"></script>
-
     <!-- Schema.org Organization -->
     <script type="application/ld+json">
     {

@@ -48,65 +48,6 @@
 			</div>
 		</footer>
 
-		<script>
-		document.addEventListener('DOMContentLoaded', function() {
-		  const toggles = document.querySelectorAll('.kreativ-theme-toggle');
-		  const storageKey = 'kreativ-dark';
-		  let storageAvailable = true;
-
-		  const readStoredPreference = () => {
-			try {
-			  return window.localStorage.getItem(storageKey) === 'true';
-			} catch (error) {
-			  storageAvailable = false;
-			  return document.body.classList.contains('dark-mode');
-			}
-		  };
-
-		  const writeStoredPreference = (value) => {
-			if (!storageAvailable) {
-			  return;
-			}
-
-			try {
-			  window.localStorage.setItem(storageKey, value ? 'true' : 'false');
-			} catch (error) {
-			  storageAvailable = false;
-			}
-		  };
-
-		  const syncThemeToggleState = () => {
-			const darkEnabled = document.body.classList.contains('dark-mode');
-
-			toggles.forEach((toggle) => {
-			  const icon = toggle.querySelector('i');
-			  toggle.setAttribute('aria-pressed', darkEnabled ? 'true' : 'false');
-			  toggle.setAttribute('title', darkEnabled ? 'Switch to light mode' : 'Switch to dark mode');
-			  toggle.setAttribute('aria-label', darkEnabled ? 'Switch to light mode' : 'Switch to dark mode');
-
-			  if (icon) {
-				icon.classList.toggle('fa-moon', !darkEnabled);
-				icon.classList.toggle('fa-sun', darkEnabled);
-			  }
-			});
-		  };
-
-		  const setTheme = (darkEnabled) => {
-			document.body.classList.toggle('dark-mode', darkEnabled);
-			writeStoredPreference(darkEnabled);
-			syncThemeToggleState();
-		  };
-
-		  setTheme(readStoredPreference());
-
-		  toggles.forEach((toggle) => {
-			toggle.addEventListener('click', () => {
-			  setTheme(!document.body.classList.contains('dark-mode'));
-			});
-		  });
-		});
-		</script>
-
         <?php wp_footer(); ?>
     </div>
 </body>
