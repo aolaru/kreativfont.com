@@ -1855,6 +1855,20 @@ function kreativ_get_font_collection_links() {
             'copy'     => 'Quiet, reduced, and practical fonts for clean visual systems.',
             'featured' => false,
         ),
+        array(
+            'slug'     => 'best-luxury-fonts',
+            'title'    => 'Best Luxury Fonts',
+            'icon'     => 'fa-solid fa-gem',
+            'copy'     => 'Premium-feeling fonts for beauty, fashion, hospitality, packaging, and high-end brands.',
+            'featured' => false,
+        ),
+        array(
+            'slug'     => 'best-packaging-fonts',
+            'title'    => 'Best Packaging Fonts',
+            'icon'     => 'fa-solid fa-box-open',
+            'copy'     => 'Fonts selected for labels, product packaging, retail systems, and shelf-ready brand work.',
+            'featured' => false,
+        ),
     );
 
     foreach ( $collections as $index => $collection ) {
