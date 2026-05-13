@@ -1,6 +1,7 @@
 <?php
 /*
-Template Name: Popular
+Quarantined Template: Legacy Popular
+Formerly exposed as a page template. Kept only for backward compatibility if an existing page is still assigned to this file.
 */
 ?>
 <?php get_header(); ?>

@@ -1,6 +1,7 @@
 <?php
 /*
-Template Name: Glossary
+Quarantined Template: Legacy Glossary
+Formerly exposed as a page template. Kept only for backward compatibility if an existing page is still assigned to this file.
 */
 ?>
 <?php get_header(); ?>

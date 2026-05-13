@@ -570,6 +570,58 @@ function kreativ_get_search_terms( $search_string ) {
     return array_values( array_unique( $terms ) );
 }
 
+function kreativ_get_search_cache_version() {
+    $version = get_option( 'kreativ_search_cache_version' );
+
+    if ( ! $version ) {
+        $version = (string) time();
+        update_option( 'kreativ_search_cache_version', $version, false );
+    }
+
+    return (string) $version;
+}
+
+function kreativ_bump_search_cache_version( ...$args ) {
+    update_option( 'kreativ_search_cache_version', (string) microtime( true ), false );
+}
+add_action( 'save_post_post', 'kreativ_bump_search_cache_version' );
+add_action( 'deleted_post', 'kreativ_bump_search_cache_version' );
+add_action( 'created_category', 'kreativ_bump_search_cache_version' );
+add_action( 'edited_category', 'kreativ_bump_search_cache_version' );
+add_action( 'delete_category', 'kreativ_bump_search_cache_version' );
+
+function kreativ_get_search_cache_key( $group, $data = array() ) {
+    return 'kf_search_' . md5(
+        wp_json_encode(
+            array(
+                'group'   => $group,
+                'version' => kreativ_get_search_cache_version(),
+                'data'    => $data,
+            )
+        )
+    );
+}
+
+function kreativ_get_cached_search_value( $cache_key ) {
+    $cached = get_transient( $cache_key );
+
+    if ( is_array( $cached ) && array_key_exists( 'value', $cached ) ) {
+        return $cached['value'];
+    }
+
+    return null;
+}
+
+function kreativ_set_cached_search_value( $cache_key, $value, $ttl = 900 ) {
+    set_transient(
+        $cache_key,
+        array(
+            'value' => $value,
+        ),
+        max( 60, (int) $ttl )
+    );
+}
+
 function kreativ_get_search_branch_match_map() {
     return array(
         'designer' => array(
@@ -695,6 +747,18 @@ function kreativ_get_font_title_suggestions( $search_string, $limit = 5 ) {
 
 function kreativ_build_search_suggestions_response( $search_string ) {
     $search_string = trim( (string) $search_string );
+    $cache_key     = kreativ_get_search_cache_key(
+        'suggestions',
+        array(
+            'q' => strtolower( $search_string ),
+        )
+    );
+    $cached        = kreativ_get_cached_search_value( $cache_key );
+
+    if ( null !== $cached ) {
+        return $cached;
+    }
+
     $response      = array(
         'fonts'    => array(),
         'designer' => array(),
@@ -705,6 +769,7 @@ function kreativ_build_search_suggestions_response( $search_string ) {
     );
 
     if ( '' === $search_string ) {
+        kreativ_set_cached_search_value( $cache_key, $response, 5 * MINUTE_IN_SECONDS );
         return $response;
     }
 
@@ -739,6 +804,8 @@ function kreativ_build_search_suggestions_response( $search_string ) {
             );
         }
     }
+
+    kreativ_set_cached_search_value( $cache_key, $response, 15 * MINUTE_IN_SECONDS );
 
     return $response;
 }
@@ -818,9 +885,25 @@ function kreativ_get_search_refinement_base_args( $search_string, $active_refine
 
 function kreativ_get_structured_search_post_ids( $search_string, $active_refinements = array(), $branch_term_limit = 5 ) {
     $search_string = trim( (string) $search_string );
+    $active_refinements = array_filter( (array) $active_refinements );
+    ksort( $active_refinements );
 
     if ( '' === $search_string ) {
         return array();
+    }
+
+    $cache_key = kreativ_get_search_cache_key(
+        'structured_ids',
+        array(
+            'q'           => strtolower( $search_string ),
+            'refinements' => $active_refinements,
+            'limit'       => (int) $branch_term_limit,
+        )
+    );
+    $cached = kreativ_get_cached_search_value( $cache_key );
+
+    if ( null !== $cached ) {
+        return $cached;
     }
 
     $scores     = array();
@@ -899,6 +982,7 @@ function kreativ_get_structured_search_post_ids( $search_string, $active_refinem
     }
 
     if ( empty( $scores ) ) {
+        kreativ_set_cached_search_value( $cache_key, array(), 10 * MINUTE_IN_SECONDS );
         return array();
     }
 
@@ -917,6 +1001,8 @@ function kreativ_get_structured_search_post_ids( $search_string, $active_refinem
             return $right_score <=> $left_score;
         }
     );
+
+    kreativ_set_cached_search_value( $cache_key, $post_ids, 15 * MINUTE_IN_SECONDS );
 
     return $post_ids;
 }
@@ -939,6 +1025,23 @@ function kreativ_count_matching_posts_for_branch_term( $post_ids, $branch_key, $
 }
 
 function kreativ_get_search_refinement_groups_with_state( $search_string, $limit = 5, $active_refinements = array() ) {
+    $search_string = trim( (string) $search_string );
+    $active_refinements = array_filter( (array) $active_refinements );
+    ksort( $active_refinements );
+    $cache_key = kreativ_get_search_cache_key(
+        'refinement_groups',
+        array(
+            'q'           => strtolower( $search_string ),
+            'limit'       => (int) $limit,
+            'refinements' => $active_refinements,
+        )
+    );
+    $cached = kreativ_get_cached_search_value( $cache_key );
+
+    if ( null !== $cached ) {
+        return $cached;
+    }
+
     $raw_matches = kreativ_get_search_branch_term_matches( $search_string, $limit );
     $labels      = kreativ_get_search_refinement_query_map();
     $groups      = array();
@@ -979,6 +1082,8 @@ function kreativ_get_search_refinement_groups_with_state( $search_string, $limit
             ),
         );
     }
+
+    kreativ_set_cached_search_value( $cache_key, $groups, 15 * MINUTE_IN_SECONDS );
 
     return $groups;
 }

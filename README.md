@@ -35,7 +35,7 @@ This codebase is used for the live Kreativ Font site and is maintained as a prac
 - Loads compiled theme styles from `assets/dist/main.min.css`
 - Loads frontend initialization from `assets/assets/components/init.js`
 - Uses custom archive/filter templates for site-specific content flows
-- Includes analytics and third-party scripts directly in theme templates where needed
+- Loads analytics, ads, affiliate scripts, and theme JavaScript through WordPress enqueue hooks
 
 ## Development Notes
 
@@ -82,18 +82,27 @@ Important: the remote path must point to the theme directory only. The current w
 - `assets/package.json`: frontend asset tooling entry point
 - `assets/Gruntfile.js`: legacy asset build workflow
 
+## Quarantined Legacy Templates
+
+These files are kept for backward compatibility, but their public `Template Name` headers have been removed so they are not offered for new page assignments:
+
+- `template-filter-market.php`
+- `template-popular.php`
+- `template-sitemap.php`
+
 ## Templates To Verify In WordPress Admin
 
 These files may still be assigned to pages from the WordPress dashboard. Do not delete them until you confirm actual usage in the admin:
 
 - `template-filter-free.php`
-- `template-filter-market.php`
-- `template-popular.php`
-- `template-sitemap.php`
 - `template-wide.php`
 - `links.php`
 - `image.php`
 - `frontend-menu.php`
+
+## Legacy Assets
+
+Unused older JavaScript files have been moved to `legacy/js/` instead of being deleted. Active frontend scripts should live in `js/` and be loaded from `inc/assets.php`.
 
 ## Repository Status
 
