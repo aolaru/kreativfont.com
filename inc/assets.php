@@ -226,11 +226,6 @@ function kreativ_enqueue_tracking_assets() {
         false
     );
     kreativ_add_script_attributes( 'kreativ-google-tag', array( 'async' => true ) );
-    wp_add_inline_script(
-        'kreativ-google-tag',
-        "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-4E74M6PB1Y');",
-        'after'
-    );
 
     wp_enqueue_script(
         'kreativ-adsense',
@@ -257,6 +252,18 @@ function kreativ_enqueue_tracking_assets() {
     kreativ_add_script_attributes( 'kreativ-cj-affiliate', array( 'async' => true ) );
 }
 add_action( 'wp_enqueue_scripts', 'kreativ_enqueue_tracking_assets', 20 );
+
+function kreativ_print_google_analytics_config() {
+    ?>
+    <script id="kreativ-google-tag-config">
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-4E74M6PB1Y');
+    </script>
+    <?php
+}
+add_action( 'wp_head', 'kreativ_print_google_analytics_config', 5 );
 
 function kreativ_print_adsense_account_meta() {
     echo '<meta name="google-adsense-account" content="ca-pub-4706844277814411">' . "\n";
