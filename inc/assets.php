@@ -237,8 +237,9 @@ function kreativ_enqueue_tracking_assets() {
     kreativ_add_script_attributes(
         'kreativ-adsense',
         array(
-            'async'       => true,
-            'crossorigin' => 'anonymous',
+            'async'         => true,
+            'crossorigin'   => 'anonymous',
+            'data-overlays' => 'bottom',
         )
     );
 
