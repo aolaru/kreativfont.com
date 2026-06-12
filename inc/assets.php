@@ -228,22 +228,6 @@ function kreativ_enqueue_tracking_assets() {
     kreativ_add_script_attributes( 'kreativ-google-tag', array( 'async' => true ) );
 
     wp_enqueue_script(
-        'kreativ-adsense',
-        'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4706844277814411',
-        array(),
-        null,
-        false
-    );
-    kreativ_add_script_attributes(
-        'kreativ-adsense',
-        array(
-            'async'         => true,
-            'crossorigin'   => 'anonymous',
-            'data-overlays' => 'bottom',
-        )
-    );
-
-    wp_enqueue_script(
         'kreativ-cj-affiliate',
         'https://www.anrdoezrs.net/am/100743026/include/allCj/generate/onLoad/impressions/page/am.js',
         array(),
@@ -265,8 +249,3 @@ function kreativ_print_google_analytics_config() {
     <?php
 }
 add_action( 'wp_head', 'kreativ_print_google_analytics_config', 5 );
-
-function kreativ_print_adsense_account_meta() {
-    echo '<meta name="google-adsense-account" content="ca-pub-4706844277814411">' . "\n";
-}
-add_action( 'wp_head', 'kreativ_print_adsense_account_meta', 5 );
