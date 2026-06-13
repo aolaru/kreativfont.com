@@ -407,6 +407,18 @@ function kreativ_get_archive_context_summary( $term, $archive_type = 'category',
     $filter_label  = ! empty( $font_filters[ $active_filter ]['label'] ) ? $font_filters[ $active_filter ]['label'] : 'Latest';
     $count_phrase  = sprintf( '%d result%s', (int) $result_count, 1 === (int) $result_count ? '' : 's' );
 
+    if ( 'category' === $archive_type && 'tools' === $term->slug ) {
+        $tool_count_phrase = sprintf( '%d tool%s', (int) $result_count, 1 === (int) $result_count ? '' : 's' );
+
+        return array(
+            'eyebrow'    => 'Font tools',
+            'title'      => 'Browse Font Tools',
+            'summary'    => $tool_count_phrase . ' built for faster font decisions. Identify type, generate names, test pairings, and create styled text from one focused tools hub.',
+            'side_title' => 'Pick the tool that matches the job.',
+            'side_copy'  => 'Start with identification, pairing, naming, or text generation, then move back into the font library when you are ready to choose.',
+        );
+    }
+
     if ( 'tag' === $archive_type ) {
         return array(
             'eyebrow'    => 'Tag archive',

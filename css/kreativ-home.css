@@ -11,6 +11,7 @@
     padding: 2.6rem;
     background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.92) 0%, rgba(246, 247, 255, 0.97) 44%, rgba(236, 239, 255, 1) 100%);
     border-radius: 30px;
+    margin-top: 1rem;
     margin-bottom: 2.35rem;
     box-shadow: 0 26px 60px rgba(74, 74, 255, 0.08);
 }

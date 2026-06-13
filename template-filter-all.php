@@ -150,6 +150,8 @@ if ( 'latest' === $active_font_filter && $free_fonts_slugs ) {
         'view_all'   => home_url( '/fonts' ),
         'show_filters' => true,
         'posts_per_page' => 12,
+        'badge_text' => 'Fonts',
+        'badge_slug' => 'fonts',
         'tax_query'  => array(
             array(
                 'taxonomy' => 'category',
@@ -173,6 +175,8 @@ if ( 'latest' === $active_font_filter && $free_fonts_slugs ) {
         'view_all'   => add_query_arg( 'font_filter', 'free', home_url( '/fonts' ) ),
         'show_filters' => false,
         'posts_per_page' => 12,
+        'badge_text' => 'Free',
+        'badge_slug' => 'free',
         'tax_query'  => array(
             array(
                 'taxonomy' => 'category',
@@ -244,8 +248,9 @@ foreach ( $home_sections as $section ) :
 
         <div class="row">
             <?php
+            $section_post_limit = max( 1, absint( $section['posts_per_page'] ) );
             $query = new WP_Query( array(
-                'posts_per_page'         => $section['posts_per_page'],
+                'posts_per_page'         => $section_post_limit * 2,
                 'post_status'            => 'publish',
                 'ignore_sticky_posts'    => true,
                 'no_found_rows'          => true,
@@ -256,18 +261,38 @@ foreach ( $home_sections as $section ) :
                 'tax_query'              => $section['tax_query'],
             ) );
 
+            $rendered_post_ids    = array();
+            $rendered_title_slugs = array();
+            $badge_text           = $section['badge_text'] ?? ( $kreativ_category_labels[ $slug ] ?? '' );
+            $badge_slug           = $section['badge_slug'] ?? $slug;
+
             if ( $query->have_posts() ) :
-                while ( $query->have_posts() ) :
+                while ( $query->have_posts() && count( $rendered_post_ids ) < $section_post_limit ) :
                     $query->the_post();
+                    $post_id    = get_the_ID();
+                    $title_slug = sanitize_title( get_the_title() );
+
+                    if ( isset( $rendered_post_ids[ $post_id ] ) || ( $title_slug && isset( $rendered_title_slugs[ $title_slug ] ) ) ) {
+                        continue;
+                    }
+
+                    $rendered_post_ids[ $post_id ] = true;
+
+                    if ( $title_slug ) {
+                        $rendered_title_slugs[ $title_slug ] = true;
+                    }
+
                     kreativ_render_font_card(
                         array(
-                            'post_id'    => get_the_ID(),
-                            'badge_text' => $kreativ_category_labels[ $slug ],
-                            'badge_slug' => $slug,
+                            'post_id'    => $post_id,
+                            'badge_text' => $badge_text,
+                            'badge_slug' => $badge_slug,
                         )
                     );
                 endwhile;
-            else :
+            endif;
+
+            if ( empty( $rendered_post_ids ) ) :
                 ?>
                 <div class="col-12">
                     <p class="text-center">No fonts found for this filter yet.</p>

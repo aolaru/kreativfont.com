@@ -12,12 +12,14 @@ $cat_id   = $category->term_id;
 $cat_slug = $category->slug;
 $cat_name = $category->name;
 $cat_desc = category_description();
+$is_tools_archive = 'tools' === $cat_slug;
 
 /* Homepage-style icons */
 $kreativ_fa_icons = [
     'fonts'      => 'fa-solid fa-font',
     'free-fonts' => 'fa-solid fa-gift',
     'free'       => 'fa-solid fa-gift',
+    'tools'      => 'fa-solid fa-screwdriver-wrench',
 ];
 $cat_icon = $kreativ_fa_icons[$cat_slug] ?? 'fa-solid fa-folder-open';
 
@@ -28,6 +30,11 @@ $sort  = kreativ_get_archive_sort();
 $paged = max(1, get_query_var('paged'));
 $font_filters = kreativ_get_font_filters();
 $active_font_filter = kreativ_get_active_font_filter( $font_filters );
+
+if ( $is_tools_archive ) {
+    $active_font_filter = 'latest';
+}
+
 $active_font_filter_config = $font_filters[ $active_font_filter ];
 
 /* --------------------------------------------
@@ -58,6 +65,13 @@ $query = new WP_Query(
 );
 $archive_context = kreativ_get_archive_context_summary( $category, 'category', (int) $query->found_posts, $active_font_filter, $font_filters );
 $related_groups  = kreativ_get_category_archive_related_groups( $category, 6 );
+$archive_count_label = sprintf(
+    '%d %s',
+    (int) $query->found_posts,
+    $is_tools_archive
+        ? ( 1 === (int) $query->found_posts ? 'tool' : 'tools' )
+        : ( 1 === (int) $query->found_posts ? 'result' : 'results' )
+);
 ?>
 
 <div class="container kreativ-category-bg">
@@ -73,8 +87,12 @@ $related_groups  = kreativ_get_category_archive_related_groups( $category, 6 );
             <p><?php echo wp_kses_post( $cat_desc ? $cat_desc : esc_html( $archive_context['summary'] ) ); ?></p>
 
             <div class="kreativ-category-meta-pills">
-                <span class="kreativ-category-meta-pill"><i class="fa-solid fa-grid-2"></i> <?php echo esc_html( sprintf( '%d result%s', (int) $query->found_posts, 1 === (int) $query->found_posts ? '' : 's' ) ); ?></span>
-                <span class="kreativ-category-meta-pill"><i class="fa-solid fa-filter"></i> <?php echo esc_html( $active_font_filter_config['label'] ); ?> filter</span>
+                <span class="kreativ-category-meta-pill"><i class="fa-solid fa-grid-2"></i> <?php echo esc_html( $archive_count_label ); ?></span>
+                <?php if ( $is_tools_archive ) : ?>
+                    <span class="kreativ-category-meta-pill"><i class="fa-solid fa-wand-magic-sparkles"></i> Identify, pair, name</span>
+                <?php else : ?>
+                    <span class="kreativ-category-meta-pill"><i class="fa-solid fa-filter"></i> <?php echo esc_html( $active_font_filter_config['label'] ); ?> filter</span>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -87,13 +105,15 @@ $related_groups  = kreativ_get_category_archive_related_groups( $category, 6 );
     </div>
 </div>
 
-<div class="kreativ-font-filter-bar kreativ-archive-filter-bar">
-    <?php foreach ( $font_filters as $filter_slug => $filter_config ) : ?>
-        <a href="<?php echo esc_url( add_query_arg( 'font_filter', $filter_slug, get_term_link( $category ) ) ); ?>" class="kreativ-font-filter <?php echo $active_font_filter === $filter_slug ? 'active' : ''; ?>">
-            <?php echo esc_html( $filter_config['label'] ); ?>
-        </a>
-    <?php endforeach; ?>
-</div>
+<?php if ( ! $is_tools_archive ) : ?>
+    <div class="kreativ-font-filter-bar kreativ-archive-filter-bar">
+        <?php foreach ( $font_filters as $filter_slug => $filter_config ) : ?>
+            <a href="<?php echo esc_url( add_query_arg( 'font_filter', $filter_slug, get_term_link( $category ) ) ); ?>" class="kreativ-font-filter <?php echo $active_font_filter === $filter_slug ? 'active' : ''; ?>">
+                <?php echo esc_html( $filter_config['label'] ); ?>
+            </a>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
 
 <?php if ( ! empty( $related_groups ) ) : ?>
     <div class="container kreativ-archive-discovery">
@@ -116,7 +136,7 @@ $related_groups  = kreativ_get_category_archive_related_groups( $category, 6 );
         </div>
     </div>
 <?php endif; ?>
-<div class="container kreativ-category-grid kreativ-category-bg">
+<div class="container kreativ-category-grid kreativ-category-bg<?php echo $is_tools_archive ? ' kreativ-tools-grid' : ''; ?>">
     <div class="row">
 
         <?php if ($query->have_posts()) : ?>
@@ -127,7 +147,7 @@ $related_groups  = kreativ_get_category_archive_related_groups( $category, 6 );
                         'post_id'        => get_the_ID(),
                         'badge_text'     => $cat_name,
                         'badge_slug'     => $cat_slug,
-                        'column_classes' => 'col-md-4 col-lg-3 col-sm-6',
+                        'column_classes' => $is_tools_archive ? 'col-md-6 col-lg-3 col-sm-6' : 'col-md-4 col-lg-3 col-sm-6',
                     )
                 );
                 ?>
@@ -152,20 +172,22 @@ $related_groups  = kreativ_get_category_archive_related_groups( $category, 6 );
 
     </div>
 
+    <?php
+    $pagination = paginate_links([
+        'total'     => $query->max_num_pages,
+        'current'   => $paged,
+        'mid_size'  => 2,
+        'prev_text' => '&laquo; Previous',
+        'next_text' => 'Next &raquo;',
+        'add_args'  => ['font_filter' => $active_font_filter],
+    ]);
+    ?>
 
-    <!-- Pagination -->
-    <div class="kreativ-pagination">
-        <?php
-        echo paginate_links([
-            'total'     => $query->max_num_pages,
-            'current'   => $paged,
-            'mid_size'  => 2,
-            'prev_text' => '&laquo; Previous',
-            'next_text' => 'Next &raquo;',
-            'add_args'  => ['font_filter' => $active_font_filter],
-        ]);
-        ?>
-    </div>
+    <?php if ( $pagination ) : ?>
+        <div class="kreativ-pagination">
+            <?php echo $pagination; ?>
+        </div>
+    <?php endif; ?>
 
 </div>
 

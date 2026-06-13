@@ -138,20 +138,22 @@ $related_groups  = kreativ_get_tag_archive_related_groups( $tag_name, 6 );
         <?php endif; wp_reset_postdata(); ?>
 
     </div>
+    <?php
+    $pagination = paginate_links([
+        'total'     => $query->max_num_pages,
+        'current'   => $paged,
+        'mid_size'  => 2,
+        'prev_text' => '&laquo; Previous',
+        'next_text' => 'Next &raquo;',
+        'add_args'  => ['font_filter' => $active_font_filter],
+    ]);
+    ?>
 
-    <!-- Pagination -->
-    <div class="kreativ-pagination">
-        <?php
-        echo paginate_links([
-            'total'     => $query->max_num_pages,
-            'current'   => $paged,
-            'mid_size'  => 2,
-            'prev_text' => '&laquo; Previous',
-            'next_text' => 'Next &raquo;',
-            'add_args'  => ['font_filter' => $active_font_filter],
-        ]);
-        ?>
-    </div>
+    <?php if ( $pagination ) : ?>
+        <div class="kreativ-pagination">
+            <?php echo $pagination; ?>
+        </div>
+    <?php endif; ?>
 
 </div>
 
