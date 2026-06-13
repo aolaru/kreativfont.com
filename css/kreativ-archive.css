@@ -2,16 +2,16 @@
    CATEGORY GRADIENT + ANIMATION
 ================================================================ */
 .kreativ-category-bg {
-    padding: 2.5rem 1rem;
-    border-radius: 22px;
-    margin-bottom: 2.5rem;
+    padding: var(--kf-hero-padding);
+    border-radius: var(--kf-hero-radius);
+    margin-bottom: var(--kf-hero-margin-bottom);
     background: var(--kreativ-cat-gradient);
     animation: kreativGradientMove 12s ease infinite;
     background-size: 200% 200%;
 }
 
 .kreativ-content > .kreativ-category-bg:first-child {
-    margin-top: 1rem;
+    margin-top: 0;
 }
 
 @keyframes kreativGradientMove {
@@ -32,15 +32,16 @@ body.kreativ-cat-tools            { --kreativ-cat-gradient: linear-gradient(135d
 .kreativ-category-header {
     display: grid;
     grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.75fr);
-    gap: 1.5rem;
+    gap: var(--kf-hero-gap);
     align-items: stretch;
     margin-bottom: 1.5rem;
 }
 
 .kreativ-category-header h1 {
     margin: 0;
-    font-size: clamp(2.2rem, 4vw, 3.6rem);
-    line-height: 0.95;
+    font-size: var(--kf-hero-title-size);
+    line-height: var(--kf-hero-title-line-height);
+    letter-spacing: var(--kf-hero-title-letter-spacing);
     font-weight: 700;
 }
 
@@ -292,8 +293,8 @@ body.dark-mode .kreativ-archive-discovery-pill:focus {
 }
 
 body.kreativ-cat-tools .kreativ-content > .kreativ-category-bg:first-child {
-    padding: 1.8rem 1rem;
-    margin-bottom: 1.35rem;
+    padding: var(--kf-hero-padding);
+    margin-bottom: var(--kf-hero-margin-bottom);
 }
 
 body.kreativ-cat-tools .kreativ-category-header {
@@ -302,7 +303,7 @@ body.kreativ-cat-tools .kreativ-category-header {
 }
 
 body.kreativ-cat-tools .kreativ-category-header h1 {
-    font-size: clamp(2.35rem, 3.9vw, 3.45rem);
+    font-size: var(--kf-hero-title-size);
 }
 
 body.kreativ-cat-tools .kreativ-category-header p {
@@ -321,9 +322,9 @@ body.kreativ-cat-tools .kreativ-category-side-card h2 {
 }
 
 body.kreativ-cat-tools .kreativ-tools-grid {
-    padding-top: 1.2rem;
-    padding-bottom: 1.8rem;
-    margin-bottom: 2rem;
+    padding-top: var(--kf-hero-padding);
+    padding-bottom: var(--kf-hero-padding);
+    margin-bottom: var(--kf-hero-margin-bottom);
 }
 
 body.kreativ-cat-tools .kreativ-tools-grid .row {
@@ -447,6 +448,6 @@ body.kreativ-cat-tools .kreativ-font-card {
     }
 
     .kreativ-category-header h1 {
-        font-size: 2.2rem;
+        font-size: var(--kf-hero-title-size);
     }
 }

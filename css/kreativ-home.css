@@ -7,12 +7,12 @@
     overflow: hidden;
     display: grid;
     grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.9fr);
-    gap: 1.45rem;
-    padding: 2.6rem;
+    gap: var(--kf-hero-gap);
+    padding: var(--kf-hero-padding);
     background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.92) 0%, rgba(246, 247, 255, 0.97) 44%, rgba(236, 239, 255, 1) 100%);
-    border-radius: 30px;
-    margin-top: 1rem;
-    margin-bottom: 2.35rem;
+    border-radius: var(--kf-hero-radius);
+    margin-top: 0;
+    margin-bottom: var(--kf-hero-margin-bottom);
     box-shadow: 0 26px 60px rgba(74, 74, 255, 0.08);
 }
 
@@ -63,9 +63,9 @@
 
 .kreativ-hero-title {
     max-width: 11.8ch;
-    font-size: clamp(3rem, 5vw, 4.85rem);
-    line-height: 0.92;
-    letter-spacing: -0.05em;
+    font-size: var(--kf-hero-title-size);
+    line-height: var(--kf-hero-title-line-height);
+    letter-spacing: var(--kf-hero-title-letter-spacing);
     color: #121622;
     margin-bottom: 1rem;
 }
@@ -468,15 +468,15 @@ body.dark-mode .kreativ-font-card {
 @media (max-width: 767px) {
     .kreativ-hero {
         grid-template-columns: 1fr;
-        gap: 1.2rem;
-        padding: 1.35rem;
-        border-radius: 22px;
-        margin-bottom: 1.8rem;
+        gap: var(--kf-hero-gap);
+        padding: var(--kf-hero-padding);
+        border-radius: var(--kf-hero-radius);
+        margin-bottom: var(--kf-hero-margin-bottom);
     }
 
     .kreativ-hero-title {
         max-width: none;
-        font-size: 2.35rem;
+        font-size: var(--kf-hero-title-size);
     }
 
     .kreativ-hero-actions,

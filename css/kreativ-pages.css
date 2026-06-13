@@ -1,7 +1,7 @@
 .kreativ-page-shell {
-    max-width: 1240px;
+    max-width: var(--kf-page-shell-max);
     margin: 0 auto;
-    padding: 2rem 1rem 4rem;
+    padding: 0 1rem 4rem;
 }
 
 .kreativ-page-hero {
@@ -9,10 +9,10 @@
     overflow: hidden;
     display: grid;
     grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.85fr);
-    gap: 1.5rem;
-    padding: 2.4rem;
-    margin-bottom: 2rem;
-    border-radius: 28px;
+    gap: var(--kf-hero-gap);
+    padding: var(--kf-hero-padding);
+    margin-bottom: var(--kf-hero-margin-bottom);
+    border-radius: var(--kf-hero-radius);
     background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.94) 0%, rgba(244, 246, 255, 0.98) 44%, rgba(235, 238, 255, 1) 100%);
     box-shadow: 0 22px 54px rgba(74, 74, 255, 0.08);
 }
@@ -50,12 +50,12 @@
 .kreativ-page-hero-compact {
     grid-template-columns: 1fr;
     gap: 0;
-    padding: 1.8rem 2rem;
+    padding: var(--kf-hero-padding);
 }
 
 .kreativ-page-hero-compact .kreativ-page-title {
     max-width: 13ch;
-    font-size: clamp(2.2rem, 4vw, 3.9rem);
+    font-size: var(--kf-hero-title-size);
 }
 
 .kreativ-page-hero-compact .kreativ-page-summary {
@@ -132,9 +132,9 @@
 .kreativ-page-title {
     margin: 0 0 0.9rem;
     color: #121622;
-    font-size: clamp(2.3rem, 4.2vw, 4rem);
-    line-height: 0.95;
-    letter-spacing: -0.04em;
+    font-size: var(--kf-hero-title-size);
+    line-height: var(--kf-hero-title-line-height);
+    letter-spacing: var(--kf-hero-title-letter-spacing);
 }
 
 .kreativ-page-summary {
@@ -1147,7 +1147,7 @@
 @media (max-width: 991.98px) {
     .kreativ-page-hero {
         grid-template-columns: 1fr;
-        padding: 1.8rem;
+        padding: var(--kf-hero-padding);
     }
 
     .kreativ-single-hero {
@@ -1188,11 +1188,11 @@
 
 @media (max-width: 767px) {
     .kreativ-page-shell {
-        padding: 1.2rem 0.72rem 2.6rem;
+        padding: 0 0.72rem 2.6rem;
     }
 
     .kreativ-page-title {
-        font-size: 2.2rem;
+        font-size: var(--kf-hero-title-size);
     }
 
     .kreativ-page-content {
@@ -1217,7 +1217,7 @@
     }
 
     .kreativ-page-hero-compact {
-        padding: 1.5rem;
+        padding: var(--kf-hero-padding);
     }
 
     .kreativ-single-hero-image-frame {
