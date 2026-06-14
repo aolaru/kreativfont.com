@@ -695,6 +695,24 @@ body.dark-mode .kreativ-search-suggestions mark {
     }
 }
 
+@media (min-width: 992px) and (max-width: 1160px) {
+    .kreativ-search {
+        flex-basis: 250px;
+        max-width: 340px;
+    }
+
+    .kreativ-search-submit {
+        min-width: 82px;
+        padding-inline: 0.72rem;
+    }
+
+    .kreativ-header .navbar-nav li.menu-item a {
+        padding-right: 0.4rem;
+        padding-left: 0.4rem;
+        font-size: 0.8rem;
+    }
+}
+
 @media (max-width: 767px) {
     .navbar-collapse.offcanvas-collapse {
         top: 68px;

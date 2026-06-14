@@ -1907,6 +1907,7 @@ function kreativ_get_font_collection_links() {
             'title'    => 'Trending Commercial Fonts',
             'icon'     => 'fa-solid fa-chart-line',
             'copy'     => 'Premium commercial font picks ranked by current library and activity signals.',
+            'group'    => 'popular',
             'featured' => true,
         ),
         array(
@@ -1914,6 +1915,7 @@ function kreativ_get_font_collection_links() {
             'title'    => 'Best Free Fonts for Commercial Use',
             'icon'     => 'fa-solid fa-gift',
             'copy'     => 'Free font downloads with commercial-use context and licensing reminders.',
+            'group'    => 'licensing',
             'featured' => true,
         ),
         array(
@@ -1921,6 +1923,7 @@ function kreativ_get_font_collection_links() {
             'title'    => 'Best Vintage Script Fonts',
             'icon'     => 'fa-solid fa-pen-nib',
             'copy'     => 'Script fonts with a vintage mood for nostalgic branding and display work.',
+            'group'    => 'style',
             'featured' => true,
         ),
         array(
@@ -1928,6 +1931,7 @@ function kreativ_get_font_collection_links() {
             'title'    => 'Best Modern Sans Serif Fonts',
             'icon'     => 'fa-solid fa-circle-half-stroke',
             'copy'     => 'Clean sans serif picks for modern interfaces, brands, and editorial systems.',
+            'group'    => 'popular',
             'featured' => true,
         ),
         array(
@@ -1935,6 +1939,7 @@ function kreativ_get_font_collection_links() {
             'title'    => 'Best Elegant Serif Fonts',
             'icon'     => 'fa-solid fa-feather-pointed',
             'copy'     => 'Refined serif choices for luxury, fashion, publishing, and premium branding.',
+            'group'    => 'style',
             'featured' => false,
         ),
         array(
@@ -1942,6 +1947,7 @@ function kreativ_get_font_collection_links() {
             'title'    => 'Best Logo Fonts',
             'icon'     => 'fa-solid fa-signature',
             'copy'     => 'Typeface shortcuts for marks, identities, wordmarks, and brand systems.',
+            'group'    => 'use_case',
             'featured' => false,
         ),
         array(
@@ -1949,6 +1955,7 @@ function kreativ_get_font_collection_links() {
             'title'    => 'Best Fonts for Branding',
             'icon'     => 'fa-solid fa-bullseye',
             'copy'     => 'Fonts selected around identity work, client projects, and visual positioning.',
+            'group'    => 'popular',
             'featured' => false,
         ),
         array(
@@ -1956,6 +1963,7 @@ function kreativ_get_font_collection_links() {
             'title'    => 'Best Wedding Fonts',
             'icon'     => 'fa-solid fa-ring',
             'copy'     => 'Elegant, romantic, and decorative fonts for invitations and event design.',
+            'group'    => 'use_case',
             'featured' => false,
         ),
         array(
@@ -1963,6 +1971,7 @@ function kreativ_get_font_collection_links() {
             'title'    => 'Best Poster Fonts',
             'icon'     => 'fa-solid fa-rectangle-ad',
             'copy'     => 'Display-ready fonts for campaigns, posters, covers, and bold compositions.',
+            'group'    => 'use_case',
             'featured' => false,
         ),
         array(
@@ -1970,6 +1979,7 @@ function kreativ_get_font_collection_links() {
             'title'    => 'Best Minimal Fonts',
             'icon'     => 'fa-solid fa-minus',
             'copy'     => 'Quiet, reduced, and practical fonts for clean visual systems.',
+            'group'    => 'style',
             'featured' => false,
         ),
         array(
@@ -1977,6 +1987,7 @@ function kreativ_get_font_collection_links() {
             'title'    => 'Best Luxury Fonts',
             'icon'     => 'fa-solid fa-gem',
             'copy'     => 'Premium-feeling fonts for beauty, fashion, hospitality, packaging, and high-end brands.',
+            'group'    => 'style',
             'featured' => false,
         ),
         array(
@@ -1984,6 +1995,7 @@ function kreativ_get_font_collection_links() {
             'title'    => 'Best Packaging Fonts',
             'icon'     => 'fa-solid fa-box-open',
             'copy'     => 'Fonts selected for labels, product packaging, retail systems, and shelf-ready brand work.',
+            'group'    => 'use_case',
             'featured' => false,
         ),
     );

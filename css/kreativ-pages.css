@@ -258,6 +258,85 @@
     color: #2d2def;
 }
 
+.kreativ-collections-hub .kreativ-page-content {
+    max-width: none;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.kreativ-collection-groups {
+    display: grid;
+    gap: 1.65rem;
+}
+
+.kreativ-collection-group {
+    display: grid;
+    gap: 0.85rem;
+}
+
+.kreativ-collection-group-head {
+    display: grid;
+    gap: 0.35rem;
+    max-width: 720px;
+}
+
+.kreativ-collection-group-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: fit-content;
+    min-height: 34px;
+    padding: 0.42rem 0.7rem;
+    border: 1px solid rgba(74, 74, 255, 0.1);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+    color: #3d43a4;
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.kreativ-collection-group-label i {
+    color: #4a4aff;
+}
+
+.kreativ-collection-group-head h2 {
+    margin: 0;
+    color: #121622;
+    font-size: clamp(1.25rem, 1.8vw, 1.65rem);
+    line-height: 1.1;
+}
+
+.kreativ-collection-group-head p {
+    margin: 0;
+    color: #5b6582;
+    font-size: 0.96rem;
+    line-height: 1.55;
+}
+
+.kreativ-collections-hub .kreativ-collections-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.9rem;
+}
+
+.kreativ-collections-hub .kreativ-collection-card {
+    min-height: 152px;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.kreativ-collections-hub .kreativ-collection-content strong {
+    font-size: 0.98rem;
+}
+
+.kreativ-collections-hub .kreativ-collection-content span {
+    font-size: 0.86rem;
+}
+
 .kreativ-updates-content {
     max-width: 1040px;
 }
@@ -1171,6 +1250,14 @@
         padding: 1.5rem;
     }
 
+    .kreativ-collections-hub .kreativ-page-content {
+        padding: 0;
+    }
+
+    .kreativ-collections-hub .kreativ-collections-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .kreativ-collection-intro-points,
     .kreativ-single-collections-grid {
         grid-template-columns: 1fr;
@@ -1200,6 +1287,83 @@
         border-radius: 20px;
     }
 
+    .kreativ-collections-hub .kreativ-page-content {
+        padding: 0;
+        border-radius: 0;
+    }
+
+    .kreativ-collection-groups {
+        gap: 1.2rem;
+    }
+
+    .kreativ-collection-group {
+        gap: 0.65rem;
+    }
+
+    .kreativ-collection-group-label {
+        min-height: 32px;
+        padding: 0.38rem 0.62rem;
+        font-size: 0.7rem;
+    }
+
+    .kreativ-collection-group-head h2 {
+        font-size: 1.2rem;
+    }
+
+    .kreativ-collection-group-head p {
+        font-size: 0.9rem;
+        line-height: 1.48;
+    }
+
+    .kreativ-collections-hub .kreativ-collections-grid {
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
+    }
+
+    .kreativ-collections-hub .kreativ-collection-card {
+        min-height: 0;
+        padding: 0.88rem;
+    }
+
+    .kreativ-dynamic-collection-page .kreativ-page-hero {
+        gap: 0.85rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .kreativ-dynamic-collection-page .kreativ-page-summary {
+        font-size: 0.96rem;
+        line-height: 1.5;
+    }
+
+    .kreativ-dynamic-collection-page .kreativ-page-badges,
+    .kreativ-dynamic-collection-page .kreativ-page-hero-side,
+    .kreativ-dynamic-collection-page .kreativ-collection-intro-points,
+    .kreativ-dynamic-collection-page .kreativ-collection-related-links {
+        display: none;
+    }
+
+    .kreativ-dynamic-collection-page .kreativ-page-content {
+        padding: 0.9rem;
+    }
+
+    .kreativ-dynamic-collection-page .kreativ-collection-intro {
+        gap: 0.7rem;
+        padding: 0.9rem;
+        margin-bottom: 0.85rem;
+        border-radius: 18px;
+    }
+
+    .kreativ-dynamic-collection-page .kreativ-collection-intro-copy h2 {
+        margin-bottom: 0.35rem;
+        font-size: 1.2rem;
+        line-height: 1.12;
+    }
+
+    .kreativ-dynamic-collection-page .kreativ-collection-intro-copy p {
+        line-height: 1.55;
+    }
+
     .kreativ-results-grid,
     .kreativ-related-posts .row {
         row-gap: 0.85rem;
@@ -1209,6 +1373,17 @@
     .kreativ-collection-actions {
         display: grid;
         gap: 0.55rem;
+    }
+
+    .kreativ-dynamic-collection-page .kreativ-collection-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-top: 0.75rem;
+    }
+
+    .kreativ-dynamic-collection-page .kreativ-collection-actions a {
+        min-height: 40px;
+        padding: 0.55rem 0.7rem;
+        font-size: 0.86rem;
     }
 
     .kreativ-page-badges {
@@ -1398,6 +1573,33 @@ body.dark-mode .kreativ-post-taxonomy-group {
 body.dark-mode .kreativ-page-content {
     background: #12192c;
     box-shadow: 0 22px 46px rgba(0, 0, 0, 0.28);
+}
+
+body.dark-mode .kreativ-collections-hub .kreativ-page-content {
+    background: transparent;
+    box-shadow: none;
+}
+
+body.dark-mode .kreativ-collection-group-label {
+    background: rgba(20, 26, 44, 0.92);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #dfe6fb;
+}
+
+body.dark-mode .kreativ-collection-group-head h2,
+body.dark-mode .kreativ-collections-hub .kreativ-collection-content strong {
+    color: #f4f7ff;
+}
+
+body.dark-mode .kreativ-collection-group-head p,
+body.dark-mode .kreativ-collections-hub .kreativ-collection-content span {
+    color: #aeb9d6;
+}
+
+body.dark-mode .kreativ-collections-hub .kreativ-collection-card {
+    background: rgba(20, 26, 44, 0.92);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #dfe6fb;
 }
 
 body.dark-mode .kreativ-update-card {
