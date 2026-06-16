@@ -70,7 +70,7 @@ foreach ( $kreativ_collection_links as $collection ) {
         <div class="kreativ-page-hero-side">
             <div class="kreativ-page-side-card">
                 <h2>Start with the job, then pick the font.</h2>
-                <p>Collections keep common design decisions closer together, so you can compare useful options without rebuilding the same filter path every time.</p>
+                <p>Compare useful font options without starting from scratch.</p>
             </div>
         </div>
     </section>

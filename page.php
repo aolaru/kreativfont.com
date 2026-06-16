@@ -16,7 +16,7 @@ if ( $is_tool_page ) {
         <div class="kreativ-page-hero-main">
             <div class="kreativ-page-eyebrow">
                 <i class="fa-solid <?php echo esc_attr( $is_tool_page ? 'fa-screwdriver-wrench' : 'fa-file-lines' ); ?>" aria-hidden="true"></i>
-                <?php echo esc_html( $is_tool_page ? 'Kreativ font tool' : 'Kreativ page' ); ?>
+                <?php echo esc_html( $is_tool_page ? 'Font tool' : 'Page' ); ?>
             </div>
 
             <h1 class="kreativ-page-title"><?php the_title(); ?></h1>
@@ -27,12 +27,12 @@ if ( $is_tool_page ) {
 
             <div class="kreativ-page-badges">
                 <?php if ( $is_tool_page ) : ?>
-                    <span class="kreativ-page-badge"><i class="fa-solid fa-bolt"></i> Practical workflow</span>
-                    <span class="kreativ-page-badge"><i class="fa-solid fa-layer-group"></i> Built for font decisions</span>
-                    <span class="kreativ-page-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> Part of Kreativ Tools</span>
+                    <span class="kreativ-page-badge"><i class="fa-solid fa-bolt"></i> Fast utility</span>
+                    <span class="kreativ-page-badge"><i class="fa-solid fa-layer-group"></i> Font decisions</span>
+                    <span class="kreativ-page-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> Creative support</span>
                 <?php else : ?>
-                    <span class="kreativ-page-badge"><i class="fa-solid fa-font"></i> Typography-focused content</span>
-                    <span class="kreativ-page-badge"><i class="fa-solid fa-compass"></i> Part of Kreativ Font</span>
+                    <span class="kreativ-page-badge"><i class="fa-solid fa-font"></i> Typography content</span>
+                    <span class="kreativ-page-badge"><i class="fa-solid fa-compass"></i> Easy reading</span>
                 <?php endif; ?>
             </div>
         </div>
@@ -40,11 +40,11 @@ if ( $is_tool_page ) {
         <div class="kreativ-page-hero-side">
             <div class="kreativ-page-side-card">
                 <?php if ( $is_tool_page ) : ?>
-                    <h2>Use the tool, then keep exploring the library.</h2>
-                    <p>These pages are designed to help you move quickly from a font problem to a usable answer, without leaving the broader Kreativ font ecosystem.</p>
+                    <h2>Solve the font task, then keep exploring.</h2>
+                    <p>Use the tool for identification, pairing, naming, or styling, then return to the library when you are ready to choose.</p>
                 <?php else : ?>
-                    <h2>Focused pages with less clutter and clearer reading flow.</h2>
-                    <p>Kreativ pages should feel like part of the same fonts-first product, even when they are not archive or homepage views.</p>
+                    <h2>Clear reading without extra clutter.</h2>
+                    <p>Read the page, follow useful links, and get back to font browsing when needed.</p>
                 <?php endif; ?>
             </div>
 
@@ -52,13 +52,13 @@ if ( $is_tool_page ) {
                 <div class="kreativ-page-mini-card">
                     <span class="kreativ-page-mini-label">Type</span>
                     <span class="kreativ-page-mini-value"><?php echo esc_html( $is_tool_page ? 'Tool' : 'Page' ); ?></span>
-                    <p class="kreativ-page-mini-copy"><?php echo esc_html( $is_tool_page ? 'Task-focused utility experience' : 'Editorial or informational content' ); ?></p>
+                    <p class="kreativ-page-mini-copy"><?php echo esc_html( $is_tool_page ? 'Identify, pair, name, or style fonts' : 'Readable reference content' ); ?></p>
                 </div>
 
                 <div class="kreativ-page-mini-card">
                     <span class="kreativ-page-mini-label">Context</span>
-                    <span class="kreativ-page-mini-value"><?php echo esc_html( $is_tool_page ? 'Fonts' : 'Kreativ' ); ?></span>
-                    <p class="kreativ-page-mini-copy"><?php echo esc_html( $is_tool_page ? 'Supports identification, pairing, and naming' : 'Part of the broader brand system' ); ?></p>
+                    <span class="kreativ-page-mini-value">Fonts</span>
+                    <p class="kreativ-page-mini-copy"><?php echo esc_html( $is_tool_page ? 'Supports identification, pairing, and naming' : 'Supports browsing and font decisions' ); ?></p>
                 </div>
             </div>
         </div>

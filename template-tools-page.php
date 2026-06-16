@@ -13,7 +13,7 @@ get_header();
         <div class="kreativ-page-hero-main">
             <div class="kreativ-page-eyebrow">
                 <i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>
-                Kreativ font tool
+                Font tool
             </div>
 
             <h1 class="kreativ-page-title"><?php the_title(); ?></h1>
@@ -23,23 +23,23 @@ get_header();
             <?php endif; ?>
 
             <div class="kreativ-page-badges">
-                <span class="kreativ-page-badge"><i class="fa-solid fa-bolt"></i> Practical workflow</span>
-                <span class="kreativ-page-badge"><i class="fa-solid fa-layer-group"></i> Built for font decisions</span>
-                <span class="kreativ-page-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> Part of Kreativ Tools</span>
+                <span class="kreativ-page-badge"><i class="fa-solid fa-bolt"></i> Fast utility</span>
+                <span class="kreativ-page-badge"><i class="fa-solid fa-layer-group"></i> Font decisions</span>
+                <span class="kreativ-page-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> Creative support</span>
             </div>
         </div>
 
         <div class="kreativ-page-hero-side">
             <div class="kreativ-page-side-card">
-                <h2>Use the tool, then keep exploring the library.</h2>
-                <p>These pages are designed to move quickly from a font problem to a usable answer without leaving the broader Kreativ ecosystem.</p>
+                <h2>Solve the font task, then keep exploring.</h2>
+                <p>Use the tool for identification, pairing, naming, or styling, then return to the library when you are ready to choose.</p>
             </div>
 
             <div class="kreativ-page-card-grid">
                 <div class="kreativ-page-mini-card">
                     <span class="kreativ-page-mini-label">Type</span>
                     <span class="kreativ-page-mini-value">Tool</span>
-                    <p class="kreativ-page-mini-copy">Task-focused utility experience</p>
+                    <p class="kreativ-page-mini-copy">Identify, pair, name, or style fonts</p>
                 </div>
 
                 <div class="kreativ-page-mini-card">

@@ -58,10 +58,10 @@ $free_fonts_slugs = function_exists( 'kreativ_get_free_fonts_category_slugs' ) ?
         <div class="kreativ-hero-panel">
             <span class="kreativ-hero-panel-label">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
-                Why Kreativ Works
+                Font decisions
             </span>
-            <h2 class="kreativ-hero-panel-title">A fonts-first workflow built for browsing, identifying, and choosing faster.</h2>
-            <p class="kreativ-hero-panel-copy">Kreativ brings curation and utility together, so discovery does not stop at inspiration and tools do not live in a separate silo.</p>
+            <h2 class="kreativ-hero-panel-title">Browse, identify, and choose fonts with less guesswork.</h2>
+            <p class="kreativ-hero-panel-copy">Move from inspiration to practical choices: browse fonts, identify type, test pairings, and generate names from one place.</p>
         </div>
 
     </div>
@@ -113,7 +113,7 @@ foreach ( kreativ_get_font_collection_links() as $collection ) {
                 <i class="fa-solid fa-compass"></i>
                 Explore fonts by intent
             </h2>
-            <p class="kreativ-section-summary">Focused dynamic pages built from style, mood, and use-case branches.</p>
+            <p class="kreativ-section-summary">Start with a goal: commercial, free, modern, vintage, branding, packaging, and more.</p>
         </div>
         <a href="<?php echo esc_url( home_url( '/collections' ) ); ?>" class="kf-view-all">View all collections &rsaquo;</a>
     </div>

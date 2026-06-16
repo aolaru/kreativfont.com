@@ -31,7 +31,7 @@ $pagination_args = kreativ_get_search_refinement_base_args( $search_query, $acti
 
             <p class="kreativ-page-summary">
                 <?php if ( $result_query->have_posts() ) : ?>
-                    <?php echo esc_html( sprintf( '%d result%s ranked by font-name relevance, structured font taxonomy, and broader library signals.', $result_count, 1 === $result_count ? '' : 's' ) ); ?>
+                    <?php echo esc_html( sprintf( '%d matching result%s from font titles, designers, foundries, styles, moods, and related pages.', $result_count, 1 === $result_count ? '' : 's' ) ); ?>
                 <?php else : ?>
                     We could not find matching fonts or content. Try a different keyword or browse the main font library instead.
                 <?php endif; ?>
@@ -39,15 +39,15 @@ $pagination_args = kreativ_get_search_refinement_base_args( $search_query, $acti
 
             <div class="kreativ-page-badges">
                 <span class="kreativ-page-badge"><i class="fa-solid fa-font"></i> Fonts and resources</span>
-                <span class="kreativ-page-badge"><i class="fa-solid fa-filter"></i> Search-driven discovery</span>
+                <span class="kreativ-page-badge"><i class="fa-solid fa-filter"></i> Refinable results</span>
                 <span class="kreativ-page-badge"><i class="fa-solid fa-tags"></i> Title, designer, foundry, style, mood, and use case</span>
             </div>
         </div>
 
         <div class="kreativ-page-hero-side">
             <div class="kreativ-page-side-card">
-                <h2>Use search as a fast way into the library.</h2>
-                <p>Search should feel like part of the same curated experience, not a generic WordPress fallback page.</p>
+                <h2>Search across fonts, styles, and makers.</h2>
+                <p>Use the filters below to narrow results by designer, foundry, style, mood, or use case.</p>
             </div>
         </div>
     </section>

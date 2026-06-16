@@ -86,7 +86,7 @@ $related_groups  = kreativ_get_tag_archive_related_groups( $tag_name, 6 );
     <div class="container kreativ-archive-discovery">
         <div class="kreativ-archive-discovery-head">
             <h2>Related discovery</h2>
-            <p>Use structured taxonomy matches to pivot from this tag into cleaner browsing paths.</p>
+            <p>Use related matches to move from this tag into clearer browsing paths.</p>
         </div>
 
         <div class="kreativ-archive-discovery-groups">

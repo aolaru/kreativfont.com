@@ -396,7 +396,7 @@ function kreativ_get_archive_context_summary( $term, $archive_type = 'category',
         return array(
             'eyebrow'    => 'Archive',
             'title'      => 'Explore the font library',
-            'summary'    => 'Browse curated type, refine your filters, and move quickly into better font decisions.',
+            'summary'    => 'Browse curated type, refine the list, and move quickly into better font decisions.',
             'side_title' => 'Discovery stays fast when the archive stays focused.',
             'side_copy'  => 'Use filters and related links to move through styles, moods, and use cases without falling back to generic browsing.',
         );
@@ -413,7 +413,7 @@ function kreativ_get_archive_context_summary( $term, $archive_type = 'category',
         return array(
             'eyebrow'    => 'Font tools',
             'title'      => 'Browse Font Tools',
-            'summary'    => $tool_count_phrase . ' built for faster font decisions. Identify type, generate names, test pairings, and create styled text from one focused tools hub.',
+            'summary'    => $tool_count_phrase . ' for faster font decisions. Identify type, generate names, test pairings, and create styled text in one place.',
             'side_title' => 'Pick the tool that matches the job.',
             'side_copy'  => 'Start with identification, pairing, naming, or text generation, then move back into the font library when you are ready to choose.',
         );
@@ -423,9 +423,9 @@ function kreativ_get_archive_context_summary( $term, $archive_type = 'category',
         return array(
             'eyebrow'    => 'Tag archive',
             'title'      => 'Explore fonts tagged ' . $term->name,
-            'summary'    => $count_phrase . ' connected to this tag. Use the filter bar and related discovery links to branch into more structured font paths.',
-            'side_title' => 'Tags are a loose entry point, not the whole discovery model.',
-            'side_copy'  => 'From here you can pivot into more structured filters like style, mood, use case, designer, or foundry.',
+            'summary'    => $count_phrase . ' connected to this tag. Use the filter bar and related links to find matching styles, moods, and use cases.',
+            'side_title' => 'Tags are a starting point.',
+            'side_copy'  => 'From here you can narrow by style, mood, use case, designer, or foundry.',
         );
     }
 
@@ -436,8 +436,8 @@ function kreativ_get_archive_context_summary( $term, $archive_type = 'category',
             'eyebrow'    => $branch_labels[ $branch_key ] . ' archive',
             'title'      => 'Explore ' . $term->name . ' across the font library',
             'summary'    => $count_phrase . ' currently surfaced here. Filter by ' . strtolower( $filter_label ) . ' order and move through related discovery paths without leaving the archive.',
-            'side_title' => $term->name . ' sits inside the ' . strtolower( $singular ) . ' branch.',
-            'side_copy'  => 'Use sibling terms and homepage-style filters to move laterally through the library instead of browsing one post at a time.',
+            'side_title' => 'Browse more ' . strtolower( $singular ) . ' options like ' . $term->name . '.',
+            'side_copy'  => 'Use related terms and filters to compare more fonts without browsing one post at a time.',
         );
     }
 
@@ -445,8 +445,8 @@ function kreativ_get_archive_context_summary( $term, $archive_type = 'category',
         'eyebrow'    => 'Category archive',
         'title'      => 'Browse ' . $term->name,
         'summary'    => $count_phrase . ' available under this category. Use filters and related discovery links to tighten the view and keep browsing momentum.',
-        'side_title' => 'Use this archive as a discovery hub, not just a list.',
-        'side_copy'  => 'The archive now shares the same visual system and filter language as the homepage, search, and single pages.',
+        'side_title' => 'Use this archive to keep browsing with more context.',
+        'side_copy'  => 'Filter the list, follow related terms, or jump back into the main font library.',
     );
 }
 
@@ -1906,7 +1906,7 @@ function kreativ_get_font_collection_links() {
             'slug'     => 'trending-commercial-fonts',
             'title'    => 'Trending Commercial Fonts',
             'icon'     => 'fa-solid fa-chart-line',
-            'copy'     => 'Premium commercial font picks ranked by current library and activity signals.',
+            'copy'     => 'Premium picks for branding, editorial, packaging, and client work.',
             'group'    => 'popular',
             'featured' => true,
         ),
@@ -2391,7 +2391,7 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
         'title'          => get_the_title(),
         'summary'        => '',
         'side_title'     => 'A focused shortcut into the font library.',
-        'side_copy'      => 'This page updates automatically from the current Kreativ Font taxonomy and published font posts.',
+        'side_copy'      => 'New matching font posts appear here as the library grows.',
         'badges'         => array(),
         'badge_text'     => 'Fonts',
         'badge_slug'     => 'fonts',
@@ -2401,7 +2401,7 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
         'intro_points'   => array(),
         'related_slugs'  => array(),
         'empty_title'    => 'No matching fonts yet.',
-        'empty_copy'     => 'This collection will populate automatically when matching font posts are published.',
+        'empty_copy'     => 'Matching fonts will appear here as they are added.',
         'posts_per_page' => 24,
         'orderby'        => array( 'date' => 'DESC' ),
         'free_mode'      => '',

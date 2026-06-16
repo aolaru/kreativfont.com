@@ -15,24 +15,24 @@ $kreativ_updates = array(
         ),
     ),
     'April 2026' => array(
-        'title'   => 'Search, taxonomy, and single-page clarity improved together',
-        'summary' => 'April focused on turning the site into a stronger font-discovery product, with better search behavior, stronger structured metadata, clearer browsing paths, and more deliberate single-page presentation.',
+        'title'   => 'Search and single-page clarity improved together',
+        'summary' => 'April focused on better search behavior, clearer browsing paths, stronger metadata, and more deliberate single-page presentation.',
         'items'   => array(
             'A custom live suggestion dropdown was added to the header search.',
             'Suggestions now include font titles, designers, foundries, styles, moods, and use cases.',
             'Search result cards now explain what matched, and the full results page now follows the same structured matching logic as the live suggestions.',
-            'Search refinements were added so results can be narrowed by structured font taxonomy without leaving the results page.',
+            'Search refinements were added so results can be narrowed by designer, foundry, style, mood, and use case.',
             'The homepage now separates latest commercial fonts from latest free fonts, making browsing clearer as free-font publishing increases.',
             'Single-page hero metadata now prefers structured designer and foundry information.',
-            'Single-page classification now prefers font style branches instead of generic category guesses.',
+            'Single-page classification now prefers clear font style labels instead of generic category guesses.',
             'Single font pages now show cleaner structured metadata for style, designer, foundry, mood, use cases, and secondary tags.',
             'Mobile navigation was rebuilt and polished so the menu opens correctly above page content and the header no longer leaves extra spacing.',
             'Single-page navigation labels were corrected, and hero title and summary widths were rebalanced.',
         ),
     ),
     'March 2026' => array(
-        'title'   => 'The theme was rebuilt into a more coherent fonts-first product',
-        'summary' => 'March was the main rebuild month. The site moved away from an older general-assets direction and became a more consistent product centered on curated fonts, font tools, stronger browsing, and cleaner page structure.',
+        'title'   => 'The theme was rebuilt around fonts and tools',
+        'summary' => 'March was the main rebuild month. The site moved away from an older general-assets direction and became more focused on curated fonts, font tools, stronger browsing, and cleaner page structure.',
         'items'   => array(
             'GitHub repository, structured changelog, and automated deployment were set up for safer ongoing theme work.',
             'The homepage was refocused on fonts and font tools, with clearer hero messaging and stronger calls to action.',
@@ -46,7 +46,7 @@ $kreativ_updates = array(
     ),
     'Since September 2025' => array(
         'title'   => 'Kreativ Font entered a broader modernization phase',
-        'summary' => 'The site began shifting away from an older general creative-assets direction and toward a cleaner fonts-first product focused on discovery, utility, and a more coherent browsing experience.',
+        'summary' => 'The site began shifting away from an older general creative-assets direction and toward cleaner font discovery, better tools, and a more coherent browsing experience.',
         'items'   => array(
             'The overall direction moved more decisively toward fonts, font reviews, and practical tools.',
             'Branding, UX, and structure started being treated as product work instead of isolated theme tweaks.',
@@ -73,8 +73,8 @@ get_header();
             </p>
 
             <div class="kreativ-page-badges">
-                <span class="kreativ-page-badge"><i class="fa-solid fa-font"></i> Fonts-first improvements</span>
-                <span class="kreativ-page-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> Product-focused updates</span>
+                <span class="kreativ-page-badge"><i class="fa-solid fa-font"></i> Browsing improvements</span>
+                <span class="kreativ-page-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> Tool and UX updates</span>
                 <span class="kreativ-page-badge"><i class="fa-solid fa-mobile-screen"></i> Desktop and mobile polish</span>
             </div>
         </div>

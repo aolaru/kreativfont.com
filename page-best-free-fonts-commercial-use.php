@@ -8,11 +8,11 @@ kreativ_render_dynamic_font_collection_page(
         'eyebrow'        => 'Free to use',
         'eyebrow_icon'   => 'fa-solid fa-gift',
         'title'          => 'Best Free Fonts for Commercial Use',
-        'summary'        => 'A dynamic shortcut to free font posts that are useful for commercial projects, experiments, and lower-friction creative work.',
+        'summary'        => 'Free fonts for commercial projects, experiments, and lower-friction creative work.',
         'side_title'     => 'Free fonts still need license checks.',
-        'side_copy'      => 'This page pulls from the Free Fonts category. Always verify the included license before using a font in client or commercial work.',
+        'side_copy'      => 'Always verify the included license before using a font in client or commercial work.',
         'intro_title'    => 'Free fonts are useful when licensing is clear.',
-        'intro_copy'     => 'This collection is designed for quick testing, mockups, and production cases where a free font can work. Always confirm the included license before using any typeface in paid or public-facing work.',
+        'intro_copy'     => 'Use free fonts for quick testing, mockups, and production cases where the license is clear. Always confirm the included terms before using any typeface in paid or public-facing work.',
         'intro_points'   => array(
             'Good for experiments, prototypes, and lower-budget projects.',
             'Prioritizes posts from the Free Fonts category.',
@@ -30,7 +30,7 @@ kreativ_render_dynamic_font_collection_page(
             ),
             array(
                 'icon' => 'fa-solid fa-rotate',
-                'text' => 'Updates as new fonts publish',
+                'text' => 'New additions included',
             ),
         ),
         'badge_text'     => 'Free',

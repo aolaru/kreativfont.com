@@ -54,7 +54,7 @@ foreach ( kreativ_get_font_collection_links() as $collection ) {
                             <i class="fa-solid fa-compass" aria-hidden="true"></i>
                             Browse by intent
                         </h2>
-                        <p class="kreativ-section-summary">Start from one of the main dynamic collections instead of guessing the old URL.</p>
+                        <p class="kreativ-section-summary">Start from one of the main font collections instead of guessing the old URL.</p>
                     </div>
                 </div>
 
