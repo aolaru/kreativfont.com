@@ -6,25 +6,17 @@
     border-radius: var(--kf-hero-radius);
     margin-bottom: var(--kf-hero-margin-bottom);
     background: var(--kreativ-cat-gradient);
-    animation: kreativGradientMove 12s ease infinite;
-    background-size: 200% 200%;
 }
 
 .kreativ-content > .kreativ-category-bg:first-child {
     margin-top: 0;
 }
 
-@keyframes kreativGradientMove {
-    0%   { background-position: 0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-/* CATEGORY-SPECIFIC GRADIENTS */
-body.kreativ-cat-fonts            { --kreativ-cat-gradient: linear-gradient(135deg, #f8f9ff 0%, #eef1ff 100%); }
-body.kreativ-cat-free             { --kreativ-cat-gradient: linear-gradient(135deg, #dff8e4 0%, #effff4 100%); }
-body.kreativ-cat-free-fonts       { --kreativ-cat-gradient: linear-gradient(135deg, #dff8e4 0%, #effff4 100%); }
-body.kreativ-cat-tools            { --kreativ-cat-gradient: linear-gradient(135deg, #fbfcff 0%, #f2f5ff 100%); }
+/* CATEGORY-SPECIFIC SURFACES */
+body.kreativ-cat-fonts            { --kreativ-cat-gradient: var(--kf-gradient-hero); }
+body.kreativ-cat-free             { --kreativ-cat-gradient: linear-gradient(180deg, #f7fbf8 0%, #ffffff 100%); }
+body.kreativ-cat-free-fonts       { --kreativ-cat-gradient: linear-gradient(180deg, #f7fbf8 0%, #ffffff 100%); }
+body.kreativ-cat-tools            { --kreativ-cat-gradient: var(--kf-gradient-hero); }
 
 /* ================================================================
    CATEGORY HEADER
@@ -56,10 +48,10 @@ body.kreativ-cat-tools            { --kreativ-cat-gradient: linear-gradient(135d
     min-height: 42px;
     padding: 0.55rem 0.9rem;
     margin-bottom: 1rem;
-    border: 1px solid rgba(74, 74, 255, 0.08);
+    border: 1px solid rgba(var(--kf-primary-rgb), 0.08);
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.82);
-    color: #3d43a4;
+    color: var(--kf-primary-strong);
     font-size: 0.95rem;
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -67,11 +59,11 @@ body.kreativ-cat-tools            { --kreativ-cat-gradient: linear-gradient(135d
 }
 
 .kreativ-category-eyebrow i {
-    color: #4A4AFF;
+    color: var(--kf-primary);
 }
 
 .kreativ-category-header p {
-    color: #4d5877;
+    color: var(--kf-text-soft);
     font-size: 1.08rem;
     line-height: 1.75;
     max-width: 58ch;
@@ -93,7 +85,7 @@ body.kreativ-cat-tools            { --kreativ-cat-gradient: linear-gradient(135d
     padding: 0.7rem 1rem;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.92);
-    border: 1px solid rgba(74, 74, 255, 0.08);
+    border: 1px solid rgba(var(--kf-primary-rgb), 0.08);
     color: #30405f;
     font-weight: 700;
 }
@@ -106,7 +98,7 @@ body.kreativ-cat-tools            { --kreativ-cat-gradient: linear-gradient(135d
     width: 100%;
     padding: 1.5rem;
     border-radius: 26px;
-    background: #1b2031;
+    background: var(--kf-panel-dark);
     color: #f2f4ff;
     box-shadow: 0 16px 36px rgba(18, 24, 40, 0.12);
 }
@@ -138,10 +130,10 @@ body.kreativ-cat-tools            { --kreativ-cat-gradient: linear-gradient(135d
     align-items: center;
     justify-content: center;
     padding: 0.65rem 1rem;
-    border: 1px solid #d7dbeb;
+    border: 1px solid rgba(var(--kf-primary-rgb), 0.14);
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.92);
-    color: #3d43a4;
+    color: var(--kf-primary-strong);
     font-size: 0.95rem;
     font-weight: 700;
     line-height: 1;
@@ -150,17 +142,17 @@ body.kreativ-cat-tools            { --kreativ-cat-gradient: linear-gradient(135d
 }
 
 .kreativ-font-filter:hover {
-    border-color: #4a4aff;
-    box-shadow: 0 8px 24px rgba(74, 74, 255, 0.12);
+    border-color: var(--kf-border-strong);
+    box-shadow: 0 8px 18px rgba(18, 22, 34, 0.07);
     transform: translateY(-1px);
     text-decoration: none;
 }
 
 .kreativ-font-filter.active {
-    background: #4a4aff;
-    border-color: #4a4aff;
+    background: var(--kf-primary);
+    border-color: var(--kf-primary);
     color: #fff;
-    box-shadow: 0 10px 24px rgba(74, 74, 255, 0.2);
+    box-shadow: 0 10px 22px rgba(var(--kf-primary-rgb), 0.16);
 }
 
 .kreativ-archive-filter-bar {
@@ -168,18 +160,18 @@ body.kreativ-cat-tools            { --kreativ-cat-gradient: linear-gradient(135d
 }
 
 .kreativ-archive-filter-bar .kreativ-font-filter {
-    box-shadow: 0 6px 18px rgba(74, 74, 255, 0.06);
+    box-shadow: 0 6px 18px rgba(18, 22, 34, 0.05);
 }
 
 .kreativ-archive-filter-bar .kreativ-font-filter.active {
-    box-shadow: 0 10px 24px rgba(74, 74, 255, 0.18);
+    box-shadow: 0 10px 22px rgba(var(--kf-primary-rgb), 0.16);
 }
 
 .kreativ-archive-discovery {
     padding: 1.4rem 1.2rem;
     margin-bottom: 2rem;
     border-radius: 24px;
-    border: 1px solid rgba(74, 74, 255, 0.08);
+    border: 1px solid rgba(var(--kf-primary-rgb), 0.08);
     background: rgba(255, 255, 255, 0.86);
 }
 
@@ -195,7 +187,7 @@ body.kreativ-cat-tools            { --kreativ-cat-gradient: linear-gradient(135d
 
 .kreativ-archive-discovery-head p {
     margin: 0;
-    color: #5d6786;
+    color: var(--kf-muted);
 }
 
 .kreativ-archive-discovery-groups {
@@ -205,7 +197,7 @@ body.kreativ-cat-tools            { --kreativ-cat-gradient: linear-gradient(135d
 
 .kreativ-archive-discovery-group h3 {
     margin: 0 0 0.45rem;
-    color: #3d43a4;
+    color: var(--kf-primary-strong);
     font-size: 0.82rem;
     font-weight: 800;
     letter-spacing: 0.08em;
@@ -224,7 +216,7 @@ body.kreativ-cat-tools            { --kreativ-cat-gradient: linear-gradient(135d
     min-height: 40px;
     padding: 0.6rem 0.9rem;
     border-radius: 999px;
-    border: 1px solid rgba(74, 74, 255, 0.12);
+    border: 1px solid rgba(var(--kf-primary-rgb), 0.12);
     background: rgba(255, 255, 255, 0.96);
     color: #2a3554;
     font-weight: 700;
@@ -234,9 +226,9 @@ body.kreativ-cat-tools            { --kreativ-cat-gradient: linear-gradient(135d
 
 .kreativ-archive-discovery-pill:hover,
 .kreativ-archive-discovery-pill:focus {
-    color: #2d2def;
-    background: rgba(74, 74, 255, 0.08);
-    border-color: rgba(74, 74, 255, 0.18);
+    color: var(--kf-primary);
+    background: rgba(var(--kf-primary-rgb), 0.08);
+    border-color: rgba(var(--kf-primary-rgb), 0.18);
     text-decoration: none;
     transform: translateY(-1px);
 }
@@ -274,7 +266,7 @@ body.dark-mode .kreativ-archive-discovery-pill {
 body.dark-mode .kreativ-archive-discovery-pill:hover,
 body.dark-mode .kreativ-archive-discovery-pill:focus {
     color: #8ea0ff;
-    background: rgba(74, 74, 255, 0.14);
+    background: rgba(var(--kf-primary-rgb), 0.14);
     border-color: rgba(142, 160, 255, 0.2);
 }
 
@@ -350,37 +342,37 @@ body.kreativ-cat-tools .kreativ-font-card {
     font-size: 1.05rem;
     border-radius: 8px;
     border: 1px solid transparent;
-    color: #333;
+    color: var(--kf-text-soft);
     text-decoration: none;
     transition: all 0.25s ease;
 }
 
 .kreativ-pagination .page-numbers:hover {
-    background: #4A4AFF;
+    background: var(--kf-primary);
     color: #fff;
-    border-color: #4A4AFF;
-    transform: translateY(-2px);
+    border-color: var(--kf-primary);
+    transform: translateY(-1px);
 }
 
 .kreativ-pagination .current {
-    background: #4A4AFF;
+    background: var(--kf-primary);
     color: #fff;
-    border-color: #4A4AFF;
+    border-color: var(--kf-primary);
     font-weight: 600;
     cursor: default;
 }
 
 .kreativ-pagination .prev,
 .kreativ-pagination .next {
-    color: #E53935;
+    color: var(--kf-accent);
     font-weight: 600;
 }
 
 .kreativ-pagination .prev:hover,
 .kreativ-pagination .next:hover {
-    background: #E53935;
+    background: var(--kf-accent);
     color: #fff;
-    border-color: #E53935;
+    border-color: var(--kf-accent);
 }
 
 .kreativ-pagination .dots {
@@ -393,7 +385,7 @@ body.kreativ-cat-tools .kreativ-font-card {
     padding: 2rem 1.5rem;
     margin: 1rem 0 0.5rem;
     text-align: center;
-    border: 1px solid rgba(74, 74, 255, 0.08);
+    border: 1px solid rgba(var(--kf-primary-rgb), 0.08);
     border-radius: 22px;
     background: rgba(255, 255, 255, 0.84);
 }

@@ -1,13 +1,10 @@
 .kreativ-footer {
   margin-top: 2.4rem;
   padding: 2.75rem 0 1.45rem;
-  color: #5f6986;
+  color: var(--kf-muted);
   text-align: left !important;
-  background:
-    radial-gradient(circle at top right, rgba(255, 51, 102, 0.08) 0%, rgba(255, 51, 102, 0) 24%),
-    radial-gradient(circle at top left, rgba(74, 74, 255, 0.08) 0%, rgba(74, 74, 255, 0) 28%),
-    linear-gradient(180deg, #f8f9ff 0%, #f1f4ff 100%);
-  border-top: 1px solid rgba(74, 74, 255, 0.08);
+  background: linear-gradient(180deg, #f8f9ff 0%, #f3f5fb 100%);
+  border-top: 1px solid rgba(var(--kf-primary-rgb), 0.08);
   font-size: 0.9rem;
 }
 
@@ -36,7 +33,7 @@
   align-items: center;
   gap: 0.65rem;
   margin-bottom: 0.7rem;
-  color: #121622 !important;
+  color: var(--kf-text) !important;
   font-size: 0.98rem;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -53,13 +50,13 @@
 }
 
 .kreativ-footer-mark:hover {
-  color: #2d2def !important;
+  color: var(--kf-primary) !important;
   text-decoration: none;
 }
 
 .kreativ-footer-copy {
   margin: 0;
-  color: #5d6785;
+  color: var(--kf-muted);
   line-height: 1.55;
 }
 
@@ -71,7 +68,7 @@
 
 .kreativ-footer-group h2 {
   margin: 0 0 0.7rem;
-  color: #121622 !important;
+  color: var(--kf-text) !important;
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.11em;
@@ -81,21 +78,21 @@
 .kreativ-footer-group a {
   display: block;
   margin-bottom: 0.52rem;
-  color: #3d4766 !important;
+  color: var(--kf-text-soft) !important;
   font-weight: 600;
   line-height: 1.35;
   text-decoration: none;
 }
 
 .kreativ-footer-group a:hover {
-  color: #2d2def !important;
+  color: var(--kf-primary) !important;
   text-decoration: none;
 }
 
 .kreativ-footer-meta {
   grid-column: 1 / -1;
   padding-top: 1rem;
-  border-top: 1px solid rgba(74, 74, 255, 0.08);
+  border-top: 1px solid rgba(var(--kf-primary-rgb), 0.08);
   display: grid;
   gap: 0.35rem;
   font-size: 0.82rem;
@@ -103,20 +100,17 @@
 
 .kreativ-footer-meta p {
   margin: 0;
-  color: #697390;
+  color: var(--kf-muted);
   line-height: 1.5;
 }
 
 .kreativ-footer-meta a {
-  color: #2d2def !important;
+  color: var(--kf-primary) !important;
   font-weight: 700;
 }
 
 body.dark-mode .kreativ-footer {
-  background:
-    radial-gradient(circle at top right, rgba(255, 51, 102, 0.12) 0%, rgba(255, 51, 102, 0) 24%),
-    radial-gradient(circle at top left, rgba(74, 74, 255, 0.14) 0%, rgba(74, 74, 255, 0) 28%),
-    linear-gradient(180deg, #10131d 0%, #0b0f18 100%);
+  background: linear-gradient(180deg, #10131d 0%, #0b0f18 100%);
   color: #aab3cc;
   border-top-color: rgba(255, 255, 255, 0.08);
 }

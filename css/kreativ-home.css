@@ -1,5 +1,5 @@
 :root {
-    --kf-gradient: linear-gradient(180deg, #fafbff 0%, #f4f6ff 100%);
+    --kf-gradient: var(--kf-gradient-section);
 }
 
 .kreativ-hero {
@@ -9,11 +9,11 @@
     grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.9fr);
     gap: var(--kf-hero-gap);
     padding: var(--kf-hero-padding);
-    background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.92) 0%, rgba(246, 247, 255, 0.97) 44%, rgba(236, 239, 255, 1) 100%);
+    background: var(--kf-gradient-hero);
     border-radius: var(--kf-hero-radius);
     margin-top: 0;
     margin-bottom: var(--kf-hero-margin-bottom);
-    box-shadow: 0 26px 60px rgba(74, 74, 255, 0.08);
+    box-shadow: var(--kf-shadow-soft);
 }
 
 .kreativ-hero::before,
@@ -22,6 +22,7 @@
     position: absolute;
     border-radius: 999px;
     pointer-events: none;
+    display: none;
 }
 
 .kreativ-hero::before {
@@ -29,7 +30,7 @@
     height: 340px;
     right: -90px;
     top: -120px;
-    background: radial-gradient(circle, rgba(255, 51, 102, 0.22) 0%, rgba(255, 51, 102, 0) 72%);
+    background: none;
 }
 
 .kreativ-hero::after {
@@ -37,7 +38,7 @@
     height: 360px;
     left: -160px;
     bottom: -200px;
-    background: radial-gradient(circle, rgba(74, 74, 255, 0.18) 0%, rgba(74, 74, 255, 0) 70%);
+    background: none;
 }
 
 .kreativ-hero-main,
@@ -53,7 +54,7 @@
     padding: 0.45rem 0.8rem;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.74);
-    color: #30378e;
+    color: var(--kf-primary-strong);
     font-size: 0.8rem;
     font-weight: 800;
     letter-spacing: 0.09em;
@@ -66,14 +67,14 @@
     font-size: var(--kf-hero-title-size);
     line-height: var(--kf-hero-title-line-height);
     letter-spacing: var(--kf-hero-title-letter-spacing);
-    color: #121622;
+    color: var(--kf-text);
     margin-bottom: 1rem;
 }
 
 .kreativ-hero-subtitle {
     font-size: 1.03rem;
     margin-bottom: 1.2rem;
-    color: #444d66;
+    color: var(--kf-text-soft);
     max-width: 610px;
     line-height: 1.55;
 }
@@ -104,15 +105,15 @@
 }
 
 .kreativ-hero-cta-primary {
-    background: linear-gradient(135deg, #4a4aff 0%, #ff3366 100%);
+    background: var(--kf-gradient-cta);
     color: #fff;
-    box-shadow: 0 18px 34px rgba(74, 74, 255, 0.2);
+    box-shadow: 0 16px 30px rgba(var(--kf-primary-rgb), 0.18);
 }
 
 .kreativ-hero-cta-secondary {
     background: rgba(255, 255, 255, 0.86);
     color: #24304e;
-    border: 1px solid rgba(74, 74, 255, 0.14);
+    border: 1px solid var(--kf-border);
 }
 
 .kreativ-hero-notes {
@@ -128,13 +129,13 @@
     padding: 0.48rem 0.72rem;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.76);
-    color: #3b4260;
+    color: var(--kf-text-soft);
     font-size: 0.83rem;
     font-weight: 700;
 }
 
 .kreativ-hero-note i {
-    color: #4a4aff;
+    color: var(--kf-primary);
 }
 
 .kreativ-hero-side {
@@ -145,7 +146,7 @@
 .kreativ-hero-panel {
     padding: 1.15rem;
     border-radius: 22px;
-    background: rgba(18, 22, 34, 0.96);
+    background: var(--kf-panel-dark);
     color: #fff;
     box-shadow: 0 24px 40px rgba(18, 22, 34, 0.18);
 }
@@ -190,7 +191,7 @@
     font-weight: 700;
     font-size: 0.9rem;
     padding: 0.55rem 0.15rem;
-    color: #4a4aff;
+    color: var(--kf-primary);
 }
 
 .kreativ-hero-tool-card {
@@ -200,7 +201,7 @@
     padding: 0.58rem 0.88rem;
     background: rgba(255, 255, 255, 0.74);
     border-radius: 12px;
-    border: 1px solid #e2e4ea;
+    border: 1px solid rgba(var(--kf-primary-rgb), 0.1);
     text-decoration: none;
     color: #1a1a1a;
     transition: 0.25s ease;
@@ -210,13 +211,13 @@
 
 .kreativ-hero-tool-card i {
     font-size: 1rem;
-    color: #4a4aff;
+    color: var(--kf-primary);
 }
 
 .kreativ-hero-tool-card:hover {
-    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.12);
-    transform: translateY(-3px);
-    border-color: #4a4aff;
+    box-shadow: 0 10px 22px rgba(18, 22, 34, 0.08);
+    transform: translateY(-1px);
+    border-color: var(--kf-border-strong);
 }
 
 body.dark-mode {
@@ -226,7 +227,7 @@ body.dark-mode {
 
 body.dark-mode .kreativ-hero,
 body.dark-mode .kreativ-section {
-    background: radial-gradient(circle at top left, rgba(28, 36, 60, 0.96) 0%, rgba(18, 24, 42, 0.98) 48%, rgba(12, 17, 30, 1) 100%);
+    background: linear-gradient(180deg, rgba(28, 36, 60, 0.96) 0%, rgba(12, 17, 30, 1) 100%);
     box-shadow: 0 28px 60px rgba(0, 0, 0, 0.28);
 }
 
@@ -296,7 +297,7 @@ body.dark-mode .kreativ-font-card {
     padding: 0.38rem 0.7rem;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.8);
-    color: #4a4aff;
+    color: var(--kf-primary);
     font-size: 0.76rem;
     font-weight: 800;
     letter-spacing: 0.08em;
@@ -314,12 +315,12 @@ body.dark-mode .kreativ-font-card {
 
 .kreativ-section-title i {
     font-size: 1.8rem;
-    color: #4a4aff;
+    color: var(--kf-primary);
 }
 
 .kreativ-section-summary {
     margin: 0;
-    color: #515c79;
+    color: var(--kf-muted);
     font-size: 0.98rem;
     line-height: 1.55;
 }
@@ -329,13 +330,13 @@ body.dark-mode .kreativ-font-card {
     font-size: 1rem;
     font-weight: 700;
     padding-right: 4px;
-    color: #4a4aff;
+    color: var(--kf-primary);
     text-decoration: none;
     transition: 0.2s ease;
 }
 
 .kf-view-all:hover {
-    color: #2d2def;
+    color: var(--kf-primary-strong);
     transform: translateX(3px);
 }
 
@@ -356,21 +357,21 @@ body.dark-mode .kreativ-font-card {
     align-items: flex-start;
     min-height: 100%;
     padding: 1rem;
-    border: 1px solid rgba(74, 74, 255, 0.12);
+    border: 1px solid var(--kf-border);
     border-radius: 18px;
     background: rgba(255, 255, 255, 0.84);
     color: #1a2137;
     text-decoration: none;
-    box-shadow: 0 12px 30px rgba(64, 70, 130, 0.06);
+    box-shadow: 0 10px 24px rgba(18, 22, 34, 0.05);
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .kreativ-collection-card:hover {
-    border-color: rgba(74, 74, 255, 0.28);
+    border-color: var(--kf-border-strong);
     color: #161b32;
     text-decoration: none;
-    transform: translateY(-3px);
-    box-shadow: 0 18px 38px rgba(64, 70, 130, 0.12);
+    transform: translateY(-1px);
+    box-shadow: var(--kf-shadow-hover);
 }
 
 .kreativ-collection-icon {
@@ -380,9 +381,9 @@ body.dark-mode .kreativ-font-card {
     width: 2.35rem;
     height: 2.35rem;
     border-radius: 14px;
-    background: linear-gradient(135deg, #5a46ff 0%, #ef2f75 100%);
+    background: var(--kf-primary);
     color: #fff;
-    box-shadow: 0 10px 22px rgba(74, 74, 255, 0.22);
+    box-shadow: 0 10px 22px rgba(var(--kf-primary-rgb), 0.14);
 }
 
 .kreativ-collection-content {
@@ -396,7 +397,7 @@ body.dark-mode .kreativ-font-card {
 }
 
 .kreativ-collection-content span {
-    color: #606a86;
+    color: var(--kf-muted);
     font-size: 0.88rem;
     line-height: 1.45;
 }
@@ -414,10 +415,10 @@ body.dark-mode .kreativ-font-card {
     align-items: center;
     justify-content: center;
     padding: 0.65rem 1rem;
-    border: 1px solid #d7dbeb;
+    border: 1px solid rgba(var(--kf-primary-rgb), 0.14);
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.92);
-    color: #3d43a4;
+    color: var(--kf-primary-strong);
     font-size: 0.95rem;
     font-weight: 700;
     line-height: 1;
@@ -426,25 +427,25 @@ body.dark-mode .kreativ-font-card {
 }
 
 .kreativ-font-filter:hover {
-    border-color: #4a4aff;
-    box-shadow: 0 8px 24px rgba(74, 74, 255, 0.12);
+    border-color: var(--kf-border-strong);
+    box-shadow: 0 8px 18px rgba(18, 22, 34, 0.07);
     transform: translateY(-1px);
     text-decoration: none;
 }
 
 .kreativ-font-filter.active {
-    background: #4a4aff;
-    border-color: #4a4aff;
+    background: var(--kf-primary);
+    border-color: var(--kf-primary);
     color: #fff;
-    box-shadow: 0 10px 24px rgba(74, 74, 255, 0.2);
+    box-shadow: 0 10px 22px rgba(var(--kf-primary-rgb), 0.16);
 }
 
 .kreativ-section-fonts {
-    background: linear-gradient(135deg, #f8f9ff 0%, #fdfdff 100%) !important;
+    background: var(--kf-gradient-section) !important;
 }
 
 .kreativ-section-free {
-    background: linear-gradient(135deg, #e2f7e8 0%, #f3fff6 100%) !important;
+    background: linear-gradient(180deg, #f7fbf8 0%, #ffffff 100%) !important;
 }
 
 .kreativ-section .row {

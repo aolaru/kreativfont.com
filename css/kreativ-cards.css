@@ -1,15 +1,15 @@
 .kreativ-font-card {
-    background: #fff;
+    background: var(--kf-surface);
     padding: 1rem;
     border-radius: 14px;
-    border: 1px solid #e2e4ea;
+    border: 1px solid rgba(var(--kf-primary-rgb), 0.1);
     transition: 0.25s ease;
 }
 
 .kreativ-font-card:hover {
-    box-shadow: 0 5px 22px rgba(0, 0, 0, 0.12);
-    transform: translateY(-4px);
-    border-color: #4a4aff;
+    box-shadow: var(--kf-shadow-hover);
+    transform: translateY(-1px);
+    border-color: var(--kf-border-strong);
 }
 
 .kreativ-font-card a {
@@ -29,11 +29,11 @@
     aspect-ratio: 16 / 9;
     object-fit: cover;
     display: block;
-    transition: transform 0.3s ease;
+    transition: transform 0.25s ease;
 }
 
 .kreativ-card-media:hover img {
-    transform: scale(1.06);
+    transform: scale(1.025);
 }
 
 .kf-badge {
@@ -50,11 +50,11 @@
 }
 
 .kf-badge-fonts {
-    background: #4a4aff;
+    background: var(--kf-primary);
 }
 
 .kf-badge-free {
-    background: #43a047;
+    background: var(--kf-success);
 }
 
 .kf-badge-tag {
@@ -67,7 +67,7 @@
     right: 0.75rem;
     padding: 0.2rem 0.5rem;
     border-radius: 999px;
-    background: #ff3366;
+    background: var(--kf-accent);
     color: #fff;
     font-size: 0.7rem;
     font-weight: 700;
@@ -84,7 +84,7 @@
 
 .kreativ-card-context-note {
     margin: 0.45rem 0 0;
-    color: #626d8c;
+    color: var(--kf-muted);
     font-size: 0.83rem;
     font-weight: 700;
     line-height: 1.4;
