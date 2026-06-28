@@ -18,7 +18,7 @@ kreativ_render_dynamic_font_collection_page(
             'Focused on poster and campaign use.',
             'Prioritize scale, contrast, and immediate recognition.',
         ),
-        'related_slugs'  => array( 'best-logo-fonts', 'best-vintage-script-fonts', 'trending-commercial-fonts' ),
+        'related_slugs'  => array( 'best-display-fonts', 'best-condensed-fonts', 'best-logo-fonts' ),
         'badges'         => array(
             array(
                 'icon' => 'fa-solid fa-rectangle-ad',

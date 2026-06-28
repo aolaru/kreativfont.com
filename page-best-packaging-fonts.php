@@ -18,7 +18,7 @@ kreativ_render_dynamic_font_collection_page(
             'Focused on packaging and retail use.',
             'Prioritize readability, personality, and strong hierarchy.',
         ),
-        'related_slugs'  => array( 'best-logo-fonts', 'best-fonts-for-branding', 'best-luxury-fonts' ),
+        'related_slugs'  => array( 'best-logo-fonts', 'best-retro-fonts', 'best-luxury-fonts' ),
         'badges'         => array(
             array(
                 'icon' => 'fa-solid fa-box-open',

@@ -18,7 +18,7 @@ kreativ_render_dynamic_font_collection_page(
             'Focused on script styles with a vintage feel.',
             'Best for display use, not long-form reading.',
         ),
-        'related_slugs'  => array( 'best-wedding-fonts', 'best-logo-fonts', 'best-poster-fonts' ),
+        'related_slugs'  => array( 'best-wedding-fonts', 'best-retro-fonts', 'best-handwritten-fonts' ),
         'badges'         => array(
             array(
                 'icon' => 'fa-solid fa-pen-nib',

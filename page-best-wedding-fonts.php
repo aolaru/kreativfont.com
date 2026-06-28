@@ -18,7 +18,7 @@ kreativ_render_dynamic_font_collection_page(
             'Focused on invitations and event design.',
             'Pair decorative scripts with simpler supporting type.',
         ),
-        'related_slugs'  => array( 'best-vintage-script-fonts', 'best-elegant-serif-fonts', 'best-logo-fonts' ),
+        'related_slugs'  => array( 'best-handwritten-fonts', 'best-vintage-script-fonts', 'best-elegant-serif-fonts' ),
         'badges'         => array(
             array(
                 'icon' => 'fa-solid fa-ring',

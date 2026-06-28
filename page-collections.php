@@ -3,6 +3,8 @@
 Template Name: Font Collections Hub
 */
 
+$GLOBALS['kreativ_meta_description_override'] = 'Browse curated font collections by style, mood, project type, and commercial-use needs on Kreativ Font.';
+
 get_header();
 
 $kreativ_collection_links = kreativ_get_font_collection_links();

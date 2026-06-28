@@ -199,14 +199,15 @@ function kreativ_get_primary_branch_term( $post = null, $branch_key = '' ) {
     return $terms[0];
 }
 
-function kreativ_filter_has_branch_terms( $branch_key, $child_slugs ) {
+function kreativ_get_valid_branch_term_slugs( $branch_key, $child_slugs ) {
     $parent_ids = kreativ_get_font_branch_parent_term_ids( $branch_key );
 
     if ( empty( $parent_ids ) ) {
-        return false;
+        return array();
     }
 
-    $child_slugs = array_map( 'sanitize_title', (array) $child_slugs );
+    $child_slugs = array_values( array_unique( array_filter( array_map( 'sanitize_title', (array) $child_slugs ) ) ) );
+    $valid_slugs = array();
 
     foreach ( $child_slugs as $child_slug ) {
         $term = get_term_by( 'slug', $child_slug, 'category' );
@@ -218,17 +219,21 @@ function kreativ_filter_has_branch_terms( $branch_key, $child_slugs ) {
         $ancestors = get_ancestors( $term->term_id, 'category', 'taxonomy' );
 
         if ( array_intersect( array_map( 'intval', $ancestors ), $parent_ids ) ) {
-            return true;
+            $valid_slugs[] = $term->slug;
         }
     }
 
-    return false;
+    return array_values( array_unique( $valid_slugs ) );
+}
+
+function kreativ_filter_has_branch_terms( $branch_key, $child_slugs ) {
+    return ! empty( kreativ_get_valid_branch_term_slugs( $branch_key, $child_slugs ) );
 }
 
 function kreativ_get_font_filter_tax_clause( $branch_key, $child_slugs, $fallback_tag_slugs = array() ) {
-    $child_slugs = array_values( array_unique( array_filter( array_map( 'sanitize_title', (array) $child_slugs ) ) ) );
+    $child_slugs = kreativ_get_valid_branch_term_slugs( $branch_key, $child_slugs );
 
-    if ( ! empty( $child_slugs ) && kreativ_filter_has_branch_terms( $branch_key, $child_slugs ) ) {
+    if ( ! empty( $child_slugs ) ) {
         return array(
             'taxonomy' => 'category',
             'field'    => 'slug',
@@ -1927,6 +1932,22 @@ function kreativ_get_font_collection_links() {
             'featured' => true,
         ),
         array(
+            'slug'     => 'best-display-fonts',
+            'title'    => 'Best Display Fonts',
+            'icon'     => 'fa-solid fa-heading',
+            'copy'     => 'High-impact display faces for headlines, posters, covers, and visual systems.',
+            'group'    => 'style',
+            'featured' => false,
+        ),
+        array(
+            'slug'     => 'best-handwritten-fonts',
+            'title'    => 'Best Handwritten Fonts',
+            'icon'     => 'fa-solid fa-pen',
+            'copy'     => 'Handwritten and hand-drawn fonts for personal, expressive, and casual designs.',
+            'group'    => 'style',
+            'featured' => false,
+        ),
+        array(
             'slug'     => 'best-modern-sans-serif-fonts',
             'title'    => 'Best Modern Sans Serif Fonts',
             'icon'     => 'fa-solid fa-circle-half-stroke',
@@ -1979,6 +2000,30 @@ function kreativ_get_font_collection_links() {
             'title'    => 'Best Minimal Fonts',
             'icon'     => 'fa-solid fa-minus',
             'copy'     => 'Quiet, reduced, and practical fonts for clean visual systems.',
+            'group'    => 'style',
+            'featured' => false,
+        ),
+        array(
+            'slug'     => 'best-retro-fonts',
+            'title'    => 'Best Retro Fonts',
+            'icon'     => 'fa-solid fa-clock-rotate-left',
+            'copy'     => 'Retro and vintage-inspired fonts for nostalgic brands, posters, and packaging.',
+            'group'    => 'style',
+            'featured' => false,
+        ),
+        array(
+            'slug'     => 'best-condensed-fonts',
+            'title'    => 'Best Condensed Fonts',
+            'icon'     => 'fa-solid fa-compress',
+            'copy'     => 'Narrow, condensed fonts for compact headlines, labels, posters, and bold layouts.',
+            'group'    => 'style',
+            'featured' => false,
+        ),
+        array(
+            'slug'     => 'best-tech-futuristic-fonts',
+            'title'    => 'Best Tech & Futuristic Fonts',
+            'icon'     => 'fa-solid fa-microchip',
+            'copy'     => 'Tech-forward and futuristic fonts for digital products, sci-fi, and modern brands.',
             'group'    => 'style',
             'featured' => false,
         ),
@@ -2124,11 +2169,23 @@ function kreativ_get_single_related_font_collections( $post = null, $limit = 4 )
         $add_collection( 'best-vintage-script-fonts' );
     }
 
+    if ( kreativ_post_has_branch_term_slugs( $post, 'font_style', array( 'display' ) ) ) {
+        $add_collection( 'best-display-fonts' );
+    }
+
+    if ( kreativ_post_has_branch_term_slugs( $post, 'font_style', array( 'handwritten', 'handwriting', 'hand-drawn', 'handdrawn' ) ) ) {
+        $add_collection( 'best-handwritten-fonts' );
+    }
+
     if (
         kreativ_post_has_branch_term_slugs( $post, 'font_style', array( 'serif' ) )
         && kreativ_post_has_branch_term_slugs( $post, 'font_mood', array( 'elegant' ) )
     ) {
         $add_collection( 'best-elegant-serif-fonts' );
+    }
+
+    if ( kreativ_post_has_branch_term_slugs( $post, 'font_mood', array( 'retro', 'vintage' ) ) ) {
+        $add_collection( 'best-retro-fonts' );
     }
 
     if ( kreativ_post_has_branch_term_slugs( $post, 'font_mood', array( 'minimal' ) ) ) {
@@ -2137,6 +2194,17 @@ function kreativ_get_single_related_font_collections( $post = null, $limit = 4 )
 
     if ( kreativ_post_has_branch_term_slugs( $post, 'font_mood', array( 'luxury' ) ) ) {
         $add_collection( 'best-luxury-fonts' );
+    }
+
+    if ( kreativ_post_has_branch_term_slugs( $post, 'font_style', array( 'condensed', 'narrow', 'compressed' ) ) ) {
+        $add_collection( 'best-condensed-fonts' );
+    }
+
+    if (
+        kreativ_post_has_branch_term_slugs( $post, 'font_mood', array( 'tech', 'technology', 'futuristic', 'sci-fi', 'scifi' ) )
+        || kreativ_post_has_branch_term_slugs( $post, 'font_use_case', array( 'tech', 'technology', 'futuristic', 'sci-fi', 'scifi' ) )
+    ) {
+        $add_collection( 'best-tech-futuristic-fonts' );
     }
 
     foreach ( array(
@@ -2405,16 +2473,40 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
         'posts_per_page' => 24,
         'orderby'        => array( 'date' => 'DESC' ),
         'free_mode'      => '',
+        'free_picks_enabled' => true,
+        'free_picks_count'   => 4,
+        'free_picks_title'   => 'Free options in this collection',
+        'free_picks_copy'    => 'A small set of matching free fonts appears here when the library has suitable options.',
         'branch_filters' => array(),
     );
 
     $config = wp_parse_args( $config, $defaults );
-    $query  = new WP_Query( kreativ_get_dynamic_font_collection_query_args( $config ) );
+    $free_picks_count   = max( 0, (int) $config['free_picks_count'] );
+    $show_free_picks    = ! empty( $config['free_picks_enabled'] ) && 'include' !== $config['free_mode'] && $free_picks_count > 0;
+    $main_query_config  = $config;
+    $free_picks_query   = null;
+
+    if ( $show_free_picks ) {
+        $main_query_config['free_mode']      = 'exclude';
+        $main_query_config['posts_per_page'] = max( 1, (int) $config['posts_per_page'] - $free_picks_count );
+
+        $free_query_config                   = $config;
+        $free_query_config['free_mode']      = 'include';
+        $free_query_config['posts_per_page'] = $free_picks_count;
+        $free_picks_query                    = new WP_Query( kreativ_get_dynamic_font_collection_query_args( $free_query_config ) );
+    }
+
+    $query = new WP_Query( kreativ_get_dynamic_font_collection_query_args( $main_query_config ) );
     $meta_description = $config['summary'] ? $config['summary'] : $config['intro_copy'];
     $meta_description = wp_trim_words( wp_strip_all_tags( (string) $meta_description ), 30, '...' );
     $collection_items = array();
+    $visible_posts     = $query->posts;
 
-    foreach ( array_slice( $query->posts, 0, 12 ) as $index => $collection_post ) {
+    if ( $free_picks_query instanceof WP_Query && ! empty( $free_picks_query->posts ) ) {
+        $visible_posts = array_merge( $visible_posts, $free_picks_query->posts );
+    }
+
+    foreach ( $visible_posts as $index => $collection_post ) {
         $collection_items[] = array(
             '@type'    => 'ListItem',
             'position' => $index + 1,
@@ -2441,6 +2533,9 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
             'itemListElement' => $collection_items,
         ),
     );
+
+    $has_main_posts = $query->have_posts();
+    $has_free_picks = $free_picks_query instanceof WP_Query && $free_picks_query->have_posts();
 
     get_header();
     ?>
@@ -2522,7 +2617,7 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
                 </section>
             <?php endif; ?>
 
-            <?php if ( $query->have_posts() ) : ?>
+            <?php if ( $has_main_posts ) : ?>
                 <div class="row kreativ-results-grid">
                     <?php while ( $query->have_posts() ) : $query->the_post(); ?>
                         <?php
@@ -2539,7 +2634,7 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
                         ?>
                     <?php endwhile; ?>
                 </div>
-            <?php else : ?>
+            <?php elseif ( ! $has_free_picks ) : ?>
                 <div class="kreativ-empty-state">
                     <h2><?php echo esc_html( $config['empty_title'] ); ?></h2>
                     <p><?php echo esc_html( $config['empty_copy'] ); ?></p>
@@ -2548,6 +2643,36 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
                         <a href="<?php echo esc_url( add_query_arg( 'font_filter', 'latest', home_url( '/fonts' ) ) ); ?>" class="kreativ-hero-cta kreativ-hero-cta-secondary">Explore Latest Fonts</a>
                     </p>
                 </div>
+            <?php endif; ?>
+
+            <?php if ( $has_free_picks ) : ?>
+                <section class="kreativ-collection-free-picks" aria-labelledby="kreativ-collection-free-picks-title">
+                    <div class="kreativ-collection-free-picks-head">
+                        <span class="kreativ-collection-free-picks-label">
+                            <i class="fa-solid fa-gift" aria-hidden="true"></i>
+                            Free picks
+                        </span>
+                        <h2 id="kreativ-collection-free-picks-title"><?php echo esc_html( $config['free_picks_title'] ); ?></h2>
+                        <p><?php echo esc_html( $config['free_picks_copy'] ); ?></p>
+                    </div>
+
+                    <div class="row kreativ-results-grid kreativ-free-results-grid">
+                        <?php while ( $free_picks_query->have_posts() ) : $free_picks_query->the_post(); ?>
+                            <?php
+                            kreativ_render_font_card(
+                                array(
+                                    'post_id'         => get_the_ID(),
+                                    'badge_text'      => 'Free',
+                                    'badge_slug'      => 'free-fonts',
+                                    'context_note'    => 'Free option',
+                                    'column_classes'  => 'col-md-4 col-lg-3 col-sm-6',
+                                    'animation_class' => 'kreativ-card-animate',
+                                )
+                            );
+                            ?>
+                        <?php endwhile; ?>
+                    </div>
+                </section>
             <?php endif; ?>
 
             <?php wp_reset_postdata(); ?>

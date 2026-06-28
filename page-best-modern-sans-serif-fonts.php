@@ -18,7 +18,7 @@ kreativ_render_dynamic_font_collection_page(
             'Focused on clean sans serif type with a modern feel.',
             'Useful when clarity and current visual tone matter.',
         ),
-        'related_slugs'  => array( 'best-minimal-fonts', 'best-logo-fonts', 'best-fonts-for-branding' ),
+        'related_slugs'  => array( 'best-minimal-fonts', 'best-tech-futuristic-fonts', 'best-fonts-for-branding' ),
         'badges'         => array(
             array(
                 'icon' => 'fa-solid fa-font',

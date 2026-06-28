@@ -655,6 +655,58 @@
     margin-top: 1.5rem;
 }
 
+.kreativ-collection-free-picks {
+    margin-top: 2rem;
+    padding-top: 1.6rem;
+    border-top: 1px solid rgba(var(--kf-primary-rgb), 0.1);
+}
+
+.kreativ-collection-free-picks-head {
+    display: grid;
+    gap: 0.35rem;
+    max-width: 720px;
+}
+
+.kreativ-collection-free-picks-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: fit-content;
+    min-height: 34px;
+    padding: 0.42rem 0.7rem;
+    border: 1px solid rgba(var(--kf-primary-rgb), 0.1);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+    color: var(--kf-primary-strong);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.kreativ-collection-free-picks-label i {
+    color: var(--kf-primary);
+}
+
+.kreativ-collection-free-picks-head h2 {
+    margin: 0;
+    color: var(--kf-text);
+    font-size: clamp(1.2rem, 1.7vw, 1.55rem);
+    line-height: 1.1;
+}
+
+.kreativ-collection-free-picks-head p {
+    margin: 0;
+    color: var(--kf-muted);
+    font-size: 0.96rem;
+    line-height: 1.55;
+}
+
+.kreativ-free-results-grid {
+    margin-top: 1rem;
+}
+
 .kreativ-search-refinements {
     margin-bottom: 1.6rem;
     padding: 1.2rem 1.25rem;
@@ -1339,8 +1391,7 @@
 
     .kreativ-dynamic-collection-page .kreativ-page-badges,
     .kreativ-dynamic-collection-page .kreativ-page-hero-side,
-    .kreativ-dynamic-collection-page .kreativ-collection-intro-points,
-    .kreativ-dynamic-collection-page .kreativ-collection-related-links {
+    .kreativ-dynamic-collection-page .kreativ-collection-intro-points {
         display: none;
     }
 
