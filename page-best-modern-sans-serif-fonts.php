@@ -50,5 +50,14 @@ kreativ_render_dynamic_font_collection_page(
                 'slugs'  => array( 'modern' ),
             ),
         ),
+        'exclude_branch_filters' => array(
+            array(
+                'branch' => 'font_style',
+                'slugs'  => array( 'script', 'handwritten', 'handwriting', 'hand-drawn', 'serif', 'display', 'blackletter' ),
+            ),
+        ),
+        'title_exclude_patterns' => array(
+            '/\b(script|handwriting|handwritten|handmade|hand-drawn|hand drawn)\b/i',
+        ),
     )
 );

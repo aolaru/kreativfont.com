@@ -1,43 +1,45 @@
-$(function () {
-    $('[data-toggle="offcanvas"]').on('click', function () {
-        $('.offcanvas-collapse').toggleClass('open')
-    })
-});
+(function ($) {
+    $(function () {
+        $('[data-toggle="offcanvas"]').on('click', function () {
+            $('.offcanvas-collapse').toggleClass('open');
+        });
+    });
 
-$('.dropdown .dropdown-toggle').click(function(){
-    myDropDown = $(this).next('.dropdown-menu')
+    $('.dropdown .dropdown-toggle').on('click', function () {
+        var myDropDown = $(this).next('.dropdown-menu');
 
-    if( myDropDown.is(':visible') ) {
-        $(this).parent().removeClass('open');
-        myDropDown.hide();
-    } else {
-        myDropDown.fadeIn();
-        $(this).parent().addClass('open');
-    }
+        if (myDropDown.is(':visible')) {
+            $(this).parent().removeClass('open');
+            myDropDown.hide();
+        } else {
+            myDropDown.fadeIn();
+            $(this).parent().addClass('open');
+        }
 
-    return false;
-});
+        return false;
+    });
 
-$('html').click(function(e) {
-    $('.dropdown-menu').hide();
-});
+    $('html').on('click', function () {
+        $('.dropdown-menu').hide();
+    });
 
-$('.dropdown-menu').click(function(e){
-    e.stopPropagation();
-});
+    $('.dropdown-menu').on('click', function (event) {
+        event.stopPropagation();
+    });
 
-$(window).scroll(function() {
-    var scroll = $(window).scrollTop();
+    $(window).on('scroll', function () {
+        var scroll = $(window).scrollTop();
 
-    if (scroll >= 57) {
-        $(".kreativ-header").addClass("header-shadow");
-    } else {
-        $(".kreativ-header").removeClass("header-shadow");
-    }
+        if (scroll >= 57) {
+            $('.kreativ-header').addClass('header-shadow');
+        } else {
+            $('.kreativ-header').removeClass('header-shadow');
+        }
 
-    if (scroll >= 125) {
-        $( '.sticky-bar' ).addClass( "active" );
-    } else {
-        $( '.sticky-bar' ).removeClass( "active" );
-    }
-});
+        if (scroll >= 125) {
+            $('.sticky-bar').addClass('active');
+        } else {
+            $('.sticky-bar').removeClass('active');
+        }
+    });
+})(jQuery);

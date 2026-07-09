@@ -11,20 +11,20 @@
 				<div class="kreativ-footer-links">
 					<div class="kreativ-footer-group">
 						<h2>Explore</h2>
-						<a href="https://kreativfont.com/fonts">Fonts</a>
+						<a href="<?php echo esc_url( home_url( '/fonts' ) ); ?>">Fonts</a>
 						<a href="<?php echo esc_url( home_url( '/collections' ) ); ?>">Collections</a>
-						<a href="https://kreativfont.com/tools">Font Tools</a>
+						<a href="<?php echo esc_url( home_url( '/tools' ) ); ?>">Font Tools</a>
 						<a href="<?php echo esc_url( add_query_arg( 'font_filter', 'free', home_url( '/fonts' ) ) ); ?>">Free Fonts</a>
-						<a href="/blog">Blog</a>
+						<a href="<?php echo esc_url( home_url( '/blog' ) ); ?>">Blog</a>
 					</div>
 
 					<div class="kreativ-footer-group">
 						<h2>Info</h2>
-						<a href="/blog/about">About</a>
-						<a href="/updates">Updates</a>
-						<a href="/blog/contact">Contact</a>
-						<a href="/blog/terms-of-use">Terms of Use</a>
-						<a href="/blog/privacy-policy">Privacy Policy</a>
+						<a href="<?php echo esc_url( home_url( '/blog/about' ) ); ?>">About</a>
+						<a href="<?php echo esc_url( home_url( '/updates' ) ); ?>">Updates</a>
+						<a href="<?php echo esc_url( home_url( '/blog/contact' ) ); ?>">Contact</a>
+						<a href="<?php echo esc_url( home_url( '/blog/terms-of-use-privacy-policy' ) ); ?>">Terms of Use</a>
+						<a href="<?php echo esc_url( home_url( '/blog/terms-of-use-privacy-policy' ) ); ?>">Privacy Policy</a>
 					</div>
 
 					<div class="kreativ-footer-group">

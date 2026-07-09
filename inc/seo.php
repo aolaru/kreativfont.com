@@ -10,21 +10,119 @@ function kreativ_get_default_meta_description() {
     return 'Discover fonts, compare styles, and use practical font tools for identification, pairing, and naming.';
 }
 
+function kreativ_clean_meta_description_text( $text, $max_words = 30 ) {
+    $text = html_entity_decode( (string) $text, ENT_QUOTES, get_bloginfo( 'charset' ) );
+    $text = strip_shortcodes( $text );
+    $text = preg_replace( '/\[[\/]?[a-zA-Z][a-zA-Z0-9_-]*(?:\s+[^\]]*)?\]/', ' ', $text );
+    $text = wp_strip_all_tags( $text );
+    $text = preg_replace( '/\s+/', ' ', trim( $text ) );
+    $text = trim( $text, " \t\n\r\0\x0B-|" );
+
+    if ( '' === $text || strlen( $text ) < 35 ) {
+        return '';
+    }
+
+    if ( preg_match( '/^(version|changelog|major upgrade|note:\s*accepted file types)/i', $text ) || preg_match( '/\b(version|changelog)\s+\d+(?:\.\d+)*/i', $text ) ) {
+        return '';
+    }
+
+    return wp_trim_words( $text, (int) $max_words, '...' );
+}
+
+function kreativ_get_singular_meta_description_fallback( $post = null ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post ) {
+        return '';
+    }
+
+    if ( is_front_page() ) {
+        return 'Browse curated fonts, focused font collections, and practical tools for identifying, pairing, and naming type.';
+    }
+
+    $fallbacks = array(
+        'collections'                         => 'Browse curated font collections by style, mood, project type, and commercial-use needs on Kreativ Font.',
+        'updates'                             => 'Follow Kreativ Font product updates across font browsing, search, tools, mobile UX, and single-page improvements.',
+        'contact'                             => 'Contact Kreativ Font with questions about typography, font resources, tools, licensing notes, or published content.',
+        'about'                               => 'Learn about Kreativ Font, an independent typography resource for curated fonts, practical font tools, and design inspiration.',
+        'terms-of-use-privacy-policy'         => 'Read the Kreativ Font terms of use, privacy policy, cookie notes, affiliate disclosure, and data-control information.',
+        'kreativ-font-identifier'             => 'Upload a font image and compare it with trusted font identification services and Kreativ Font resources.',
+        'kreativ-font-pairing-tools'          => 'Generate font pairing ideas from a base font and design context, then continue into related font collections.',
+        'kreativ-font-name-generator'         => 'Describe a type style and generate brandable font-family name ideas for creative projects.',
+        'fancy-text-generator'                => 'Convert plain text into decorative Unicode text styles and aesthetic presets directly in the browser.',
+    );
+
+    if ( isset( $fallbacks[ $post->post_name ] ) ) {
+        return $fallbacks[ $post->post_name ];
+    }
+
+    if ( has_category( 'tools', $post ) ) {
+        return sprintf(
+            '%s is a practical Kreativ Font tool for faster typography decisions and font discovery.',
+            get_the_title( $post )
+        );
+    }
+
+    return '';
+}
+
+function kreativ_get_content_meta_description( $content ) {
+    $content = strip_shortcodes( (string) $content );
+    $content = preg_replace( '/\[[\/]?[a-zA-Z][a-zA-Z0-9_-]*(?:\s+[^\]]*)?\]/', ' ', $content );
+    $blocks  = preg_split( '/<\/p>|<br\s*\/?>|\n{2,}/i', $content );
+
+    foreach ( (array) $blocks as $block ) {
+        $description = kreativ_clean_meta_description_text( $block );
+
+        if ( '' !== $description ) {
+            return $description;
+        }
+    }
+
+    return kreativ_clean_meta_description_text( $content );
+}
+
 function kreativ_get_meta_description() {
     if ( ! empty( $GLOBALS['kreativ_meta_description_override'] ) ) {
-        return wp_strip_all_tags( $GLOBALS['kreativ_meta_description_override'] );
+        $override_description = kreativ_clean_meta_description_text( $GLOBALS['kreativ_meta_description_override'] );
+
+        if ( '' !== $override_description ) {
+            return $override_description;
+        }
+    }
+
+    if ( is_front_page() ) {
+        $front_page_description = kreativ_get_singular_meta_description_fallback( get_queried_object_id() );
+
+        return '' !== $front_page_description ? $front_page_description : kreativ_get_default_meta_description();
     }
 
     if ( is_singular() && has_excerpt() ) {
-        return wp_strip_all_tags( get_the_excerpt() );
+        $excerpt_description = kreativ_clean_meta_description_text( get_the_excerpt() );
+
+        if ( '' !== $excerpt_description ) {
+            return $excerpt_description;
+        }
     }
 
     if ( is_singular() ) {
-        return wp_trim_words(
-            wp_strip_all_tags( get_post_field( 'post_content', get_queried_object_id() ) ),
-            25,
-            '...'
-        );
+        $post = get_post( get_queried_object_id() );
+
+        if ( $post instanceof WP_Post ) {
+            $fallback_description = kreativ_get_singular_meta_description_fallback( $post );
+
+            if ( '' !== $fallback_description ) {
+                return $fallback_description;
+            }
+
+            $content_description = kreativ_get_content_meta_description( get_post_field( 'post_content', $post ) );
+
+            if ( '' !== $content_description ) {
+                return $content_description;
+            }
+        }
+
+        return kreativ_get_default_meta_description();
     }
 
     if ( is_category() || is_tag() || is_tax() ) {

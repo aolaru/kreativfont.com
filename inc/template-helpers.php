@@ -2452,6 +2452,114 @@ function kreativ_get_dynamic_font_collection_query_args( $config = array() ) {
     );
 }
 
+function kreativ_post_matches_branch_filters( $post = null, $branch_filters = array() ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post ) {
+        return false;
+    }
+
+    foreach ( (array) $branch_filters as $branch_filter ) {
+        if ( empty( $branch_filter['branch'] ) || empty( $branch_filter['slugs'] ) ) {
+            continue;
+        }
+
+        $valid_slugs = kreativ_get_valid_branch_term_slugs( $branch_filter['branch'], $branch_filter['slugs'] );
+
+        if ( empty( $valid_slugs ) ) {
+            continue;
+        }
+
+        $post_slugs = array_map(
+            static function ( $term ) {
+                return $term->slug;
+            },
+            kreativ_get_post_category_branch_terms( $post, $branch_filter['branch'] )
+        );
+
+        if ( ! array_intersect( $valid_slugs, $post_slugs ) ) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function kreativ_post_matches_excluded_branch_filters( $post = null, $branch_filters = array() ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post ) {
+        return false;
+    }
+
+    foreach ( (array) $branch_filters as $branch_filter ) {
+        if ( empty( $branch_filter['branch'] ) || empty( $branch_filter['slugs'] ) ) {
+            continue;
+        }
+
+        $valid_slugs = kreativ_get_valid_branch_term_slugs( $branch_filter['branch'], $branch_filter['slugs'] );
+
+        if ( empty( $valid_slugs ) ) {
+            continue;
+        }
+
+        $post_slugs = array_map(
+            static function ( $term ) {
+                return $term->slug;
+            },
+            kreativ_get_post_category_branch_terms( $post, $branch_filter['branch'] )
+        );
+
+        if ( array_intersect( $valid_slugs, $post_slugs ) ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function kreativ_text_matches_any_pattern( $text, $patterns = array() ) {
+    foreach ( (array) $patterns as $pattern ) {
+        if ( ! is_string( $pattern ) || '' === $pattern ) {
+            continue;
+        }
+
+        if ( preg_match( $pattern, (string) $text ) ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function kreativ_filter_dynamic_collection_posts( $posts = array(), $config = array() ) {
+    $filtered_posts = array();
+
+    foreach ( (array) $posts as $post ) {
+        $post = get_post( $post );
+
+        if ( ! $post instanceof WP_Post ) {
+            continue;
+        }
+
+        if ( ! kreativ_post_matches_branch_filters( $post, $config['branch_filters'] ?? array() ) ) {
+            continue;
+        }
+
+        if ( kreativ_post_matches_excluded_branch_filters( $post, $config['exclude_branch_filters'] ?? array() ) ) {
+            continue;
+        }
+
+        if ( kreativ_text_matches_any_pattern( get_the_title( $post ), $config['title_exclude_patterns'] ?? array() ) ) {
+            continue;
+        }
+
+        $filtered_posts[] = $post;
+    }
+
+    return $filtered_posts;
+}
+
 function kreativ_render_dynamic_font_collection_page( $config = array() ) {
     $defaults = array(
         'eyebrow'        => 'Font collection',
@@ -2478,6 +2586,8 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
         'free_picks_title'   => 'Free options in this collection',
         'free_picks_copy'    => 'A small set of matching free fonts appears here when the library has suitable options.',
         'branch_filters' => array(),
+        'exclude_branch_filters' => array(),
+        'title_exclude_patterns' => array(),
     );
 
     $config = wp_parse_args( $config, $defaults );
@@ -2497,14 +2607,12 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
     }
 
     $query = new WP_Query( kreativ_get_dynamic_font_collection_query_args( $main_query_config ) );
+    $main_posts       = kreativ_filter_dynamic_collection_posts( $query->posts, $config );
+    $free_picks_posts = $free_picks_query instanceof WP_Query ? kreativ_filter_dynamic_collection_posts( $free_picks_query->posts, $free_query_config ?? $config ) : array();
     $meta_description = $config['summary'] ? $config['summary'] : $config['intro_copy'];
     $meta_description = wp_trim_words( wp_strip_all_tags( (string) $meta_description ), 30, '...' );
     $collection_items = array();
-    $visible_posts     = $query->posts;
-
-    if ( $free_picks_query instanceof WP_Query && ! empty( $free_picks_query->posts ) ) {
-        $visible_posts = array_merge( $visible_posts, $free_picks_query->posts );
-    }
+    $visible_posts     = array_merge( $main_posts, $free_picks_posts );
 
     foreach ( $visible_posts as $index => $collection_post ) {
         $collection_items[] = array(
@@ -2534,8 +2642,8 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
         ),
     );
 
-    $has_main_posts = $query->have_posts();
-    $has_free_picks = $free_picks_query instanceof WP_Query && $free_picks_query->have_posts();
+    $has_main_posts = ! empty( $main_posts );
+    $has_free_picks = ! empty( $free_picks_posts );
 
     get_header();
     ?>
@@ -2619,11 +2727,12 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
 
             <?php if ( $has_main_posts ) : ?>
                 <div class="row kreativ-results-grid">
-                    <?php while ( $query->have_posts() ) : $query->the_post(); ?>
+                    <?php foreach ( $main_posts as $collection_post ) : ?>
                         <?php
+                        setup_postdata( $collection_post );
                         kreativ_render_font_card(
                             array(
-                                'post_id'         => get_the_ID(),
+                                'post_id'         => $collection_post->ID,
                                 'badge_text'      => $config['badge_text'],
                                 'badge_slug'      => $config['badge_slug'],
                                 'context_note'    => $config['context_note'],
@@ -2632,7 +2741,7 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
                             )
                         );
                         ?>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 </div>
             <?php elseif ( ! $has_free_picks ) : ?>
                 <div class="kreativ-empty-state">
@@ -2657,11 +2766,12 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
                     </div>
 
                     <div class="row kreativ-results-grid kreativ-free-results-grid">
-                        <?php while ( $free_picks_query->have_posts() ) : $free_picks_query->the_post(); ?>
+                        <?php foreach ( $free_picks_posts as $collection_post ) : ?>
                             <?php
+                            setup_postdata( $collection_post );
                             kreativ_render_font_card(
                                 array(
-                                    'post_id'         => get_the_ID(),
+                                    'post_id'         => $collection_post->ID,
                                     'badge_text'      => 'Free',
                                     'badge_slug'      => 'free-fonts',
                                     'context_note'    => 'Free option',
@@ -2670,7 +2780,7 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
                                 )
                             );
                             ?>
-                        <?php endwhile; ?>
+                        <?php endforeach; ?>
                     </div>
                 </section>
             <?php endif; ?>
