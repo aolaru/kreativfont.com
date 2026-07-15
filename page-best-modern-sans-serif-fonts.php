@@ -45,10 +45,6 @@ kreativ_render_dynamic_font_collection_page(
                 'branch' => 'font_style',
                 'slugs'  => array( 'sans-serif', 'sansserif' ),
             ),
-            array(
-                'branch' => 'font_mood',
-                'slugs'  => array( 'modern' ),
-            ),
         ),
         'title_exclude_patterns' => array(
             '/\b(script|handw[a-z-]*|handmade|hand-drawn|hand drawn|brush)\b/i',
