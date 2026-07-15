@@ -2082,6 +2082,27 @@ function kreativ_redirect_legacy_font_collection_urls() {
 }
 add_action( 'template_redirect', 'kreativ_redirect_legacy_font_collection_urls' );
 
+function kreativ_redirect_legacy_legal_urls() {
+    if ( is_admin() || empty( $_SERVER['REQUEST_URI'] ) ) {
+        return;
+    }
+
+    $request_path = wp_parse_url( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ), PHP_URL_PATH );
+    $request_path = untrailingslashit( '/' . ltrim( (string) $request_path, '/' ) );
+    $legacy_paths = array(
+        '/privacy-policy',
+        '/terms-of-use',
+        '/blog/privacy-policy',
+        '/blog/terms-of-use',
+    );
+
+    if ( in_array( $request_path, $legacy_paths, true ) ) {
+        wp_safe_redirect( home_url( '/blog/terms-of-use-privacy-policy' ), 301 );
+        exit;
+    }
+}
+add_action( 'template_redirect', 'kreativ_redirect_legacy_legal_urls' );
+
 function kreativ_post_has_category_slugs( $post = null, $slugs = array() ) {
     $post = get_post( $post );
 
