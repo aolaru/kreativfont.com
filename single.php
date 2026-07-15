@@ -5,7 +5,8 @@
 $page_summary = kreativ_get_content_summary( get_post(), 24 );
 $font_credits = kreativ_get_font_credit_data( get_post() );
 $primary_cat  = kreativ_get_single_font_eyebrow( get_post() );
-$hero_image   = has_post_thumbnail() ? get_the_post_thumbnail_url( get_the_ID(), 'large' ) : '';
+$hero_image_data = has_post_thumbnail() ? wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'large' ) : false;
+$hero_image      = $hero_image_data ? $hero_image_data[0] : '';
 $share_url    = rawurlencode( get_permalink() );
 $share_title  = rawurlencode( get_the_title() );
 $share_email_subject = rawurlencode( get_the_title() . ' | Kreativ Font' );
@@ -54,7 +55,7 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
         <?php if ( $hero_image ) : ?>
             <div class="kreativ-page-hero-side kreativ-single-hero-media">
                 <div class="kreativ-single-hero-image-frame">
-                    <img src="<?php echo esc_url( $hero_image ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" class="kreativ-single-hero-image">
+                    <img src="<?php echo esc_url( $hero_image ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" width="<?php echo esc_attr( $hero_image_data[1] ?? 900 ); ?>" height="<?php echo esc_attr( $hero_image_data[2] ?? 600 ); ?>" class="kreativ-single-hero-image">
                 </div>
             </div>
         <?php endif; ?>

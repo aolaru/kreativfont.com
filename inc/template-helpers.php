@@ -1872,7 +1872,7 @@ function kreativ_get_font_card_args( $args = array() ) {
         'title_tag'        => 'h3',
         'new_label'        => 'NEW',
         'show_new_badge'   => null,
-        'empty_thumb_url'  => get_template_directory_uri() . '/img/default-thumb.png',
+        'empty_thumb_url'  => get_template_directory_uri() . '/img/logo-512.png',
         'loading_thumb_url'=> get_template_directory_uri() . '/img/loading.gif',
     );
 
@@ -1890,6 +1890,8 @@ function kreativ_get_font_card_args( $args = array() ) {
     $args['title']          = get_the_title( $post );
     $args['title_attr']     = the_title_attribute( array( 'post' => $post, 'echo' => false ) );
     $args['thumb_url']      = $thumb[0] ?? $args['empty_thumb_url'];
+    $args['thumb_width']    = isset( $thumb[1] ) ? (int) $thumb[1] : 240;
+    $args['thumb_height']   = isset( $thumb[2] ) ? (int) $thumb[2] : 140;
     $args['show_new_badge'] = null === $args['show_new_badge'] ? kf_is_new_post( $post->ID ) : (bool) $args['show_new_badge'];
 
     return $args;
@@ -1904,6 +1906,62 @@ function kreativ_render_font_card( $args = array() ) {
 
     kreativ_render_partial( 'partials/font-card.php', $font_card_args );
 }
+
+function kreativ_fill_empty_attachment_alt_text( $attributes, $attachment, $size ) {
+    if ( ! empty( $attributes['alt'] ) ) {
+        return $attributes;
+    }
+
+    $attachment_alt = get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true );
+    $fallback_alt   = $attachment_alt ? $attachment_alt : get_the_title( $attachment );
+
+    if ( ! $fallback_alt && ! empty( $attachment->post_parent ) ) {
+        $fallback_alt = get_the_title( $attachment->post_parent );
+    }
+
+    if ( $fallback_alt ) {
+        $attributes['alt'] = wp_strip_all_tags( $fallback_alt );
+    }
+
+    return $attributes;
+}
+add_filter( 'wp_get_attachment_image_attributes', 'kreativ_fill_empty_attachment_alt_text', 10, 3 );
+
+function kreativ_demote_content_h1_headings( $content ) {
+    if ( is_admin() || ! is_singular() || '' === trim( (string) $content ) ) {
+        return $content;
+    }
+
+    $content = preg_replace( '/<h1(\s[^>]*)?>/i', '<h2$1>', $content );
+    $content = preg_replace( '/<\/h1>/i', '</h2>', $content );
+
+    return $content;
+}
+add_filter( 'the_content', 'kreativ_demote_content_h1_headings', 8 );
+
+function kreativ_improve_tool_content_accessibility( $content ) {
+    if ( is_admin() || ! is_singular() || ! is_main_query() || 'kreativ-font-identifier' !== get_post_field( 'post_name', get_queried_object_id() ) ) {
+        return $content;
+    }
+
+    if ( false === strpos( $content, 'name="font_image"' ) || false !== strpos( $content, 'for="kreativ-font-identifier-upload"' ) ) {
+        return $content;
+    }
+
+    $pattern = '/<input([^>]*type=["\']file["\'][^>]*name=["\']font_image["\'][^>]*)>/i';
+
+    return preg_replace_callback(
+        $pattern,
+        static function ( $matches ) {
+            $attributes = rtrim( trim( $matches[1] ), " \t\n\r\0\x0B/" );
+
+            return '<label class="kfi-upload-label" for="kreativ-font-identifier-upload">Upload a font image</label><input id="kreativ-font-identifier-upload" ' . $attributes . ' aria-label="Upload a font image">';
+        },
+        $content,
+        1
+    );
+}
+add_filter( 'the_content', 'kreativ_improve_tool_content_accessibility', 12 );
 
 function kreativ_get_font_collection_links() {
     $collections = array(

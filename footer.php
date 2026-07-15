@@ -1,8 +1,10 @@
+		</main>
+
 		<footer class="kreativ-footer">
 			<div class="container kreativ-footer-inner">
 				<div class="kreativ-footer-brand">
 					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="kreativ-footer-mark">
-						<img src="<?php echo esc_url( get_template_directory_uri() . '/img/logo-96.png' ); ?>" alt="" class="kreativ-footer-logo" aria-hidden="true">
+						<img src="<?php echo esc_url( get_template_directory_uri() . '/img/logo-96.png' ); ?>" alt="" width="96" height="96" class="kreativ-footer-logo" aria-hidden="true">
 						<span>Kreativ Font</span>
 					</a>
 					<p class="kreativ-footer-copy">Curated fonts, font reviews, and practical tools for discovering better type faster.</p>
@@ -52,6 +54,5 @@
 		</footer>
 
         <?php wp_footer(); ?>
-    </div>
 </body>
 </html>

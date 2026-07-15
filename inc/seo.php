@@ -97,6 +97,16 @@ function kreativ_get_meta_description() {
         return '' !== $front_page_description ? $front_page_description : kreativ_get_default_meta_description();
     }
 
+    $singular_post = is_singular() ? get_post( get_queried_object_id() ) : null;
+
+    if ( $singular_post instanceof WP_Post ) {
+        $fallback_description = kreativ_get_singular_meta_description_fallback( $singular_post );
+
+        if ( '' !== $fallback_description ) {
+            return $fallback_description;
+        }
+    }
+
     if ( is_singular() && has_excerpt() ) {
         $excerpt_description = kreativ_clean_meta_description_text( get_the_excerpt() );
 
@@ -106,15 +116,9 @@ function kreativ_get_meta_description() {
     }
 
     if ( is_singular() ) {
-        $post = get_post( get_queried_object_id() );
+        $post = $singular_post;
 
         if ( $post instanceof WP_Post ) {
-            $fallback_description = kreativ_get_singular_meta_description_fallback( $post );
-
-            if ( '' !== $fallback_description ) {
-                return $fallback_description;
-            }
-
             $content_description = kreativ_get_content_meta_description( get_post_field( 'post_content', $post ) );
 
             if ( '' !== $content_description ) {

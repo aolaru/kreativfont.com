@@ -42,5 +42,11 @@ kreativ_render_dynamic_font_collection_page(
             'date'          => 'DESC',
         ),
         'free_mode'      => 'exclude',
+        'free_picks_enabled' => false,
+        'title_exclude_patterns' => array(
+            '/\bfree\s+font\s+pack\b/i',
+            '/\bfree\s+download\b/i',
+            '/\bfree\s+fonts?\b/i',
+        ),
     )
 );

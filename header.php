@@ -75,23 +75,27 @@
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 
+<a class="sr-only sr-only-focusable" href="#content">Skip to content</a>
+
 <header class="kreativ-header">
     <div class="container">
-        <nav class="navbar navbar-expand-lg">
+        <nav class="navbar navbar-expand-lg" aria-label="Primary navigation">
 	            <div class="navbar-collapse offcanvas-collapse">
 
                 <div class="kreativ-hdr-left">
-                    <h1 class="kreativ-logo">
+                    <div class="kreativ-logo">
 						<a href="<?php echo esc_url( $site_url ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
 							<img src="<?php echo esc_url( $theme_uri . '/img/logo-96.png' ); ?>"
 								 alt="Kreativ Font logo"
+                                 width="96"
+                                 height="96"
 								 class="kreativ-logo-icon">
 							<span class="kreativ-logo-lockup">
 								<span class="kreativ-logo-text">Kreativ Font</span>
 								<span class="kreativ-logo-tagline">Curated Fonts and Tools</span>
 							</span>
 						</a>
-					</h1>
+					</div>
 
 	                </div>
 
@@ -126,17 +130,19 @@
             </div>
 
 
-			<h2 class="kreativ-logo offcanvas-show">
+			<div class="kreativ-logo offcanvas-show">
 				<a href="<?php echo esc_url( $site_url ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
 					<img src="<?php echo esc_url( $theme_uri . '/img/logo-96.png' ); ?>"
 						 alt="Kreativ Font logo"
+                         width="96"
+                         height="96"
 						 class="kreativ-logo-icon">
 					<span class="kreativ-logo-lockup">
 						<span class="kreativ-logo-text">Kreativ Font</span>
 						<span class="kreativ-logo-tagline">Curated Fonts and Tools</span>
 					</span>
 				</a>
-			</h2>
+			</div>
 
             <div class="offcanvas-show kreativ-header-mobile-actions">
                 <button type="button" class="kreativ-theme-toggle" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle dark mode">
@@ -151,4 +157,4 @@
     </div>
 </header>
 
-<section class="kreativ-content">
+<main id="content" class="kreativ-content" tabindex="-1">

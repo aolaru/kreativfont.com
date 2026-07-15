@@ -43,12 +43,11 @@ kreativ_render_dynamic_font_collection_page(
         'branch_filters' => array(
             array(
                 'branch' => 'font_style',
-                'slugs'  => array( 'script' ),
+                'slugs'  => array( 'script', 'vintage', 'retro' ),
             ),
-            array(
-                'branch' => 'font_mood',
-                'slugs'  => array( 'vintage' ),
-            ),
+        ),
+        'title_exclude_patterns' => array(
+            '/\b(sans|sans-serif|monospace|mono|tech|futuristic)\b/i',
         ),
     )
 );
