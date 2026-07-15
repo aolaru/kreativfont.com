@@ -13,6 +13,8 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      WP_REMOTE_PATH: /htdocs/wp-content/themes/kreativfont.com/
 
     steps:
       - name: Check out repository
@@ -24,7 +26,6 @@ jobs:
           WP_SSH_PORT: ${{ secrets.WP_SSH_PORT }}
           WP_SSH_USER: ${{ secrets.WP_SSH_USER }}
           WP_SSH_PASSWORD: ${{ secrets.WP_SSH_PASSWORD }}
-          WP_REMOTE_PATH: ${{ secrets.WP_REMOTE_PATH }}
         run: |
           test -n "${WP_SSH_HOST}" || { echo "Missing WP_SSH_HOST"; exit 1; }
           test -n "${WP_SSH_PORT}" || { echo "Missing WP_SSH_PORT"; exit 1; }
@@ -32,17 +33,24 @@ jobs:
           test -n "${WP_SSH_PASSWORD}" || { echo "Missing WP_SSH_PASSWORD"; exit 1; }
           test -n "${WP_REMOTE_PATH}" || { echo "Missing WP_REMOTE_PATH"; exit 1; }
 
+      - name: Install SFTP client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lftp
+
       - name: Deploy theme over SFTP
-        uses: Dylan700/sftp-upload-action@latest
-        with:
-          server: ${{ secrets.WP_SSH_HOST }}
-          port: ${{ secrets.WP_SSH_PORT }}
-          username: ${{ secrets.WP_SSH_USER }}
-          password: ${{ secrets.WP_SSH_PASSWORD }}
-          uploads: |
-            ./ => ${{ secrets.WP_REMOTE_PATH }}
-          ignore: |
-            .git
-            .github
-            .gitignore
-            README.md
+        env:
+          WP_SSH_HOST: ${{ secrets.WP_SSH_HOST }}
+          WP_SSH_PORT: ${{ secrets.WP_SSH_PORT }}
+          WP_SSH_USER: ${{ secrets.WP_SSH_USER }}
+          WP_SSH_PASSWORD: ${{ secrets.WP_SSH_PASSWORD }}
+        run: |
+          lftp \
+            -u "${WP_SSH_USER},${WP_SSH_PASSWORD}" \
+            -e "set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20; mirror --reverse --verbose --only-newer --exclude-glob .git/ --exclude-glob .git/** --exclude-glob .github/ --exclude-glob .github/** --exclude .gitignore --exclude README.md ./ ${WP_REMOTE_PATH}; bye" \
+            "sftp://${WP_SSH_HOST}:${WP_SSH_PORT}"
+
+      - name: Verify deployed asset
+        run: |
+          curl --fail --silent --show-error --location "https://kreativfont.com/wp-content/themes/kreativfont.com/assets/assets/components/init.js?deploy_check=${GITHUB_SHA}" \
+            | grep -F '(function ($)'
