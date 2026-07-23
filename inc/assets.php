@@ -86,6 +86,27 @@ function kreativ_should_load_search_suggest() {
         || is_page_template( array( 'template-filter-all.php', 'template-filter-market.php', 'template-filter-free.php', 'template-tools-page.php' ) );
 }
 
+function kreativ_should_load_page_styles() {
+    if ( is_page_template( array( 'template-filter-all.php', 'template-filter-market.php' ) ) ) {
+        return false;
+    }
+
+    return is_singular()
+        || is_search()
+        || is_404()
+        || kreativ_is_dynamic_collection_template();
+}
+
+function kreativ_should_load_card_styles() {
+    return is_front_page()
+        || is_home()
+        || is_archive()
+        || is_search()
+        || is_404()
+        || kreativ_is_dynamic_collection_template()
+        || is_page_template( array( 'template-filter-all.php', 'template-filter-market.php', 'template-filter-free.php' ) );
+}
+
 function kreativ_enqueue_theme_assets() {
     wp_enqueue_style(
         'font-awesome',
@@ -108,12 +129,14 @@ function kreativ_enqueue_theme_assets() {
         kreativ_asset_version( '/css/kreativ-header.css' )
     );
 
-    wp_enqueue_style(
-        'kreativ-pages',
-        get_template_directory_uri() . '/css/kreativ-pages.css',
-        array( 'kreativ-styles' ),
-        kreativ_asset_version( '/css/kreativ-pages.css' )
-    );
+    if ( kreativ_should_load_page_styles() ) {
+        wp_enqueue_style(
+            'kreativ-pages',
+            get_template_directory_uri() . '/css/kreativ-pages.css',
+            array( 'kreativ-styles' ),
+            kreativ_asset_version( '/css/kreativ-pages.css' )
+        );
+    }
 
     wp_enqueue_style(
         'kreativ-footer',
@@ -122,12 +145,14 @@ function kreativ_enqueue_theme_assets() {
         kreativ_asset_version( '/css/kreativ-footer.css' )
     );
 
-    wp_enqueue_style(
-        'kreativ-cards',
-        get_template_directory_uri() . '/css/kreativ-cards.css',
-        array( 'kreativ-styles' ),
-        kreativ_asset_version( '/css/kreativ-cards.css' )
-    );
+    if ( kreativ_should_load_card_styles() ) {
+        wp_enqueue_style(
+            'kreativ-cards',
+            get_template_directory_uri() . '/css/kreativ-cards.css',
+            array( 'kreativ-styles' ),
+            kreativ_asset_version( '/css/kreativ-cards.css' )
+        );
+    }
 
     if ( is_page_template( 'template-filter-all.php' ) || is_page_template( 'template-filter-market.php' ) || is_page_template( 'template-filter-free.php' ) || is_page_template( 'page-collections.php' ) || is_page( 'collections' ) || is_404() ) {
         wp_enqueue_style(
@@ -155,6 +180,17 @@ function kreativ_enqueue_theme_assets() {
         true
     );
     wp_enqueue_script( 'init' );
+
+    if ( is_singular( 'post' ) && 'font' === kreativ_get_single_content_kind( get_queried_object() ) ) {
+        wp_enqueue_script(
+            'kreativ-share',
+            get_template_directory_uri() . '/js/kreativ-share.js',
+            array(),
+            kreativ_asset_version( '/js/kreativ-share.js' ),
+            true
+        );
+        kreativ_add_script_attributes( 'kreativ-share', array( 'defer' => true ) );
+    }
 
     if ( kreativ_should_load_lazyload() ) {
         wp_enqueue_script(

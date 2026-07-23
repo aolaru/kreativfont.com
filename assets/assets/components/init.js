@@ -1,7 +1,58 @@
 (function ($) {
     $(function () {
-        $('[data-toggle="offcanvas"]').on('click', function () {
-            $('.offcanvas-collapse').toggleClass('open');
+        var $toggle = $('[data-toggle="offcanvas"]');
+        var $panel = $('#primary-navigation-panel');
+        var $body = $('body');
+
+        function isMobileNavigation() {
+            return window.matchMedia('(max-width: 991.98px)').matches;
+        }
+
+        function setMenuState(isOpen, returnFocus) {
+            if (!isMobileNavigation()) {
+                $panel.removeClass('open').attr('aria-hidden', 'false');
+                $toggle.attr({
+                    'aria-expanded': 'false',
+                    'aria-label': 'Open navigation'
+                }).text('Menu');
+                $body.removeClass('kreativ-nav-open');
+                return;
+            }
+
+            $panel.toggleClass('open', isOpen).attr('aria-hidden', isOpen ? 'false' : 'true');
+            $toggle.attr({
+                'aria-expanded': isOpen ? 'true' : 'false',
+                'aria-label': isOpen ? 'Close navigation' : 'Open navigation'
+            }).text(isOpen ? 'Close' : 'Menu');
+            $body.toggleClass('kreativ-nav-open', isOpen);
+
+            if (isOpen) {
+                window.setTimeout(function () {
+                    $panel.find('.kreativ-search-input').first().trigger('focus');
+                }, 50);
+            } else if (returnFocus) {
+                $toggle.trigger('focus');
+            }
+        }
+
+        setMenuState(false, false);
+
+        $toggle.on('click', function () {
+            setMenuState(!$panel.hasClass('open'), false);
+        });
+
+        $panel.find('a').on('click', function () {
+            setMenuState(false, false);
+        });
+
+        $(document).on('keydown.kreativNavigation', function (event) {
+            if (event.key === 'Escape' && $panel.hasClass('open')) {
+                setMenuState(false, true);
+            }
+        });
+
+        $(window).on('resize.kreativNavigation', function () {
+            setMenuState(false, false);
         });
     });
 

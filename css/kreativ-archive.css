@@ -409,6 +409,11 @@ body.kreativ-cat-tools .kreativ-font-card {
 }
 
 @media (max-width: 767px) {
+    .kreativ-category-grid .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
     .kreativ-category-header {
         grid-template-columns: 1fr;
         gap: 1rem;

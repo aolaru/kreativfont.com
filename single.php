@@ -2,6 +2,19 @@
 
 <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 <?php
+$content_kind = kreativ_get_single_content_kind( get_post() );
+
+if ( 'font' !== $content_kind ) {
+    kreativ_render_partial(
+        'partials/single-content.php',
+        array(
+            'post'         => get_post(),
+            'content_kind' => $content_kind,
+        )
+    );
+    continue;
+}
+
 $page_summary = kreativ_get_content_summary( get_post(), 24 );
 $font_credits = kreativ_get_font_credit_data( get_post() );
 $primary_cat  = kreativ_get_single_font_eyebrow( get_post() );
@@ -155,7 +168,7 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
                 </a>
                 <button type="button" class="kreativ-share-button kreativ-share-copy" data-share-url="<?php echo esc_url( get_permalink() ); ?>">
                     <i class="fa-solid fa-link" aria-hidden="true"></i>
-                    <span>Copy Link</span>
+                    <span aria-live="polite">Copy Link</span>
                 </button>
             </div>
         </div>
@@ -232,40 +245,6 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
 
     </section>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.kreativ-share-copy').forEach(function (button) {
-        button.addEventListener('click', async function () {
-            var url = button.getAttribute('data-share-url');
-            if (!url) {
-                return;
-            }
-
-            try {
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    await navigator.clipboard.writeText(url);
-                } else {
-                    var tempInput = document.createElement('input');
-                    tempInput.value = url;
-                    document.body.appendChild(tempInput);
-                    tempInput.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(tempInput);
-                }
-
-                var originalText = button.querySelector('span').textContent;
-                button.querySelector('span').textContent = 'Copied';
-                window.setTimeout(function () {
-                    button.querySelector('span').textContent = originalText;
-                }, 1500);
-            } catch (error) {
-                window.open(url, '_blank', 'noopener');
-            }
-        });
-    });
-});
-</script>
 
 <?php endwhile; else : ?>
     <div class="kreativ-page-shell">

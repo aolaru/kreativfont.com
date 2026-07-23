@@ -20,7 +20,7 @@ $title_tag = isset( $title_tag ) && in_array( $title_tag, array( 'h2', 'h3', 'h4
                     decoding="async"
                     width="<?php echo esc_attr( $thumb_width ); ?>"
                     height="<?php echo esc_attr( $thumb_height ); ?>"
-                    alt="<?php echo esc_attr( $title_attr ); ?>"
+                    alt=""
                     data-src="<?php echo esc_url( $thumb_url ); ?>"
                     src="<?php echo esc_url( $loading_thumb_url ); ?>" />
             </div>

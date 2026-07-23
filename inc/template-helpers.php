@@ -153,6 +153,31 @@ function kreativ_get_font_branch_parent_term_ids( $branch_key ) {
     return $cache[ $branch_key ];
 }
 
+function kreativ_is_font_archive_term( $term ) {
+    $term = get_term( $term, 'category' );
+
+    if ( ! $term || is_wp_error( $term ) ) {
+        return false;
+    }
+
+    if ( in_array( $term->slug, array( 'fonts', 'free', 'free-fonts' ), true ) ) {
+        return true;
+    }
+
+    $term_ids = array_merge(
+        array( (int) $term->term_id ),
+        array_map( 'intval', get_ancestors( $term->term_id, 'category', 'taxonomy' ) )
+    );
+
+    foreach ( array_keys( kreativ_get_font_taxonomy_branch_definitions() ) as $branch_key ) {
+        if ( array_intersect( $term_ids, kreativ_get_font_branch_parent_term_ids( $branch_key ) ) ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function kreativ_get_post_category_branch_terms( $post = null, $branch_key = '' ) {
     $post = get_post( $post );
 
@@ -424,6 +449,16 @@ function kreativ_get_archive_context_summary( $term, $archive_type = 'category',
         );
     }
 
+    if ( 'category' === $archive_type && ! kreativ_is_font_archive_term( $term ) ) {
+        return array(
+            'eyebrow'    => 'Category archive',
+            'title'      => 'Browse ' . $term->name,
+            'summary'    => $count_phrase . ' published under this category.',
+            'side_title' => 'Read the latest from ' . $term->name . '.',
+            'side_copy'  => 'Open an article for the full details or return to the main site navigation to explore another section.',
+        );
+    }
+
     if ( 'tag' === $archive_type ) {
         return array(
             'eyebrow'    => 'Tag archive',
@@ -613,6 +648,7 @@ function kreativ_get_search_cache_key( $group, $data = array() ) {
             array(
                 'group'   => $group,
                 'version' => kreativ_get_search_cache_version(),
+                'schema'  => '2026-07-23.1',
                 'data'    => $data,
             )
         )
@@ -925,6 +961,8 @@ function kreativ_get_structured_search_post_ids( $search_string, $active_refinem
 
     $scores     = array();
     $sort_hints = array();
+    $normalized_query = remove_accents( wp_strip_all_tags( $search_string ) );
+    $normalized_query = function_exists( 'mb_strtolower' ) ? mb_strtolower( $normalized_query ) : strtolower( $normalized_query );
     $text_query = new WP_Query(
         array(
             'post_type'              => 'post',
@@ -943,6 +981,17 @@ function kreativ_get_structured_search_post_ids( $search_string, $active_refinem
     foreach ( $text_query->posts as $index => $post_id ) {
         $scores[ $post_id ]     = ( $scores[ $post_id ] ?? 0 ) + max( 600 - ( $index * 8 ), 40 );
         $sort_hints[ $post_id ] = $index;
+
+        $normalized_title = remove_accents( wp_strip_all_tags( get_the_title( $post_id ) ) );
+        $normalized_title = function_exists( 'mb_strtolower' ) ? mb_strtolower( $normalized_title ) : strtolower( $normalized_title );
+
+        if ( $normalized_title === $normalized_query ) {
+            $scores[ $post_id ] += 1800;
+        } elseif ( preg_match( '/^' . preg_quote( $normalized_query, '/' ) . '(?:\b|$)/u', $normalized_title ) ) {
+            $scores[ $post_id ] += 1200;
+        } elseif ( false !== strpos( $normalized_title, $normalized_query ) ) {
+            $scores[ $post_id ] += 450;
+        }
     }
 
     $branch_terms = kreativ_get_search_branch_term_matches( $search_string, $branch_term_limit );
@@ -1733,10 +1782,31 @@ function kreativ_get_font_credit_data( $post = null ) {
         );
     }
 
-    $designer_term = kreativ_get_primary_branch_term( $post, 'designer' );
-    $foundry_term  = kreativ_get_primary_branch_term( $post, 'foundry' );
-    $designer      = $designer_term ? $designer_term->name : '';
-    $foundry       = $foundry_term ? $foundry_term->name : '';
+    $format_names = static function ( $terms ) {
+        $names = array_values(
+            array_unique(
+                array_filter(
+                    array_map(
+                        static function ( $term ) {
+                            return isset( $term->name ) ? trim( $term->name ) : '';
+                        },
+                        (array) $terms
+                    )
+                )
+            )
+        );
+
+        if ( count( $names ) < 2 ) {
+            return $names ? $names[0] : '';
+        }
+
+        $last_name = array_pop( $names );
+
+        return implode( ', ', $names ) . ' and ' . $last_name;
+    };
+
+    $designer = $format_names( kreativ_get_post_category_branch_terms( $post, 'designer' ) );
+    $foundry  = $format_names( kreativ_get_post_category_branch_terms( $post, 'foundry' ) );
 
     $content = apply_filters( 'the_content', $post->post_content );
     $text    = wp_strip_all_tags( $content );
@@ -1845,6 +1915,44 @@ function kreativ_is_tool_page( $post = null ) {
     $path_segments = $request_path ? explode( '/', $request_path ) : array();
 
     return isset( $path_segments[0] ) && 'tools' === $path_segments[0];
+}
+
+function kreativ_get_single_content_kind( $post = null ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post ) {
+        return 'article';
+    }
+
+    if ( kreativ_is_tool_page( $post ) || kreativ_post_has_category_slugs( $post, array( 'tools' ) ) ) {
+        return 'tool';
+    }
+
+    if ( in_array( $post->post_name, array( 'about', 'contact', 'privacy-policy', 'terms-of-use', 'terms-of-use-privacy-policy', 'updates' ), true ) ) {
+        return 'information';
+    }
+
+    if ( kreativ_post_has_category_slugs( $post, array( 'blog' ) ) ) {
+        return 'article';
+    }
+
+    $categories = get_the_terms( $post->ID, 'category' );
+
+    if ( $categories && ! is_wp_error( $categories ) ) {
+        foreach ( $categories as $category ) {
+            if ( kreativ_is_font_archive_term( $category ) ) {
+                return 'font';
+            }
+        }
+    }
+
+    foreach ( array_keys( kreativ_get_font_taxonomy_branch_definitions() ) as $branch_key ) {
+        if ( kreativ_get_post_category_branch_terms( $post, $branch_key ) ) {
+            return 'font';
+        }
+    }
+
+    return 'article';
 }
 
 function kreativ_render_partial( $template, $args = array() ) {

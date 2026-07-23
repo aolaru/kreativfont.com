@@ -80,7 +80,7 @@
 <header class="kreativ-header">
     <div class="container">
         <nav class="navbar navbar-expand-lg" aria-label="Primary navigation">
-	            <div class="navbar-collapse offcanvas-collapse">
+            <div class="navbar-collapse offcanvas-collapse" id="primary-navigation-panel" aria-hidden="false">
 
                 <div class="kreativ-hdr-left">
                     <div class="kreativ-logo">
@@ -149,7 +149,7 @@
                     <i class="fa-solid fa-moon" aria-hidden="true"></i>
                 </button>
 
-                <button class="navbar-toggler" type="button" data-toggle="offcanvas" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-toggle="offcanvas" aria-label="Open navigation" aria-controls="primary-navigation-panel" aria-expanded="false">
                     Menu
                 </button>
             </div>

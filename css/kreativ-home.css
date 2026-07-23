@@ -467,6 +467,11 @@ body.dark-mode .kreativ-font-card {
 }
 
 @media (max-width: 767px) {
+    .kreativ-section .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
     .kreativ-hero {
         grid-template-columns: 1fr;
         gap: var(--kf-hero-gap);
