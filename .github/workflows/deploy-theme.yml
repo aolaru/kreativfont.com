@@ -15,10 +15,19 @@ jobs:
     runs-on: ubuntu-latest
     env:
       WP_REMOTE_PATH: /htdocs/wp-content/themes/kreativfont.com/
+      WP_ROOT_PATH: /htdocs/
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      - name: Validate theme
+        run: |
+          find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n 1 php -l
+          node --check assets/assets/components/init.js
+          node --check js/kreativ-search-suggest.js
+          node --check js/kreativ-share.js
+          php -l scripts/audit-production.php
 
       - name: Validate deployment secrets
         env:
@@ -32,11 +41,12 @@ jobs:
           test -n "${WP_SSH_USER}" || { echo "Missing WP_SSH_USER"; exit 1; }
           test -n "${WP_SSH_PASSWORD}" || { echo "Missing WP_SSH_PASSWORD"; exit 1; }
           test -n "${WP_REMOTE_PATH}" || { echo "Missing WP_REMOTE_PATH"; exit 1; }
+          test -n "${WP_ROOT_PATH}" || { echo "Missing WP_ROOT_PATH"; exit 1; }
 
-      - name: Install SFTP client
+      - name: Install deployment dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y lftp
+          sudo apt-get install -y lftp php-curl php-xml
 
       - name: Deploy theme over SFTP
         env:
@@ -47,10 +57,13 @@ jobs:
         run: |
           lftp \
             -u "${WP_SSH_USER},${WP_SSH_PASSWORD}" \
-            -e "set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20; mirror --reverse --verbose --only-newer --exclude-glob .git/ --exclude-glob .git/** --exclude-glob .github/ --exclude-glob .github/** --exclude .gitignore --exclude README.md ./ ${WP_REMOTE_PATH}; bye" \
+            -e "set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20; mirror --reverse --verbose --only-newer --exclude-glob .git/ --exclude-glob .git/** --exclude-glob .github/ --exclude-glob .github/** --exclude-glob scripts/ --exclude-glob scripts/** --exclude .gitignore --exclude README.md --exclude robots.txt ./ ${WP_REMOTE_PATH}; put robots.txt -o ${WP_ROOT_PATH}robots.txt; bye" \
             "sftp://${WP_SSH_HOST}:${WP_SSH_PORT}"
 
       - name: Verify deployed asset
         run: |
           curl --fail --silent --show-error --location "https://kreativfont.com/wp-content/themes/kreativfont.com/assets/assets/components/init.js?deploy_check=${GITHUB_SHA}" \
             | grep -F '(function ($)'
+
+      - name: Audit production
+        run: php scripts/audit-production.php "https://kreativfont.com" "${GITHUB_SHA}"

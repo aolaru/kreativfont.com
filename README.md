@@ -21,6 +21,7 @@ This codebase is used for the live Kreativ Font site and is maintained as a prac
 ├── img/                  Theme images and icons
 ├── js/                   Frontend JavaScript
 ├── partials/             Shared reusable template fragments
+├── scripts/              Production audit utilities
 ├── webfonts/             Theme webfonts
 ├── functions.php         Theme loader for `inc/` modules
 ├── header.php            Global head markup and site header
@@ -50,7 +51,7 @@ This codebase is used for the live Kreativ Font site and is maintained as a prac
 2. Review the affected PHP, CSS, and JS templates.
 3. Commit focused changes to Git.
 4. Push to GitHub.
-5. Deploy to the WordPress environment using your normal hosting workflow.
+5. Let the `main` branch workflow deploy and audit production.
 
 ## Automated Deployment
 
@@ -62,15 +63,23 @@ Add these GitHub repository secrets before enabling it:
 - `WP_SSH_PORT`: SSH port
 - `WP_SSH_USER`: WordPress.com SSH username
 - `WP_SSH_PASSWORD`: WordPress.com SSH password
-- `WP_REMOTE_PATH`: Absolute remote path to the live theme folder
 
-Example `WP_REMOTE_PATH`:
+The deployment workflow keeps the remote theme and WordPress root paths as reviewed, non-secret environment values:
 
 ```text
-/htdocs/wp-content/themes/kreativfont.com/
+WP_REMOTE_PATH=/htdocs/wp-content/themes/kreativfont.com/
+WP_ROOT_PATH=/htdocs/
 ```
 
-Important: the remote path must point to the theme directory only. The current workflow deploys over SFTP, so treat it as production infrastructure and verify credentials carefully before enabling automatic deployments.
+The theme is mirrored only into `WP_REMOTE_PATH`. The repository `robots.txt` is uploaded separately to `WP_ROOT_PATH`, and `scripts/` is excluded from the public theme deployment.
+
+After deployment, the workflow runs the production audit. Run the same checks locally with:
+
+```bash
+php scripts/audit-production.php https://kreativfont.com
+```
+
+The audit verifies top-page HTTP responses, document structure, metadata, search ordering, template routing, `robots.txt`, the sitemap, and deployment markers.
 
 ## Important Files
 
@@ -81,6 +90,7 @@ Important: the remote path must point to the theme directory only. The current w
 - `footer.php`: footer content, dark mode toggle script, `wp_footer()`
 - `assets/package.json`: frontend asset tooling entry point
 - `assets/Gruntfile.js`: legacy asset build workflow
+- `scripts/audit-production.php`: repeatable post-deploy production checks
 
 ## Quarantined Legacy Templates
 

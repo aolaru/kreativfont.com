@@ -54,6 +54,19 @@
         $(window).on('resize.kreativNavigation', function () {
             setMenuState(false, false);
         });
+
+        $('.kft-output').each(function (index) {
+            var $output = $(this);
+
+            if ($output.attr('aria-label') || $output.attr('aria-labelledby')) {
+                return;
+            }
+
+            $output.attr(
+                'aria-label',
+                $output.attr('placeholder') || 'Fancy text result ' + (index + 1)
+            );
+        });
     });
 
     $('.dropdown .dropdown-toggle').on('click', function () {

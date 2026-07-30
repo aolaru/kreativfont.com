@@ -8,7 +8,6 @@
         'title'       => wp_get_document_title(),
         'description' => 'Discover fonts, compare styles, and use practical font tools for identification, pairing, and naming.',
         'canonical'   => is_singular() ? get_permalink() : '',
-        'robots'      => is_search() ? 'noindex,follow' : '',
         'url'         => home_url( '/' ),
         'image'       => $theme_uri . '/img/logo-512.png',
     );
@@ -18,10 +17,6 @@
 
     <!-- Dynamic meta description -->
     <meta name="description" content="<?php echo esc_attr( $seo_meta['description'] ); ?>">
-
-    <?php if ( ! empty( $seo_meta['robots'] ) ) : ?>
-        <meta name="robots" content="<?php echo esc_attr( $seo_meta['robots'] ); ?>">
-    <?php endif; ?>
 
     <!-- SEO keywords -->
     <meta name="keywords" content="kreativ font, fonts, typography, font tools, font identifier, font pairing, font name generator, curated fonts">
