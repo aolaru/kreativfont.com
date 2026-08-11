@@ -20,6 +20,32 @@ $active_font_filter = kreativ_get_active_font_filter( $font_filters );
 $active_font_filter_config = $font_filters[ $active_font_filter ];
 $free_fonts_slugs = function_exists( 'kreativ_get_free_fonts_category_slugs' ) ? kreativ_get_free_fonts_category_slugs() : array();
 
+$kreativ_featured_font_query = new WP_Query(
+    array(
+        'posts_per_page'         => 1,
+        'post_status'            => 'publish',
+        'ignore_sticky_posts'    => true,
+        'no_found_rows'          => true,
+        'update_post_meta_cache' => true,
+        'update_post_term_cache' => true,
+        'tax_query'              => array(
+            array(
+                'taxonomy' => 'category',
+                'field'    => 'slug',
+                'terms'    => array( 'fonts' ),
+            ),
+        ),
+        'meta_query'             => array(
+            array(
+                'key'     => '_thumbnail_id',
+                'compare' => 'EXISTS',
+            ),
+        ),
+    )
+);
+
+$kreativ_featured_font = $kreativ_featured_font_query->posts[0] ?? null;
+
 ?>
 
 <!-- =====================================================
@@ -28,11 +54,15 @@ $free_fonts_slugs = function_exists( 'kreativ_get_free_fonts_category_slugs' ) ?
 <div class="kreativ-hero container">
     <div class="kreativ-hero-main">
         <div class="kreativ-hero-eyebrow">
-            <i class="fa-solid fa-font"></i>
+            <i class="fa-solid fa-pen-nib" aria-hidden="true"></i>
             Curated fonts and practical tools
         </div>
 
-        <h1 class="kreativ-hero-title">Curated fonts. Practical tools. Faster decisions.</h1>
+        <h1 class="kreativ-hero-title">
+            <span>Curated fonts.</span>
+            <span>Practical tools.</span>
+            <span>Faster decisions.</span>
+        </h1>
 
         <p class="kreativ-hero-subtitle">
             Browse a growing library of curated type, then jump into the tools that help you identify, pair, and name fonts without wasting time.
@@ -40,55 +70,84 @@ $free_fonts_slugs = function_exists( 'kreativ_get_free_fonts_category_slugs' ) ?
 
         <div class="kreativ-hero-actions">
             <a href="<?php echo esc_url( home_url( '/fonts' ) ); ?>" class="kreativ-hero-cta kreativ-hero-cta-primary">
-                <i class="fa-solid fa-compass"></i>
+                <i class="fa-solid fa-compass" aria-hidden="true"></i>
                 Browse Fonts
             </a>
-            <a href="/tools/kreativ-font-identifier" class="kreativ-hero-cta kreativ-hero-cta-secondary">
-                <i class="fa-solid fa-magnifying-glass"></i>
+            <a href="<?php echo esc_url( home_url( '/tools/kreativ-font-identifier' ) ); ?>" class="kreativ-hero-cta kreativ-hero-cta-secondary">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                 Identify a Font
             </a>
         </div>
 
         <div class="kreativ-hero-notes">
-            <span class="kreativ-hero-note"><i class="fa-solid fa-layer-group"></i> 4000+ curated fonts</span>
+            <span class="kreativ-hero-note"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> 4000+ curated fonts</span>
         </div>
     </div>
 
     <div class="kreativ-hero-side">
-        <div class="kreativ-hero-panel">
-            <span class="kreativ-hero-panel-label">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                Font decisions
-            </span>
-            <h2 class="kreativ-hero-panel-title">Browse, identify, and choose fonts with less guesswork.</h2>
-            <p class="kreativ-hero-panel-copy">Move from inspiration to practical choices: browse fonts, identify type, test pairings, and generate names from one place.</p>
-        </div>
+        <?php if ( $kreativ_featured_font instanceof WP_Post ) : ?>
+            <?php
+            $kreativ_featured_font_id       = $kreativ_featured_font->ID;
+            $kreativ_featured_font_title    = get_the_title( $kreativ_featured_font );
+            $kreativ_featured_font_eyebrow = function_exists( 'kreativ_get_single_font_eyebrow' ) ? kreativ_get_single_font_eyebrow( $kreativ_featured_font ) : 'Font';
+            ?>
+            <a class="kreativ-hero-feature" href="<?php echo esc_url( get_permalink( $kreativ_featured_font ) ); ?>" aria-label="View <?php echo esc_attr( $kreativ_featured_font_title ); ?>">
+                <?php
+                echo wp_get_attachment_image(
+                    get_post_thumbnail_id( $kreativ_featured_font_id ),
+                    'large',
+                    false,
+                    array(
+                        'class'         => 'kreativ-hero-feature-image',
+                        'loading'       => 'eager',
+                        'fetchpriority' => 'high',
+                        'decoding'      => 'async',
+                        'sizes'         => '(max-width: 767px) calc(100vw - 48px), (max-width: 1200px) 42vw, 480px',
+                    )
+                );
+                ?>
+                <span class="kreativ-hero-feature-kicker">New in the library</span>
+                <span class="kreativ-hero-feature-meta">
+                    <span>
+                        <small><?php echo esc_html( $kreativ_featured_font_eyebrow ); ?></small>
+                        <strong><?php echo esc_html( $kreativ_featured_font_title ); ?></strong>
+                    </span>
+                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                </span>
+            </a>
+        <?php else : ?>
+            <div class="kreativ-hero-panel">
+                <span class="kreativ-hero-panel-label">Font decisions</span>
+                <h2 class="kreativ-hero-panel-title">Browse, identify, and choose fonts with less guesswork.</h2>
+                <p class="kreativ-hero-panel-copy">Move from inspiration to practical choices, all in one place.</p>
+            </div>
+        <?php endif; ?>
 
     </div>
 
-    <div class="kreativ-hero-tools">
-        <span class="kreativ-hero-tools-label">Tools:</span>
+    <nav class="kreativ-hero-tools" aria-label="Quick font tools">
+        <span class="kreativ-hero-tools-label">Quick tools</span>
 
-        <a href="/tools/kreativ-font-pairing-tools" class="kreativ-hero-tool-card">
-            <i class="fa-solid fa-object-group"></i>
-            <span>Font Pairing Tools</span>
+        <a href="<?php echo esc_url( home_url( '/tools/kreativ-font-pairing-tools' ) ); ?>" class="kreativ-hero-tool-card">
+            <i class="fa-solid fa-object-group" aria-hidden="true"></i>
+            <span>Font Pairing</span>
         </a>
 
-        <a href="/tools/kreativ-font-identifier" class="kreativ-hero-tool-card">
-            <i class="fa-solid fa-search"></i>
+        <a href="<?php echo esc_url( home_url( '/tools/kreativ-font-identifier' ) ); ?>" class="kreativ-hero-tool-card">
+            <i class="fa-solid fa-search" aria-hidden="true"></i>
             <span>Font Identifier</span>
         </a>
 
-        <a href="/tools/fancy-text-generator" class="kreativ-hero-tool-card">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-            <span>Fancy Text Generator</span>
+        <a href="<?php echo esc_url( home_url( '/tools/fancy-text-generator' ) ); ?>" class="kreativ-hero-tool-card">
+            <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+            <span>Fancy Text</span>
         </a>
 
-        <a href="/tools/kreativ-font-name-generator" class="kreativ-hero-tool-card">
-            <i class="fa-solid fa-lightbulb"></i>
-            <span>Font Name Generator</span>
+        <a href="<?php echo esc_url( home_url( '/tools/kreativ-font-name-generator' ) ); ?>" class="kreativ-hero-tool-card">
+            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+            <span>Font Names</span>
         </a>
-    </div>
+    </nav>
 </div>
 
 
@@ -110,7 +169,7 @@ foreach ( kreativ_get_font_collection_links() as $collection ) {
         <div class="kreativ-section-heading">
             <span class="kreativ-section-eyebrow">Curated collections</span>
             <h2 class="kreativ-section-title">
-                <i class="fa-solid fa-compass"></i>
+                <i class="fa-solid fa-compass" aria-hidden="true"></i>
                 Explore fonts by intent
             </h2>
             <p class="kreativ-section-summary">Start with a goal: commercial, free, modern, vintage, branding, packaging, and more.</p>
@@ -225,7 +284,7 @@ foreach ( $home_sections as $section ) :
                 <?php endif; ?>
                 <h2 class="kreativ-section-title">
                     <?php if ( $icon ) : ?>
-                        <i class="<?php echo esc_attr( $icon ); ?>"></i>
+                        <i class="<?php echo esc_attr( $icon ); ?>" aria-hidden="true"></i>
                     <?php endif; ?>
                     <?php echo esc_html( $section['title'] ); ?>
                 </h2>

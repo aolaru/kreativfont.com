@@ -98,7 +98,7 @@
                     <form method="get" id="searchform" class="kreativ-search-form" action="<?php echo esc_url( $site_url ); ?>" role="search" aria-label="Search Kreativ Font">
                         <span class="kreativ-search-icon" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
                         <input id="searchi" type="search" name="s" value="<?php echo get_search_query(); ?>"
-                               maxlength="128" placeholder="Search fonts, styles, foundries, or tools"
+                               maxlength="128" placeholder="Search fonts and styles"
                                aria-label="Search Kreativ Font"
                                autocomplete="off"
                                class="form-control form-control-sm kreativ-search-input">
