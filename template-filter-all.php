@@ -20,31 +20,76 @@ $active_font_filter = kreativ_get_active_font_filter( $font_filters );
 $active_font_filter_config = $font_filters[ $active_font_filter ];
 $free_fonts_slugs = function_exists( 'kreativ_get_free_fonts_category_slugs' ) ? kreativ_get_free_fonts_category_slugs() : array();
 
-$kreativ_featured_font_query = new WP_Query(
+$kreativ_featured_font_query_args = array(
+    'posts_per_page'         => 10,
+    'post_status'            => 'publish',
+    'ignore_sticky_posts'    => true,
+    'no_found_rows'          => true,
+    'update_post_meta_cache' => true,
+    'update_post_term_cache' => true,
+    'orderby'                => 'date',
+    'order'                  => 'DESC',
+    'meta_query'             => array(
+        array(
+            'key'     => '_thumbnail_id',
+            'compare' => 'EXISTS',
+        ),
+    ),
+);
+
+$kreativ_commercial_tax_query = array(
     array(
-        'posts_per_page'         => 1,
-        'post_status'            => 'publish',
-        'ignore_sticky_posts'    => true,
-        'no_found_rows'          => true,
-        'update_post_meta_cache' => true,
-        'update_post_term_cache' => true,
-        'tax_query'              => array(
-            array(
-                'taxonomy' => 'category',
-                'field'    => 'slug',
-                'terms'    => array( 'fonts' ),
-            ),
-        ),
-        'meta_query'             => array(
-            array(
-                'key'     => '_thumbnail_id',
-                'compare' => 'EXISTS',
-            ),
-        ),
+        'taxonomy' => 'category',
+        'field'    => 'slug',
+        'terms'    => array( 'fonts' ),
+    ),
+);
+
+if ( $free_fonts_slugs ) {
+    $kreativ_commercial_tax_query[] = array(
+        'taxonomy' => 'category',
+        'field'    => 'slug',
+        'terms'    => $free_fonts_slugs,
+        'operator' => 'NOT IN',
+    );
+}
+
+$kreativ_commercial_font_query = new WP_Query(
+    array_merge(
+        $kreativ_featured_font_query_args,
+        array( 'tax_query' => $kreativ_commercial_tax_query )
     )
 );
 
-$kreativ_featured_font = $kreativ_featured_font_query->posts[0] ?? null;
+$kreativ_featured_font_candidates = $kreativ_commercial_font_query->posts;
+
+if ( $free_fonts_slugs ) {
+    $kreativ_free_font_query = new WP_Query(
+        array_merge(
+            $kreativ_featured_font_query_args,
+            array(
+                'tax_query' => array(
+                    array(
+                        'taxonomy' => 'category',
+                        'field'    => 'slug',
+                        'terms'    => array( 'fonts' ),
+                    ),
+                    array(
+                        'taxonomy' => 'category',
+                        'field'    => 'slug',
+                        'terms'    => $free_fonts_slugs,
+                    ),
+                ),
+            )
+        )
+    );
+
+    $kreativ_featured_font_candidates = array_merge( $kreativ_featured_font_candidates, $kreativ_free_font_query->posts );
+}
+
+$kreativ_featured_font = $kreativ_featured_font_candidates
+    ? $kreativ_featured_font_candidates[ wp_rand( 0, count( $kreativ_featured_font_candidates ) - 1 ) ]
+    : null;
 
 ?>
 
@@ -80,7 +125,7 @@ $kreativ_featured_font = $kreativ_featured_font_query->posts[0] ?? null;
         </div>
 
         <div class="kreativ-hero-notes">
-            <span class="kreativ-hero-note"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> 4000+ curated fonts</span>
+            <span class="kreativ-hero-note"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> 5000+ curated fonts</span>
         </div>
     </div>
 
