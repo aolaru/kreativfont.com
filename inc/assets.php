@@ -271,6 +271,21 @@ function kreativ_enqueue_tracking_assets() {
         false
     );
     kreativ_add_script_attributes( 'kreativ-cj-affiliate', array( 'async' => true ) );
+
+    wp_enqueue_script(
+        'kreativ-cloudflare-web-analytics',
+        'https://static.cloudflareinsights.com/beacon.min.js',
+        array(),
+        null,
+        true
+    );
+    kreativ_add_script_attributes(
+        'kreativ-cloudflare-web-analytics',
+        array(
+            'type'           => 'module',
+            'data-cf-beacon' => wp_json_encode( array( 'token' => 'ab7a9c1b54714400a0112acefa6e4479' ) ),
+        )
+    );
 }
 add_action( 'wp_enqueue_scripts', 'kreativ_enqueue_tracking_assets', 20 );
 
