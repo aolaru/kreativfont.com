@@ -19,6 +19,7 @@ $font_filters = kreativ_get_font_filters();
 $active_font_filter = kreativ_get_active_font_filter( $font_filters );
 $active_font_filter_config = $font_filters[ $active_font_filter ];
 $free_fonts_slugs = function_exists( 'kreativ_get_free_fonts_category_slugs' ) ? kreativ_get_free_fonts_category_slugs() : array();
+$font_exclusion_clause = function_exists( 'kreativ_get_font_exclusion_tax_clause' ) ? kreativ_get_font_exclusion_tax_clause() : array();
 
 $kreativ_featured_font_query_args = array(
     'posts_per_page'         => 10,
@@ -45,6 +46,10 @@ $kreativ_commercial_tax_query = array(
     ),
 );
 
+if ( ! empty( $font_exclusion_clause ) ) {
+    $kreativ_commercial_tax_query[] = $font_exclusion_clause;
+}
+
 if ( $free_fonts_slugs ) {
     $kreativ_commercial_tax_query[] = array(
         'taxonomy' => 'category',
@@ -64,22 +69,28 @@ $kreativ_commercial_font_query = new WP_Query(
 $kreativ_featured_font_candidates = $kreativ_commercial_font_query->posts;
 
 if ( $free_fonts_slugs ) {
+    $kreativ_free_tax_query = array(
+        array(
+            'taxonomy' => 'category',
+            'field'    => 'slug',
+            'terms'    => array( 'fonts' ),
+        ),
+        array(
+            'taxonomy' => 'category',
+            'field'    => 'slug',
+            'terms'    => $free_fonts_slugs,
+        ),
+    );
+
+    if ( ! empty( $font_exclusion_clause ) ) {
+        $kreativ_free_tax_query[] = $font_exclusion_clause;
+    }
+
     $kreativ_free_font_query = new WP_Query(
         array_merge(
             $kreativ_featured_font_query_args,
             array(
-                'tax_query' => array(
-                    array(
-                        'taxonomy' => 'category',
-                        'field'    => 'slug',
-                        'terms'    => array( 'fonts' ),
-                    ),
-                    array(
-                        'taxonomy' => 'category',
-                        'field'    => 'slug',
-                        'terms'    => $free_fonts_slugs,
-                    ),
-                ),
+                'tax_query' => $kreativ_free_tax_query,
             )
         )
     );
@@ -314,6 +325,13 @@ if ( 'latest' === $active_font_filter && $free_fonts_slugs ) {
             $active_font_filter_config['tax_query']
         ),
     );
+}
+
+if ( ! empty( $font_exclusion_clause ) ) {
+    foreach ( $home_sections as &$home_section ) {
+        $home_section['tax_query'][] = $font_exclusion_clause;
+    }
+    unset( $home_section );
 }
 
 foreach ( $home_sections as $section ) :

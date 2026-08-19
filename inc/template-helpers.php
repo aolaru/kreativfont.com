@@ -87,6 +87,10 @@ function kreativ_get_font_content_category_slugs() {
     return array( 'fonts', 'free-fonts' );
 }
 
+function kreativ_get_non_font_content_category_slugs() {
+    return array( 'tools', 'blog', 'templates-themes', 'graphics', 'photos', 'videos', 'sounds' );
+}
+
 function kreativ_get_font_eligibility_tax_clause() {
     $slugs = array();
 
@@ -110,6 +114,45 @@ function kreativ_get_font_eligibility_tax_clause() {
     );
 }
 
+function kreativ_get_font_exclusion_tax_clause() {
+    $slugs = array();
+
+    foreach ( kreativ_get_non_font_content_category_slugs() as $slug ) {
+        $term = get_term_by( 'slug', $slug, 'category' );
+
+        if ( $term && ! is_wp_error( $term ) ) {
+            $slugs[] = $term->slug;
+        }
+    }
+
+    if ( empty( $slugs ) ) {
+        return array();
+    }
+
+    return array(
+        'taxonomy' => 'category',
+        'field'    => 'slug',
+        'terms'    => array_values( array_unique( $slugs ) ),
+        'operator' => 'NOT IN',
+    );
+}
+
+function kreativ_get_font_eligibility_tax_query() {
+    $tax_query = array();
+    $include   = kreativ_get_font_eligibility_tax_clause();
+    $exclude   = kreativ_get_font_exclusion_tax_clause();
+
+    if ( ! empty( $include ) ) {
+        $tax_query[] = $include;
+    }
+
+    if ( ! empty( $exclude ) ) {
+        $tax_query[] = $exclude;
+    }
+
+    return $tax_query;
+}
+
 function kreativ_is_font_post( $post = null ) {
     $post = get_post( $post );
 
@@ -117,7 +160,8 @@ function kreativ_is_font_post( $post = null ) {
         return false;
     }
 
-    return kreativ_post_has_category_slugs( $post, kreativ_get_font_content_category_slugs() );
+    return kreativ_post_has_category_slugs( $post, kreativ_get_font_content_category_slugs() )
+        && ! kreativ_post_has_category_slugs( $post, kreativ_get_non_font_content_category_slugs() );
 }
 
 function kreativ_get_font_taxonomy_branch_definitions() {
@@ -2869,6 +2913,12 @@ function kreativ_get_dynamic_font_collection_query_args( $config = array() ) {
             'terms'    => array( 'fonts' ),
         ),
     );
+
+    $font_exclusion_clause = kreativ_get_font_exclusion_tax_clause();
+
+    if ( ! empty( $font_exclusion_clause ) ) {
+        $tax_query[] = $font_exclusion_clause;
+    }
 
     $free_fonts_slugs = kreativ_get_free_fonts_category_slugs();
 

@@ -35,12 +35,7 @@ if ( ! empty( $active_font_filter_config['tax_query'] ) ) {
     $tax_query = array_merge( $tax_query, $active_font_filter_config['tax_query'] );
 }
 
-$eligibility_clause = kreativ_get_font_eligibility_tax_clause();
-
-if ( ! empty( $eligibility_clause ) ) {
-    $tax_query[] = $eligibility_clause;
-}
-
+$tax_query = array_merge( $tax_query, kreativ_get_font_eligibility_tax_query() );
 $tax_query = array_merge( $tax_query, kreativ_get_font_archive_facet_tax_query( $active_font_facets ) );
 
 $query = new WP_Query(
