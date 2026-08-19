@@ -190,6 +190,15 @@ function kreativ_enqueue_theme_assets() {
             true
         );
         kreativ_add_script_attributes( 'kreativ-share', array( 'defer' => true ) );
+
+        wp_enqueue_script(
+            'kreativ-research-board',
+            get_template_directory_uri() . '/js/kreativ-research-board.js',
+            array(),
+            kreativ_asset_version( '/js/kreativ-research-board.js' ),
+            true
+        );
+        kreativ_add_script_attributes( 'kreativ-research-board', array( 'defer' => true ) );
     }
 
     if ( kreativ_should_load_lazyload() ) {

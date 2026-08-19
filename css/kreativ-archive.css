@@ -167,6 +167,74 @@ body.kreativ-cat-tools            { --kreativ-cat-gradient: var(--kf-gradient-he
     box-shadow: 0 10px 22px rgba(var(--kf-primary-rgb), 0.16);
 }
 
+.kreativ-font-facet-form {
+    max-width: 1160px;
+    margin: -1rem auto 2rem;
+    padding: 1rem;
+    border: 1px solid rgba(var(--kf-primary-rgb), 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 10px 24px rgba(18, 22, 34, 0.05);
+}
+
+.kreativ-font-facet-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.kreativ-font-facet-field {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+    color: var(--kf-primary-strong);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.kreativ-font-facet-field select {
+    width: 100%;
+    min-height: 42px;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid rgba(var(--kf-primary-rgb), 0.16);
+    border-radius: 6px;
+    background: #fff;
+    color: #27324d;
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.kreativ-font-facet-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-top: 1rem;
+}
+
+.kreativ-font-facet-actions button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 42px;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--kf-primary);
+    border-radius: 6px;
+    background: var(--kf-primary);
+    color: #fff;
+    font-weight: 800;
+}
+
+.kreativ-font-facet-actions a {
+    color: var(--kf-primary-strong);
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
 .kreativ-archive-discovery {
     padding: 1.4rem 1.2rem;
     margin-bottom: 2rem;
@@ -236,9 +304,21 @@ body.kreativ-cat-tools            { --kreativ-cat-gradient: var(--kf-gradient-he
 body.dark-mode .kreativ-category-eyebrow,
 body.dark-mode .kreativ-category-meta-pill,
 body.dark-mode .kreativ-archive-discovery,
-body.dark-mode .kreativ-archive-empty-state {
+body.dark-mode .kreativ-archive-empty-state,
+body.dark-mode .kreativ-font-facet-form {
     background: rgba(24, 31, 52, 0.92);
     border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.dark-mode .kreativ-font-facet-field,
+body.dark-mode .kreativ-font-facet-actions a {
+    color: #cfd8f5;
+}
+
+body.dark-mode .kreativ-font-facet-field select {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(20, 26, 44, 0.92);
+    color: #edf2ff;
 }
 
 body.dark-mode .kreativ-category-header p,
@@ -425,6 +505,20 @@ body.kreativ-cat-tools .kreativ-font-card {
 
     .kreativ-font-filter {
         flex: 1 1 calc(50% - 0.5rem);
+    }
+
+    .kreativ-font-facet-form {
+        margin: -0.5rem 0.72rem 1.5rem;
+        padding: 0.85rem;
+    }
+
+    .kreativ-font-facet-grid {
+        grid-template-columns: 1fr;
+        gap: 0.65rem;
+    }
+
+    .kreativ-font-facet-actions {
+        justify-content: space-between;
     }
 
     .kreativ-archive-filter-bar {

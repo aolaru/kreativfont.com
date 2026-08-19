@@ -32,6 +32,9 @@ $primary_taxonomy_groups = array_intersect_key( $taxonomy_groups, array_flip( ar
 $secondary_taxonomy_groups = array_diff_key( $taxonomy_groups, $primary_taxonomy_groups );
 $related_collections = kreativ_get_single_related_font_collections( get_post(), 4 );
 $primary_action      = kreativ_get_single_font_primary_action_data( get_post() );
+$font_facts          = kreativ_get_single_font_facts( get_post() );
+$research_item        = kreativ_get_font_research_board_item( get_post() );
+$pairing_tool_url     = home_url( '/tools/kreativ-font-pairing-tools/' );
 
 if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', $page_summary ) ) {
     $page_summary = '';
@@ -114,6 +117,45 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
                     <?php endif; ?>
                 </div>
             </aside>
+        <?php endif; ?>
+
+        <?php if ( ! empty( $font_facts ) || ! empty( $research_item ) ) : ?>
+            <section class="kreativ-font-decision-panel" aria-labelledby="kreativ-font-decision-title">
+                <div class="kreativ-font-decision-head">
+                    <div>
+                        <span class="kreativ-single-quick-label"><i class="fa-solid fa-list-check" aria-hidden="true"></i> Font facts</span>
+                        <h2 id="kreativ-font-decision-title">Useful context before you choose</h2>
+                    </div>
+
+                    <?php if ( ! empty( $research_item ) ) : ?>
+                        <button type="button" class="kreativ-research-save" data-kreativ-save-font="<?php echo esc_attr( wp_json_encode( $research_item ) ); ?>" aria-pressed="false">
+                            <i class="fa-regular fa-bookmark" aria-hidden="true"></i>
+                            <span>Save to board</span>
+                        </button>
+                    <?php endif; ?>
+                </div>
+
+                <?php if ( ! empty( $font_facts ) ) : ?>
+                    <dl class="kreativ-font-facts">
+                        <?php foreach ( $font_facts as $fact ) : ?>
+                            <div>
+                                <dt><?php echo esc_html( $fact['label'] ); ?></dt>
+                                <dd><?php echo esc_html( $fact['value'] ); ?></dd>
+                            </div>
+                        <?php endforeach; ?>
+                    </dl>
+                <?php endif; ?>
+
+                <div class="kreativ-research-board" data-kreativ-research-board data-pairing-url="<?php echo esc_url( $pairing_tool_url ); ?>">
+                    <div class="kreativ-research-board-head">
+                        <span><i class="fa-solid fa-book-bookmark" aria-hidden="true"></i> Research board</span>
+                        <button type="button" class="kreativ-research-clear" data-kreativ-research-clear hidden>Clear board</button>
+                    </div>
+                    <p class="kreativ-research-empty" data-kreativ-research-empty>Save fonts here to keep a shortlist while you browse.</p>
+                    <ol class="kreativ-research-list" data-kreativ-research-list></ol>
+                    <a class="kreativ-research-compare" data-kreativ-research-compare hidden><i class="fa-solid fa-object-group" aria-hidden="true"></i><span>Compare saved fonts</span></a>
+                </div>
+            </section>
         <?php endif; ?>
 
         <article class="kreativ-post-content">

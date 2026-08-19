@@ -33,6 +33,11 @@ function kreativ_get_font_post_quality_checks( $post_id ) {
     $content = (string) get_post_field( 'post_content', $post_id );
     $checks  = array(
         array(
+            'label'  => 'Font library category',
+            'passed' => function_exists( 'kreativ_is_font_post' ) && kreativ_is_font_post( $post_id ),
+            'fix'    => 'Assign Fonts or Free Fonts so this post can appear in the font library.',
+        ),
+        array(
             'label'  => 'Featured image',
             'passed' => has_post_thumbnail( $post_id ),
             'fix'    => 'Add a strong font preview image.',

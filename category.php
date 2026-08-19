@@ -31,6 +31,8 @@ $sort  = kreativ_get_archive_sort();
 $paged = max(1, get_query_var('paged'));
 $font_filters = kreativ_get_font_filters();
 $active_font_filter = kreativ_get_active_font_filter( $font_filters );
+$active_font_facets = $is_font_archive ? kreativ_get_active_font_archive_facets() : array();
+$font_archive_facets = $is_font_archive ? kreativ_get_font_archive_facets() : array();
 
 if ( ! $is_font_archive ) {
     $active_font_filter = 'latest';
@@ -51,6 +53,16 @@ $tax_query = [
 
 if ( $is_font_archive && ! empty( $active_font_filter_config['tax_query'] ) ) {
     $tax_query = array_merge( $tax_query, $active_font_filter_config['tax_query'] );
+}
+
+if ( $is_font_archive ) {
+    $eligibility_clause = kreativ_get_font_eligibility_tax_clause();
+
+    if ( ! empty( $eligibility_clause ) ) {
+        $tax_query[] = $eligibility_clause;
+    }
+
+    $tax_query = array_merge( $tax_query, kreativ_get_font_archive_facet_tax_query( $active_font_facets ) );
 }
 
 $query = new WP_Query(
@@ -115,11 +127,43 @@ $archive_count_label = sprintf(
 <?php if ( $is_font_archive ) : ?>
     <div class="kreativ-font-filter-bar kreativ-archive-filter-bar">
         <?php foreach ( $font_filters as $filter_slug => $filter_config ) : ?>
-            <a href="<?php echo esc_url( add_query_arg( 'font_filter', $filter_slug, get_term_link( $category ) ) ); ?>" class="kreativ-font-filter <?php echo $active_font_filter === $filter_slug ? 'active' : ''; ?>">
+            <a href="<?php echo esc_url( add_query_arg( kreativ_get_font_archive_query_args( $filter_slug, $active_font_facets ), get_term_link( $category ) ) ); ?>" class="kreativ-font-filter <?php echo $active_font_filter === $filter_slug ? 'active' : ''; ?>">
                 <?php echo esc_html( $filter_config['label'] ); ?>
             </a>
         <?php endforeach; ?>
     </div>
+
+    <?php if ( ! empty( $font_archive_facets ) ) : ?>
+        <form class="kreativ-font-facet-form" method="get" action="<?php echo esc_url( get_term_link( $category ) ); ?>">
+            <div class="kreativ-font-facet-grid">
+                <?php foreach ( $font_archive_facets as $branch_key => $facet ) : ?>
+                    <label class="kreativ-font-facet-field">
+                        <span><?php echo esc_html( $facet['label'] ); ?></span>
+                        <select name="<?php echo esc_attr( $facet['param'] ); ?>">
+                            <option value="">Any <?php echo esc_html( strtolower( $facet['label'] ) ); ?></option>
+                            <?php foreach ( $facet['terms'] as $term ) : ?>
+                                <option value="<?php echo esc_attr( $term->slug ); ?>"<?php selected( $active_font_facets[ $branch_key ] ?? '', $term->slug ); ?>><?php echo esc_html( $term->name ); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label>
+                <?php endforeach; ?>
+
+                <label class="kreativ-font-facet-field">
+                    <span>Availability</span>
+                    <select name="availability">
+                        <option value="">Any availability</option>
+                        <option value="commercial"<?php selected( $active_font_facets['availability'] ?? '', 'commercial' ); ?>>Commercial</option>
+                        <option value="free"<?php selected( $active_font_facets['availability'] ?? '', 'free' ); ?>>Free</option>
+                    </select>
+                </label>
+            </div>
+            <input type="hidden" name="font_filter" value="<?php echo esc_attr( $active_font_filter ); ?>">
+            <div class="kreativ-font-facet-actions">
+                <button type="submit"><i class="fa-solid fa-filter" aria-hidden="true"></i><span>Apply filters</span></button>
+                <a href="<?php echo esc_url( add_query_arg( 'font_filter', $active_font_filter, get_term_link( $category ) ) ); ?>">Clear filters</a>
+            </div>
+        </form>
+    <?php endif; ?>
 <?php endif; ?>
 
 <?php if ( ! empty( $related_groups ) ) : ?>
@@ -202,7 +246,7 @@ $archive_count_label = sprintf(
         'mid_size'  => 2,
         'prev_text' => '&laquo; Previous',
         'next_text' => 'Next &raquo;',
-        'add_args'  => $is_font_archive ? ['font_filter' => $active_font_filter] : array(),
+        'add_args'  => $is_font_archive ? kreativ_get_font_archive_query_args( $active_font_filter, $active_font_facets ) : array(),
     ]);
     ?>
 
