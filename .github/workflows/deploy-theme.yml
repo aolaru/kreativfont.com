@@ -13,6 +13,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     env:
       WP_REMOTE_PATH: /htdocs/wp-content/themes/kreativfont.com/
       WP_ROOT_PATH: /htdocs/
@@ -45,8 +46,8 @@ jobs:
 
       - name: Install deployment dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y lftp php-curl php-xml
+          timeout 5m sudo apt-get update -qq
+          timeout 5m sudo apt-get install -y --no-install-recommends lftp php-curl php-xml
 
       - name: Deploy theme over SFTP
         env:
@@ -55,15 +56,15 @@ jobs:
           WP_SSH_USER: ${{ secrets.WP_SSH_USER }}
           WP_SSH_PASSWORD: ${{ secrets.WP_SSH_PASSWORD }}
         run: |
-          lftp \
+          timeout --signal=TERM --kill-after=15s 5m lftp \
             -u "${WP_SSH_USER},${WP_SSH_PASSWORD}" \
-            -e "set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20; mirror --reverse --verbose --only-newer --exclude-glob .git/ --exclude-glob .git/** --exclude-glob .github/ --exclude-glob .github/** --exclude-glob scripts/ --exclude-glob scripts/** --exclude .gitignore --exclude README.md --exclude robots.txt ./ ${WP_REMOTE_PATH}; put robots.txt -o ${WP_ROOT_PATH}robots.txt; bye" \
+            -e "set cmd:fail-exit yes; set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20; set net:reconnect-interval-base 2; set net:reconnect-interval-max 8; mirror --reverse --verbose=1 --only-newer --exclude-glob .git/ --exclude-glob .git/** --exclude-glob .github/ --exclude-glob .github/** --exclude-glob scripts/ --exclude-glob scripts/** --exclude .gitignore --exclude README.md --exclude robots.txt ./ ${WP_REMOTE_PATH}; put robots.txt -o ${WP_ROOT_PATH}robots.txt; bye" \
             "sftp://${WP_SSH_HOST}:${WP_SSH_PORT}"
 
       - name: Verify deployed asset
         run: |
-          curl --fail --silent --show-error --location "https://kreativfont.com/wp-content/themes/kreativfont.com/assets/assets/components/init.js?deploy_check=${GITHUB_SHA}" \
+          curl --fail --silent --show-error --location --connect-timeout 10 --max-time 30 --retry 2 --retry-all-errors "https://kreativfont.com/wp-content/themes/kreativfont.com/assets/assets/components/init.js?deploy_check=${GITHUB_SHA}" \
             | grep -F '(function ($)'
 
       - name: Audit production
-        run: php scripts/audit-production.php "https://kreativfont.com" "${GITHUB_SHA}"
+        run: timeout 12m php scripts/audit-production.php "https://kreativfont.com" "${GITHUB_SHA}"
