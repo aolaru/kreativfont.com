@@ -2516,6 +2516,36 @@ function kreativ_redirect_legacy_font_collection_urls() {
 }
 add_action( 'template_redirect', 'kreativ_redirect_legacy_font_collection_urls' );
 
+function kreativ_serve_virtual_font_collection_pages( $template ) {
+    if ( is_admin() || ! is_404() || empty( $_SERVER['REQUEST_URI'] ) ) {
+        return $template;
+    }
+
+    $request_path = wp_parse_url( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ), PHP_URL_PATH );
+    $request_path = trim( (string) $request_path, '/' );
+
+    if ( ! preg_match( '#^collections/([^/]+)$#', $request_path, $matches ) ) {
+        return $template;
+    }
+
+    $collection = kreativ_get_font_collection_link_by_slug( $matches[1] );
+    $template_path = get_template_directory() . '/page-' . sanitize_file_name( $matches[1] ) . '.php';
+
+    if ( empty( $collection ) || ! file_exists( $template_path ) ) {
+        return $template;
+    }
+
+    global $wp_query;
+
+    $wp_query->is_404 = false;
+    $GLOBALS['kreativ_virtual_collection_url'] = $collection['url'];
+    $GLOBALS['kreativ_virtual_collection_title'] = $collection['title'];
+    status_header( 200 );
+
+    return $template_path;
+}
+add_filter( 'template_include', 'kreativ_serve_virtual_font_collection_pages', 99 );
+
 function kreativ_redirect_legacy_legal_urls() {
     if ( is_admin() || empty( $_SERVER['REQUEST_URI'] ) ) {
         return;

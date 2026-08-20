@@ -159,6 +159,10 @@ function kreativ_get_meta_description() {
 }
 
 function kreativ_get_canonical_url() {
+    if ( ! empty( $GLOBALS['kreativ_virtual_collection_url'] ) ) {
+        return $GLOBALS['kreativ_virtual_collection_url'];
+    }
+
     if ( is_singular() ) {
         return get_permalink();
     }
@@ -175,6 +179,15 @@ function kreativ_get_canonical_url() {
 
     return '';
 }
+
+function kreativ_get_virtual_collection_document_title( $title ) {
+    if ( empty( $GLOBALS['kreativ_virtual_collection_title'] ) ) {
+        return $title;
+    }
+
+    return sprintf( '%s | %s', $GLOBALS['kreativ_virtual_collection_title'], get_bloginfo( 'name' ) );
+}
+add_filter( 'pre_get_document_title', 'kreativ_get_virtual_collection_document_title' );
 
 function kreativ_is_legacy_template() {
     return is_page_template( array(
