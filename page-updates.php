@@ -4,6 +4,18 @@ Template Name: Updates Page
 */
 
 $kreativ_updates = array(
+    'August 2026' => array(
+        'title'   => 'Catalog growth, quality controls, and site reliability strengthened',
+        'summary' => 'August focused on making the font catalog easier to grow without losing structure, while tightening the technical foundations that keep discovery and deployment dependable.',
+        'items'   => array(
+            'The commercial-font publishing workflow now supports source-linked descriptions, featured previews, galleries, structured designer and foundry terms, style, mood, use-case classifications, and clear calls to action.',
+            'Font quality checks were strengthened so new entries can be reviewed against the complete library standard before they are published.',
+            'Category coverage and descriptions were expanded to make browsing paths more useful across font styles, moods, use cases, designers, and foundries.',
+            'Search behavior, result context, catalog recovery checks, and noncanonical route handling were refined to make font discovery more reliable for visitors and search engines.',
+            'Header search layout was hardened for long queries, keeping the navigation usable across common desktop and mobile widths.',
+            'Deployment and production audit workflows were tightened with bounded runtimes and safer recovery checks, reducing unnecessary Action usage while protecting live updates.',
+        ),
+    ),
     'May 2026' => array(
         'title'   => 'Homepage and single-page flow simplified',
         'summary' => 'May started with a simplification pass focused on making the site easier to scan, easier to maintain, and more consistent for future font posts.',
