@@ -74,6 +74,32 @@ function kreativ_audit_fetch( $url ) {
     );
 }
 
+function kreativ_audit_fetch_headers( $url ) {
+    $handle = curl_init( $url );
+    curl_setopt_array(
+        $handle,
+        array(
+            CURLOPT_NOBODY         => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => false,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_TIMEOUT        => 30,
+            CURLOPT_USERAGENT      => 'KreativFontProductionAudit/1.0',
+            CURLOPT_HTTPHEADER     => array( 'Cache-Control: no-cache' ),
+        )
+    );
+
+    curl_exec( $handle );
+    $status   = (int) curl_getinfo( $handle, CURLINFO_RESPONSE_CODE );
+    $location = (string) curl_getinfo( $handle, CURLINFO_REDIRECT_URL );
+    $error    = curl_error( $handle );
+    return array(
+        'status'   => $status,
+        'location' => $location,
+        'error'    => $error,
+    );
+}
+
 function kreativ_audit_document( $html ) {
     $previous_state = libxml_use_internal_errors( true );
     $document       = new DOMDocument();
@@ -128,11 +154,16 @@ function kreativ_audit_page( $base_url, $cache_token, $spec ) {
 
     $title       = kreativ_audit_text( $xpath->query( '//title' )->item( 0 ) );
     $description = trim( (string) $xpath->evaluate( 'string(//meta[translate(@name, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz") = "description"]/@content)' ) );
+    $description_nodes = $xpath->query( '//meta[translate(@name, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz") = "description"]' );
 
     if ( '' === $title || '' === $description ) {
         kreativ_audit_fail( "{$label}: missing title or meta description" );
     } else {
         kreativ_audit_pass( "{$label}: title and meta description" );
+    }
+
+    if ( ! empty( $spec['single_meta_description'] ) && 1 !== $description_nodes->length ) {
+        kreativ_audit_fail( "{$label}: expected one meta description, found {$description_nodes->length}" );
     }
 
     $ids       = array();
@@ -184,7 +215,9 @@ $page_specs = array(
     array( 'label' => 'Tools', 'path' => '/tools', 'status' => 200, 'h1' => 'Browse Font Tools', 'canonical' => true ),
     array( 'label' => 'Blog', 'path' => '/blog', 'status' => 200, 'h1' => 'Browse Blog', 'canonical' => true ),
     array( 'label' => 'Search', 'path' => '/?s=Inter', 'status' => 200, 'h1' => 'Results for "Inter"', 'canonical' => false ),
-    array( 'label' => 'Font post', 'path' => '/fonts/hanley-pro-expressive-script-variety', 'status' => 200, 'h1' => 'Hanley Pro – expressive script variety', 'canonical' => true ),
+    array( 'label' => 'Font post', 'path' => '/fonts/hanley-pro-expressive-script-variety', 'status' => 200, 'h1' => 'Hanley Pro – expressive script variety', 'canonical' => true, 'single_meta_description' => true ),
+    array( 'label' => 'Collection route', 'path' => '/collections/best-retro-fonts', 'status' => 200, 'h1' => 'Best Retro Fonts', 'canonical' => true, 'single_meta_description' => true ),
+    array( 'label' => 'Tag archive', 'path' => '/tag/handmade-typeface', 'status' => 200, 'canonical' => true ),
     array( 'label' => 'Tool post', 'path' => '/tools/fancy-text-generator', 'status' => 200, 'h1' => 'Kreativ Fancy Text Generator', 'canonical' => true ),
     array( 'label' => 'Contact', 'path' => '/blog/contact', 'status' => 200, 'h1' => 'Contact', 'canonical' => true ),
     array( 'label' => 'Legal', 'path' => '/blog/terms-of-use-privacy-policy', 'status' => 200, 'h1' => 'Terms Of Use & Privacy Policy', 'canonical' => true ),
@@ -294,6 +327,17 @@ if ( ! empty( $pages['404'] ) ) {
     }
 }
 
+if ( ! empty( $pages['Tag archive'] ) ) {
+    $robots      = $pages['Tag archive']['xpath']->query( '//meta[translate(@name, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz") = "robots"]' );
+    $robots_text = $robots->length ? strtolower( $robots->item( 0 )->getAttribute( 'content' ) ) : '';
+
+    if ( 1 === $robots->length && false !== strpos( $robots_text, 'noindex' ) ) {
+        kreativ_audit_pass( 'Tag archive: one noindex robots directive' );
+    } else {
+        kreativ_audit_fail( "Tag archive: expected one noindex robots directive, found {$robots->length}" );
+    }
+}
+
 $robots_response = kreativ_audit_fetch( kreativ_audit_url( $base_url, '/robots.txt', $cache_token ) );
 $expected_sitemap = 'Sitemap: ' . $base_url . '/sitemap.xml';
 
@@ -309,6 +353,20 @@ if ( 200 === $sitemap_response['status'] && preg_match( '/<(?:sitemapindex|urlse
     kreativ_audit_pass( 'Sitemap: reachable XML index' );
 } else {
     kreativ_audit_fail( 'Sitemap: unavailable or invalid' );
+}
+
+if ( false === strpos( $sitemap_response['body'], 'post_tag-sitemap' ) ) {
+    kreativ_audit_pass( 'Sitemap: tag archives are excluded' );
+} else {
+    kreativ_audit_fail( 'Sitemap: tag archives are still included' );
+}
+
+$share_redirect = kreativ_audit_fetch_headers( $base_url . '/fonts/nevo?share=twitter' );
+
+if ( 301 === $share_redirect['status'] && $base_url . '/fonts/nevo' === $share_redirect['location'] ) {
+    kreativ_audit_pass( 'Legacy share URL: redirects to the canonical font page' );
+} else {
+    kreativ_audit_fail( "Legacy share URL: expected a 301 to the canonical font page, received {$share_redirect['status']} ({$share_redirect['location']})" );
 }
 
 $asset_response = kreativ_audit_fetch( kreativ_audit_url( $base_url, '/wp-content/themes/kreativfont.com/assets/assets/components/init.js', $cache_token ) );

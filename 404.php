@@ -93,6 +93,7 @@ foreach ( kreativ_get_font_collection_links() as $collection ) {
                         'post_type'           => 'post',
                         'posts_per_page'      => 4,
                         'ignore_sticky_posts' => true,
+                        'tax_query'           => kreativ_get_font_eligibility_tax_query(),
                     )
                 );
 
