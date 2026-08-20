@@ -4,19 +4,22 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 concurrency:
-  group: deploy-theme-production
+  group: deploy-theme-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
-  deploy:
+  validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
-    env:
-      WP_REMOTE_PATH: /htdocs/wp-content/themes/kreativfont.com/
-      WP_ROOT_PATH: /htdocs/
+    timeout-minutes: 10
 
     steps:
       - name: Check out repository
@@ -26,9 +29,21 @@ jobs:
         run: |
           find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n 1 php -l
           node --check assets/assets/components/init.js
-          node --check js/kreativ-search-suggest.js
-          node --check js/kreativ-share.js
+          find js -maxdepth 1 -type f -name '*.js' -print0 | xargs -0 -r -n 1 node --check
           php -l scripts/audit-production.php
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      WP_REMOTE_PATH: /htdocs/wp-content/themes/kreativfont.com/
+      WP_ROOT_PATH: /htdocs/
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
 
       - name: Validate deployment secrets
         env:
@@ -58,7 +73,7 @@ jobs:
         run: |
           timeout --signal=TERM --kill-after=15s 5m lftp \
             -u "${WP_SSH_USER},${WP_SSH_PASSWORD}" \
-            -e "set cmd:fail-exit yes; set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20; set net:reconnect-interval-base 2; set net:reconnect-interval-max 8; mirror --reverse --verbose=1 --only-newer --exclude-glob .git/ --exclude-glob .git/** --exclude-glob .github/ --exclude-glob .github/** --exclude-glob scripts/ --exclude-glob scripts/** --exclude .gitignore --exclude README.md --exclude robots.txt ./ ${WP_REMOTE_PATH}; put robots.txt -o ${WP_ROOT_PATH}robots.txt; bye" \
+            -e "set cmd:fail-exit yes; set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20; set net:reconnect-interval-base 2; set net:reconnect-interval-max 8; mirror --reverse --delete --verbose=1 --only-newer --exclude-glob .git/ --exclude-glob .git/** --exclude-glob .github/ --exclude-glob .github/** --exclude-glob scripts/ --exclude-glob scripts/** --exclude .gitignore --exclude README.md --exclude robots.txt ./ ${WP_REMOTE_PATH}; put robots.txt -o ${WP_ROOT_PATH}robots.txt; bye" \
             "sftp://${WP_SSH_HOST}:${WP_SSH_PORT}"
 
       - name: Verify deployed asset

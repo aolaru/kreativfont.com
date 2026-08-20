@@ -71,7 +71,11 @@ WP_REMOTE_PATH=/htdocs/wp-content/themes/kreativfont.com/
 WP_ROOT_PATH=/htdocs/
 ```
 
-The theme is mirrored only into `WP_REMOTE_PATH`. The repository `robots.txt` is uploaded separately to `WP_ROOT_PATH`, and `scripts/` is excluded from the public theme deployment.
+The theme is mirrored only into `WP_REMOTE_PATH`. The deployment is an exact mirror, so files removed from the repository are removed from that theme directory on the next deployment. The repository `robots.txt` is uploaded separately to `WP_ROOT_PATH`, and `scripts/` is excluded from the public theme deployment.
+
+Pull requests run the same PHP and active-JavaScript validation, but they never deploy, publish, merge, or create pull requests. Only pushes to `main` and manual workflow runs deploy production.
+
+The workflow deploys the committed `assets/dist/main.min.css`; it does not run the legacy Grunt build. When editing SCSS in `assets/assets/`, regenerate and commit the matching compiled files in `assets/dist/` with the source change.
 
 After deployment, the workflow runs the production audit. Run the same checks locally with:
 
