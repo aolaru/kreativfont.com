@@ -12,6 +12,10 @@ remove_action( 'wp_head', 'rel_canonical' );
 remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 remove_action( 'wp_print_styles', 'print_emoji_styles' );
 
+add_filter( 'jetpack_seo_meta_tags_enabled', '__return_false' );
+add_filter( 'jetpack_seo_custom_titles', '__return_false' );
+add_filter( 'jetpack_enable_open_graph', '__return_false', 99 );
+
 function kreativ_disable_jetpack_sharing_on_single( $show, $post ) {
     if ( is_singular( 'post' ) ) {
         return false;
