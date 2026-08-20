@@ -184,8 +184,39 @@ function kreativ_is_legacy_template() {
     ) );
 }
 
+function kreativ_request_has_query_parameters() {
+    return ! empty( $_GET );
+}
+
+function kreativ_is_amp_endpoint_request() {
+    if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+        return true;
+    }
+
+    $request_uri  = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+    $request_path = wp_parse_url( $request_uri, PHP_URL_PATH );
+
+    return is_singular() && is_string( $request_path ) && (bool) preg_match( '#/amp/?$#', $request_path );
+}
+
+function kreativ_redirect_amp_endpoints_to_canonical() {
+    if ( is_admin() || wp_doing_ajax() || ! kreativ_is_amp_endpoint_request() ) {
+        return;
+    }
+
+    $canonical_url = get_permalink( get_queried_object_id() );
+
+    if ( $canonical_url ) {
+        wp_safe_redirect( $canonical_url, 301 );
+        exit;
+    }
+}
+add_action( 'template_redirect', 'kreativ_redirect_amp_endpoints_to_canonical', 1 );
+
 function kreativ_filter_wp_robots( $robots ) {
-    if ( is_search() || is_404() || kreativ_is_legacy_template() ) {
+    $noindex_archive = is_tag() || ( is_archive() && is_paged() );
+
+    if ( is_search() || is_404() || kreativ_is_legacy_template() || $noindex_archive || kreativ_request_has_query_parameters() ) {
         unset( $robots['index'], $robots['nofollow'] );
         $robots['noindex'] = true;
         $robots['follow']  = true;
@@ -194,6 +225,21 @@ function kreativ_filter_wp_robots( $robots ) {
     return $robots;
 }
 add_filter( 'wp_robots', 'kreativ_filter_wp_robots' );
+
+function kreativ_add_noindex_header_to_feeds() {
+    if ( is_feed() && ! headers_sent() ) {
+        header( 'X-Robots-Tag: noindex, follow', true );
+    }
+}
+add_action( 'send_headers', 'kreativ_add_noindex_header_to_feeds' );
+
+function kreativ_exclude_low_value_taxonomies_from_sitemap( $taxonomies ) {
+    $taxonomies   = is_array( $taxonomies ) ? $taxonomies : array();
+    $taxonomies[] = 'post_tag';
+
+    return array_values( array_unique( $taxonomies ) );
+}
+add_filter( 'sm_sitemap_exclude_taxonomy', 'kreativ_exclude_low_value_taxonomies_from_sitemap' );
 
 function kreativ_get_open_graph_image() {
     if ( is_singular() && has_post_thumbnail() ) {
