@@ -82,6 +82,44 @@ function kreativ_get_content_meta_description( $content ) {
     return kreativ_clean_meta_description_text( $content );
 }
 
+function kreativ_is_weak_font_meta_description( $description ) {
+    $description = trim( (string) $description );
+
+    return strlen( $description ) < 90 || (bool) preg_match( '/^(view|purchase)\b/i', $description );
+}
+
+function kreativ_get_font_meta_description_fallback( $post = null ) {
+    $post = get_post( $post );
+
+    if ( ! $post instanceof WP_Post || ! function_exists( 'kreativ_is_font_post' ) || ! kreativ_is_font_post( $post ) ) {
+        return '';
+    }
+
+    $title = get_the_title( $post );
+    $style = function_exists( 'kreativ_get_primary_branch_term' ) ? kreativ_get_primary_branch_term( $post, 'font_style' ) : null;
+    $mood  = function_exists( 'kreativ_get_primary_branch_term' ) ? kreativ_get_primary_branch_term( $post, 'font_mood' ) : null;
+    $use_case = function_exists( 'kreativ_get_primary_branch_term' ) ? kreativ_get_primary_branch_term( $post, 'font_use_case' ) : null;
+    $description = $title . ' is a';
+
+    if ( $style instanceof WP_Term ) {
+        $description .= ' ' . $style->name;
+    }
+
+    $description .= ' font';
+
+    if ( $mood instanceof WP_Term ) {
+        $description .= ' with a ' . $mood->name . ' mood';
+    }
+
+    if ( $use_case instanceof WP_Term ) {
+        $description .= ', suited to ' . $use_case->name . ' projects';
+    }
+
+    $description .= '. Explore the preview, licensing details, and official source on Kreativ Font.';
+
+    return kreativ_clean_meta_description_text( $description, 30 );
+}
+
 function kreativ_get_meta_description() {
     if ( ! empty( $GLOBALS['kreativ_meta_description_override'] ) ) {
         $override_description = kreativ_clean_meta_description_text( $GLOBALS['kreativ_meta_description_override'] );
@@ -110,7 +148,7 @@ function kreativ_get_meta_description() {
     if ( is_singular() && has_excerpt() ) {
         $excerpt_description = kreativ_clean_meta_description_text( get_the_excerpt() );
 
-        if ( '' !== $excerpt_description ) {
+        if ( '' !== $excerpt_description && ( ! kreativ_is_font_post( $singular_post ) || ! kreativ_is_weak_font_meta_description( $excerpt_description ) ) ) {
             return $excerpt_description;
         }
     }
@@ -120,6 +158,16 @@ function kreativ_get_meta_description() {
 
         if ( $post instanceof WP_Post ) {
             $content_description = kreativ_get_content_meta_description( get_post_field( 'post_content', $post ) );
+
+            if ( '' !== $content_description && ( ! kreativ_is_font_post( $post ) || ! kreativ_is_weak_font_meta_description( $content_description ) ) ) {
+                return $content_description;
+            }
+
+            $font_description = kreativ_get_font_meta_description_fallback( $post );
+
+            if ( '' !== $font_description ) {
+                return $font_description;
+            }
 
             if ( '' !== $content_description ) {
                 return $content_description;

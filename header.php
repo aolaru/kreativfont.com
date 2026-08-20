@@ -32,11 +32,13 @@
     <meta property="og:description" content="<?php echo esc_attr( $seo_meta['description'] ); ?>">
     <meta property="og:url" content="<?php echo esc_url( $seo_meta['url'] ); ?>">
     <meta property="og:image" content="<?php echo esc_url( $seo_meta['image'] ); ?>">
+    <meta property="og:image:alt" content="<?php echo esc_attr( $seo_meta['title'] ); ?>">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<?php echo esc_attr( $seo_meta['title'] ); ?>">
     <meta name="twitter:description" content="<?php echo esc_attr( $seo_meta['description'] ); ?>">
     <meta name="twitter:image" content="<?php echo esc_url( $seo_meta['image'] ); ?>">
+    <meta name="twitter:image:alt" content="<?php echo esc_attr( $seo_meta['title'] ); ?>">
 
     <!-- PWA: Web App metadata -->
     <meta name="application-name" content="Kreativ Font">
