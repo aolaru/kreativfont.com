@@ -262,7 +262,21 @@ function kreativ_enqueue_theme_assets() {
 }
 add_action( 'wp_enqueue_scripts', 'kreativ_enqueue_theme_assets' );
 
+function kreativ_is_probable_automated_request() {
+    $user_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) : '';
+
+    if ( '' === $user_agent ) {
+        return false;
+    }
+
+    return (bool) preg_match( '/bot|crawler|spider|slurp|bingpreview|facebookexternalhit|pinterestbot|twitterbot|discordbot|whatsapp|telegrambot|headlesschrome|phantomjs|lighthouse/i', $user_agent );
+}
+
 function kreativ_enqueue_tracking_assets() {
+    if ( kreativ_is_probable_automated_request() ) {
+        return;
+    }
+
     wp_enqueue_script(
         'kreativ-google-tag',
         'https://www.googletagmanager.com/gtag/js?id=G-4E74M6PB1Y',
@@ -295,16 +309,38 @@ function kreativ_enqueue_tracking_assets() {
             'data-cf-beacon' => wp_json_encode( array( 'token' => 'ab7a9c1b54714400a0112acefa6e4479' ) ),
         )
     );
+
+    wp_enqueue_script(
+        'kreativ-analytics-events',
+        get_template_directory_uri() . '/js/kreativ-analytics-events.js',
+        array(),
+        filemtime( get_template_directory() . '/js/kreativ-analytics-events.js' ),
+        true
+    );
+    wp_localize_script(
+        'kreativ-analytics-events',
+        'kreativAnalyticsConfig',
+        array(
+            'contentType' => is_singular( 'post' ) && function_exists( 'kreativ_is_font_post' ) && kreativ_is_font_post( get_queried_object_id() ) ? 'font' : ( is_404() ? 'not_found' : 'site' ),
+            'isNotFound'  => is_404(),
+        )
+    );
 }
 add_action( 'wp_enqueue_scripts', 'kreativ_enqueue_tracking_assets', 20 );
 
 function kreativ_print_google_analytics_config() {
+    if ( kreativ_is_probable_automated_request() ) {
+        return;
+    }
+
     ?>
     <script id="kreativ-google-tag-config">
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-4E74M6PB1Y');
+        if (!navigator.webdriver && !/headless|phantomjs/i.test(navigator.userAgent || '')) {
+            gtag('js', new Date());
+            gtag('config', 'G-4E74M6PB1Y');
+        }
     </script>
     <?php
 }
