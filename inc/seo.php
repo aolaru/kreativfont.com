@@ -289,7 +289,10 @@ function kreativ_redirect_legacy_share_links_to_canonical() {
 add_action( 'template_redirect', 'kreativ_redirect_legacy_share_links_to_canonical', 0 );
 
 function kreativ_filter_wp_robots( $robots ) {
-    $noindex_archive = is_tag() || ( is_archive() && is_paged() );
+    // Date archives and paginated archive results repeat content that has a
+    // stronger canonical home elsewhere. Keep links crawlable, but do not
+    // invite them to compete with primary font, collection, or taxonomy pages.
+    $noindex_archive = is_tag() || is_date() || ( is_archive() && is_paged() );
 
     if ( is_search() || is_404() || kreativ_is_legacy_template() || $noindex_archive || kreativ_request_has_query_parameters() ) {
         unset( $robots['index'], $robots['nofollow'] );

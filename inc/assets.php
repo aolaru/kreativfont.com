@@ -175,11 +175,12 @@ function kreativ_enqueue_theme_assets() {
     wp_register_script(
         'init',
         get_template_directory_uri() . '/assets/assets/components/init.js',
-        array( 'jquery' ),
+        array(),
         kreativ_asset_version( '/assets/assets/components/init.js' ),
         true
     );
     wp_enqueue_script( 'init' );
+    kreativ_add_script_attributes( 'init', array( 'defer' => true ) );
 
     if ( is_singular( 'post' ) && 'font' === kreativ_get_single_content_kind( get_queried_object() ) ) {
         wp_enqueue_script(
