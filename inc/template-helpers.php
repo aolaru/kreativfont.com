@@ -2768,7 +2768,7 @@ function kreativ_get_single_font_primary_action_data( $post = null ) {
         }
 
         $primary_url     = $download_data['download_url'] ?? '';
-        $primary_label   = 'Download ZIP';
+        $primary_label   = 'Download font ZIP';
         $primary_icon    = 'fa-solid fa-arrow-down';
         $action_title    = 'Download the font ZIP before reading the full details.';
         $secondary_url   = $download_data['source_url'] ?? '';
@@ -3142,6 +3142,9 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
         'intro_copy'     => '',
         'intro_points'   => array(),
         'related_slugs'  => array(),
+        'guide_sections' => array(),
+        'faq_items'      => array(),
+        'faq_title'      => 'Frequently asked questions',
         'empty_title'    => 'No matching fonts yet.',
         'empty_copy'     => 'Matching fonts will appear here as they are added.',
         'posts_per_page' => 24,
@@ -3207,6 +3210,38 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
             'itemListElement' => $collection_items,
         ),
     );
+
+    $GLOBALS['kreativ_collection_page_extra_schemas'] = array();
+
+    if ( ! empty( $config['faq_items'] ) && is_array( $config['faq_items'] ) ) {
+        $faq_entities = array();
+
+        foreach ( $config['faq_items'] as $faq_item ) {
+            $question = trim( (string) ( $faq_item['question'] ?? '' ) );
+            $answer   = trim( (string) ( $faq_item['answer'] ?? '' ) );
+
+            if ( '' === $question || '' === $answer ) {
+                continue;
+            }
+
+            $faq_entities[] = array(
+                '@type'          => 'Question',
+                'name'           => $question,
+                'acceptedAnswer' => array(
+                    '@type' => 'Answer',
+                    'text'  => wp_strip_all_tags( $answer ),
+                ),
+            );
+        }
+
+        if ( ! empty( $faq_entities ) ) {
+            $GLOBALS['kreativ_collection_page_extra_schemas'][] = array(
+                '@context'   => 'https://schema.org',
+                '@type'      => 'FAQPage',
+                'mainEntity' => $faq_entities,
+            );
+        }
+    }
 
     $has_main_posts = ! empty( $main_posts );
     $has_free_picks = ! empty( $free_picks_posts );
@@ -3291,6 +3326,43 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
                 </section>
             <?php endif; ?>
 
+            <?php if ( ! empty( $config['guide_sections'] ) && is_array( $config['guide_sections'] ) ) : ?>
+                <div class="kreativ-collection-guide" aria-label="Collection guide">
+                    <?php foreach ( $config['guide_sections'] as $guide_section ) : ?>
+                        <?php
+                        $guide_title      = trim( (string) ( $guide_section['title'] ?? '' ) );
+                        $guide_paragraphs = ! empty( $guide_section['paragraphs'] ) && is_array( $guide_section['paragraphs'] ) ? $guide_section['paragraphs'] : array();
+                        $guide_points     = ! empty( $guide_section['points'] ) && is_array( $guide_section['points'] ) ? $guide_section['points'] : array();
+
+                        if ( '' === $guide_title && empty( $guide_paragraphs ) && empty( $guide_points ) ) {
+                            continue;
+                        }
+                        ?>
+                        <section class="kreativ-collection-guide-section">
+                            <?php if ( '' !== $guide_title ) : ?>
+                                <h2><?php echo esc_html( $guide_title ); ?></h2>
+                            <?php endif; ?>
+
+                            <?php foreach ( $guide_paragraphs as $guide_paragraph ) : ?>
+                                <?php if ( '' !== trim( (string) $guide_paragraph ) ) : ?>
+                                    <p><?php echo esc_html( $guide_paragraph ); ?></p>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+
+                            <?php if ( ! empty( $guide_points ) ) : ?>
+                                <ul>
+                                    <?php foreach ( $guide_points as $guide_point ) : ?>
+                                        <?php if ( '' !== trim( (string) $guide_point ) ) : ?>
+                                            <li><?php echo esc_html( $guide_point ); ?></li>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+                        </section>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
             <?php if ( $has_main_posts ) : ?>
                 <div class="row kreativ-results-grid">
                     <?php foreach ( $main_posts as $collection_post ) : ?>
@@ -3346,6 +3418,29 @@ function kreativ_render_dynamic_font_collection_page( $config = array() ) {
                                 )
                             );
                             ?>
+                        <?php endforeach; ?>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <?php if ( ! empty( $config['faq_items'] ) && is_array( $config['faq_items'] ) ) : ?>
+                <section class="kreativ-collection-faq" aria-labelledby="kreativ-collection-faq-title">
+                    <h2 id="kreativ-collection-faq-title"><?php echo esc_html( $config['faq_title'] ); ?></h2>
+
+                    <div class="kreativ-collection-faq-list">
+                        <?php foreach ( $config['faq_items'] as $faq_item ) : ?>
+                            <?php
+                            $question = trim( (string) ( $faq_item['question'] ?? '' ) );
+                            $answer   = trim( (string) ( $faq_item['answer'] ?? '' ) );
+
+                            if ( '' === $question || '' === $answer ) {
+                                continue;
+                            }
+                            ?>
+                            <details>
+                                <summary><?php echo esc_html( $question ); ?></summary>
+                                <p><?php echo esc_html( $answer ); ?></p>
+                            </details>
                         <?php endforeach; ?>
                     </div>
                 </section>

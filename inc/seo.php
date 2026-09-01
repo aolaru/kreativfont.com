@@ -358,5 +358,13 @@ function kreativ_get_document_schemas() {
         $schemas[] = $GLOBALS['kreativ_collection_page_schema'];
     }
 
+    if ( ! empty( $GLOBALS['kreativ_collection_page_extra_schemas'] ) && is_array( $GLOBALS['kreativ_collection_page_extra_schemas'] ) ) {
+        foreach ( $GLOBALS['kreativ_collection_page_extra_schemas'] as $schema ) {
+            if ( is_array( $schema ) && ! empty( $schema['@type'] ) ) {
+                $schemas[] = $schema;
+            }
+        }
+    }
+
     return $schemas;
 }

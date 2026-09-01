@@ -528,13 +528,20 @@
     padding: 0.85rem 1.15rem;
     border-radius: 999px;
     background: var(--kf-gradient-cta);
-    color: #ffffff;
+    /* Keep the primary action legible even when a theme-level link colour is loaded later. */
+    color: #ffffff !important;
     font-weight: 900;
+    letter-spacing: 0.01em;
     line-height: 1.1;
     text-align: center;
     text-decoration: none;
     box-shadow: 0 15px 28px rgba(var(--kf-primary-rgb), 0.18);
     transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.kreativ-font-cta-button i,
+.kreativ-post-content .kreativ-font-cta-button i {
+    color: inherit !important;
 }
 
 .kreativ-font-cta-free .kreativ-font-cta-button,
@@ -644,6 +651,72 @@
     font-size: 0.88rem;
     font-weight: 800;
     text-decoration: none;
+}
+
+.kreativ-collection-guide {
+    display: grid;
+    gap: 1.25rem;
+    margin: 0 0 1.9rem;
+}
+
+.kreativ-collection-guide-section {
+    max-width: 78ch;
+}
+
+.kreativ-collection-guide-section h2,
+.kreativ-collection-faq h2 {
+    margin: 0 0 0.6rem;
+    color: var(--kf-text);
+    font-size: clamp(1.2rem, 1.8vw, 1.55rem);
+    line-height: 1.15;
+}
+
+.kreativ-collection-guide-section p,
+.kreativ-collection-faq p {
+    margin: 0 0 0.72rem;
+    color: var(--kf-muted);
+    font-size: 0.98rem;
+    line-height: 1.65;
+}
+
+.kreativ-collection-guide-section ul {
+    display: grid;
+    gap: 0.42rem;
+    margin: 0;
+    padding-left: 1.2rem;
+    color: var(--kf-text-soft);
+    font-size: 0.94rem;
+    line-height: 1.55;
+}
+
+.kreativ-collection-faq {
+    max-width: 860px;
+    margin-top: 2.25rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid rgba(var(--kf-primary-rgb), 0.1);
+}
+
+.kreativ-collection-faq-list {
+    display: grid;
+    gap: 0.55rem;
+}
+
+.kreativ-collection-faq details {
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(var(--kf-primary-rgb), 0.11);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.64);
+}
+
+.kreativ-collection-faq summary {
+    cursor: pointer;
+    color: var(--kf-text);
+    font-size: 0.96rem;
+    font-weight: 800;
+}
+
+.kreativ-collection-faq details p {
+    margin: 0.7rem 0 0;
 }
 
 .kreativ-page-shell.kreativ-tool-page .kreativ-page-content {
