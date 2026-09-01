@@ -29,6 +29,30 @@
         }
     }
 
+    function destinationHost(link) {
+        if (!link || !link.href) {
+            return 'unknown';
+        }
+
+        try {
+            return new URL(link.href, window.location.origin).hostname || 'unknown';
+        } catch (error) {
+            return 'unknown';
+        }
+    }
+
+    function referrerHost() {
+        if (!document.referrer) {
+            return 'direct';
+        }
+
+        try {
+            return new URL(document.referrer).hostname || 'unknown';
+        } catch (error) {
+            return 'unknown';
+        }
+    }
+
     document.addEventListener('submit', function (event) {
         if (event.target.matches('.kreativ-search-form')) {
             track('font_search', { content_type: config.contentType || 'site' });
@@ -45,7 +69,10 @@
         if (target.matches('.kreativ-font-cta-button')) {
             track('font_cta_click', {
                 content_type: config.contentType || 'font',
-                destination_type: destinationType(target)
+                destination_type: destinationType(target),
+                destination_host: destinationHost(target),
+                cta_label: (target.textContent || '').trim().slice(0, 100),
+                transport_type: 'beacon'
             });
             return;
         }
@@ -53,7 +80,10 @@
         if (target.matches('.kreativ-font-cta-secondary')) {
             track('font_secondary_cta_click', {
                 content_type: config.contentType || 'font',
-                destination_type: destinationType(target)
+                destination_type: destinationType(target),
+                destination_host: destinationHost(target),
+                cta_label: (target.textContent || '').trim().slice(0, 100),
+                transport_type: 'beacon'
             });
             return;
         }
@@ -79,6 +109,11 @@
     });
 
     if (config.isNotFound) {
-        track('not_found_view', { content_type: 'not_found' });
+        track('not_found_view', {
+            content_type: 'not_found',
+            not_found_path: window.location.pathname,
+            referrer_host: referrerHost(),
+            transport_type: 'beacon'
+        });
     }
 })();
