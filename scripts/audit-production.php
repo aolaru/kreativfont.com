@@ -217,6 +217,7 @@ $page_specs = array(
     array( 'label' => 'Search', 'path' => '/?s=Inter', 'status' => 200, 'h1' => 'Results for "Inter"', 'canonical' => false ),
     array( 'label' => 'Font post', 'path' => '/fonts/hanley-pro-expressive-script-variety', 'status' => 200, 'h1' => 'Hanley Pro – expressive script variety', 'canonical' => true, 'single_meta_description' => true ),
     array( 'label' => 'Collection route', 'path' => '/collections/best-retro-fonts', 'status' => 200, 'h1' => 'Best Retro Fonts', 'canonical' => true, 'single_meta_description' => true ),
+    array( 'label' => 'Virtual collection route', 'path' => '/collections/best-packaging-fonts', 'status' => 200, 'h1' => 'Best Packaging Fonts', 'canonical' => true, 'single_meta_description' => true ),
     array( 'label' => 'Tag archive', 'path' => '/tag/handmade-typeface', 'status' => 200, 'canonical' => true ),
     array( 'label' => 'Tool post', 'path' => '/tools/fancy-text-generator', 'status' => 200, 'h1' => 'Kreativ Fancy Text Generator', 'canonical' => true ),
     array( 'label' => 'Contact', 'path' => '/blog/contact', 'status' => 200, 'h1' => 'Contact', 'canonical' => true ),
@@ -227,6 +228,32 @@ $pages      = array();
 
 foreach ( $page_specs as $spec ) {
     $pages[ $spec['label'] ] = kreativ_audit_page( $base_url, $cache_token, $spec );
+}
+
+if ( ! empty( $pages['Virtual collection route'] ) ) {
+    $stylesheet_nodes     = $pages['Virtual collection route']['xpath']->query( '//link[contains(concat(" ", normalize-space(@rel), " "), " stylesheet ")]' );
+    $has_collection_style = false;
+
+    foreach ( $stylesheet_nodes as $stylesheet_node ) {
+        $stylesheet_url = trim( $stylesheet_node->getAttribute( 'href' ) );
+
+        if ( '' === $stylesheet_url ) {
+            continue;
+        }
+
+        $stylesheet_response = kreativ_audit_fetch( $stylesheet_url );
+
+        if ( 200 === $stylesheet_response['status'] && false !== strpos( $stylesheet_response['body'], '.kreativ-page-hero' ) && false !== strpos( $stylesheet_response['body'], '.kreativ-dynamic-collection-page' ) ) {
+            $has_collection_style = true;
+            break;
+        }
+    }
+
+    if ( $has_collection_style ) {
+        kreativ_audit_pass( 'Virtual collection route: page and card styles are loaded' );
+    } else {
+        kreativ_audit_fail( 'Virtual collection route: page and card styles are missing' );
+    }
 }
 
 if ( ! empty( $pages['Blog'] ) ) {
