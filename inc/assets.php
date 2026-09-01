@@ -54,6 +54,12 @@ function kreativ_script_loader_tag( $tag, $handle, $src ) {
 add_filter( 'script_loader_tag', 'kreativ_script_loader_tag', 10, 3 );
 
 function kreativ_is_dynamic_collection_template() {
+    // Virtual collection routes are resolved in template_include before the
+    // header runs, so they do not have a WordPress page-template slug.
+    if ( ! empty( $GLOBALS['kreativ_virtual_collection_url'] ) ) {
+        return true;
+    }
+
     $template_slug = (string) get_page_template_slug();
 
     return 'page-trending-commercial-fonts.php' === $template_slug || 0 === strpos( $template_slug, 'page-best-' );
