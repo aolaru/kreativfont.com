@@ -371,8 +371,8 @@ if ( 301 === $share_redirect['status'] && $base_url . '/fonts/nevo' === $share_r
 
 $asset_response = kreativ_audit_fetch( kreativ_audit_url( $base_url, '/wp-content/themes/kreativfont.com/assets/assets/components/init.js', $cache_token ) );
 
-if ( 200 === $asset_response['status'] && false !== strpos( $asset_response['body'], 'kreativNavigation' ) && false !== strpos( $asset_response['body'], 'Fancy text result' ) ) {
-    kreativ_audit_pass( 'Theme asset: latest navigation and accessibility checks deployed' );
+if ( 200 === $asset_response['status'] && false !== strpos( $asset_response['body'], 'initialiseNavigation' ) && false !== strpos( $asset_response['body'], "'Escape'" ) && false === strpos( $asset_response['body'], 'jQuery' ) ) {
+    kreativ_audit_pass( 'Theme asset: vanilla navigation and accessibility checks deployed' );
 } else {
     kreativ_audit_fail( 'Theme asset: expected deployment markers are missing' );
 }
