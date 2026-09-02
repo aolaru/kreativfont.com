@@ -128,6 +128,21 @@ function kreativ_enqueue_theme_assets() {
         kreativ_asset_version( '/assets/dist/main.min.css' )
     );
 
+    // Keep the first rendered layout aligned with the enhanced header and cards.
+    // This is deliberately attached to the base stylesheet: a cached or delayed
+    // component stylesheet must not change the document's geometry after paint.
+    wp_add_inline_style(
+        'kreativ-styles',
+        ':root{--kf-fixed-header-offset:72px}' .
+        'body{padding-top:var(--kf-fixed-header-offset)}' .
+        '.kreativ-header{box-sizing:border-box;min-height:var(--kf-fixed-header-offset);padding:0!important}' .
+        '.kreativ-header .navbar{box-sizing:border-box;min-height:var(--kf-fixed-header-offset);height:var(--kf-fixed-header-offset)}' .
+        '.kreativ-hdr-right{min-height:44px}' .
+        '.kreativ-card-media{aspect-ratio:16/9;background:#f6f8ff}' .
+        '.kreativ-card-media>img{display:block;width:100%;height:100%;object-fit:cover}' .
+        '@media(max-width:991.98px){body{padding-top:0!important}.kreativ-header{position:sticky;top:0}.kreativ-content{padding-top:.85rem!important}}'
+    );
+
     wp_enqueue_style(
         'kreativ-header',
         get_template_directory_uri() . '/css/kreativ-header.css',

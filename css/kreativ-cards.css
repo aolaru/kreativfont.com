@@ -1,5 +1,6 @@
 .kreativ-font-card {
     background: var(--kf-surface);
+    height: 100%;
     padding: 1rem;
     border-radius: 14px;
     border: 1px solid rgba(var(--kf-primary-rgb), 0.1);
@@ -19,12 +20,15 @@
 }
 
 .kreativ-card-media {
+    aspect-ratio: 16 / 9;
+    background: var(--kf-surface-soft);
     position: relative;
     overflow: hidden;
     border-radius: 10px;
 }
 
 .kreativ-card-media img {
+    height: 100%;
     width: 100%;
     aspect-ratio: 16 / 9;
     object-fit: cover;
