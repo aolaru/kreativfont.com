@@ -78,8 +78,12 @@ jobs:
 
       - name: Verify deployed asset
         run: |
-          curl --fail --silent --show-error --location --connect-timeout 10 --max-time 30 --retry 2 --retry-all-errors "https://kreativfont.com/wp-content/themes/kreativfont.com/assets/assets/components/init.js?deploy_check=${GITHUB_SHA}" \
-            | grep -F '(function ($)'
+          expected_sha256="$(sha256sum assets/assets/components/init.js | awk '{print $1}')"
+          deployed_sha256="$(curl --fail --silent --show-error --location --connect-timeout 10 --max-time 30 --retry 2 --retry-all-errors "https://kreativfont.com/wp-content/themes/kreativfont.com/assets/assets/components/init.js?deploy_check=${GITHUB_SHA}" | sha256sum | awk '{print $1}')"
+          test "${deployed_sha256}" = "${expected_sha256}" || {
+            echo "Deployed init.js does not match this revision."
+            exit 1
+          }
 
       - name: Audit production
         run: timeout 12m php scripts/audit-production.php "https://kreativfont.com" "${GITHUB_SHA}"
