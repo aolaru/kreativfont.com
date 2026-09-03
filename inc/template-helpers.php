@@ -2005,7 +2005,7 @@ function kreativ_get_font_description_score( $text ) {
     return $score;
 }
 
-function kreativ_get_content_summary( $post = null, $max_words = 24 ) {
+function kreativ_get_content_summary( $post = null, $max_words = 24, $apply_content_filters = true ) {
     $post = get_post( $post );
 
     if ( ! $post instanceof WP_Post ) {
@@ -2016,7 +2016,12 @@ function kreativ_get_content_summary( $post = null, $max_words = 24 ) {
         return wp_trim_words( wp_strip_all_tags( get_the_excerpt( $post ) ), $max_words, '...' );
     }
 
-    $content = apply_filters( 'the_content', $post->post_content );
+    // Tool shortcodes can be expensive to render. A page summary only needs the
+    // authored copy, not interactive tool output, so callers can opt out of
+    // running the full content-filter stack.
+    $content = $apply_content_filters
+        ? apply_filters( 'the_content', $post->post_content )
+        : strip_shortcodes( $post->post_content );
 
     if ( preg_match_all( '/<p\b[^>]*>(.*?)<\/p>/is', $content, $paragraph_matches ) ) {
         $fallback_summary = '';
