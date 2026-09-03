@@ -41,7 +41,7 @@ $config = array(
 );
 
 $view         = $config[ $content_kind ] ?? $config['article'];
-$page_summary = kreativ_get_content_summary( $post, 28, 'tool' !== $content_kind );
+$page_summary = kreativ_get_content_summary( $post, 28, false );
 ?>
 
 <div class="<?php echo esc_attr( 'kreativ-page-shell' . $view['shell_class'] ); ?>">

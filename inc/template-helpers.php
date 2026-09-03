@@ -2093,7 +2093,9 @@ function kreativ_get_font_credit_data( $post = null ) {
     $designer = $format_names( kreativ_get_post_category_branch_terms( $post, 'designer' ) );
     $foundry  = $format_names( kreativ_get_post_category_branch_terms( $post, 'foundry' ) );
 
-    $content = apply_filters( 'the_content', $post->post_content );
+    // Credits are extracted from authored copy. Rendering shortcodes here can
+    // invoke expensive plugin output before the post body is rendered.
+    $content = strip_shortcodes( $post->post_content );
     $text    = wp_strip_all_tags( $content );
     $text    = preg_replace( '/\s+/', ' ', (string) $text );
 
@@ -2159,7 +2161,7 @@ function kreativ_get_single_font_eyebrow( $post = null ) {
         return $style_term->name . ' Font';
     }
 
-    $summary = strtolower( kreativ_get_content_summary( $post, 28 ) );
+    $summary = strtolower( kreativ_get_content_summary( $post, 28, false ) );
 
     foreach ( $style_map as $slug => $label ) {
         if ( false !== strpos( $summary, $slug ) ) {

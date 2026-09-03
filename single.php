@@ -15,7 +15,7 @@ if ( 'font' !== $content_kind ) {
     continue;
 }
 
-$page_summary = kreativ_get_content_summary( get_post(), 24 );
+$page_summary = kreativ_get_content_summary( get_post(), 24, false );
 $font_credits = kreativ_get_font_credit_data( get_post() );
 $primary_cat  = kreativ_get_single_font_eyebrow( get_post() );
 $hero_image_data = has_post_thumbnail() ? wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ), 'large' ) : false;
