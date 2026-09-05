@@ -9,6 +9,7 @@ $kreativ_includes = array(
     '/inc/shortcodes.php',
     '/inc/template-helpers.php',
     '/inc/search.php',
+    '/inc/collections.php',
     '/inc/seo.php',
 );
 
