@@ -5,6 +5,12 @@ function kreativ_handle_showcase_conversion() {
         return;
     }
 
+    if ( ! current_user_can( 'manage_options' ) ) {
+        wp_die( esc_html__( 'You are not allowed to convert showcase posts.', 'kreativfont' ) );
+    }
+
+    check_admin_referer( 'kreativ_convert_showcases' );
+
     $query = new WP_Query(
         array(
             'post_type'      => 'kreativ_showcase',

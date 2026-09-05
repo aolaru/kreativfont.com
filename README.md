@@ -89,6 +89,7 @@ The audit verifies top-page HTTP responses, document structure, metadata, search
 
 - `functions.php`: lightweight loader for theme modules
 - `inc/assets.php`: enqueue logic and asset versioning
+- `inc/search.php`: enhanced font search, suggestions, ranking, and cache handling
 - `inc/template-helpers.php`: shared page and font-card helpers
 - `header.php`: meta tags, global scripts, analytics, top navigation
 - `footer.php`: footer content, dark mode toggle script, `wp_footer()`
