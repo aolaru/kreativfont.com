@@ -230,6 +230,26 @@ foreach ( $page_specs as $spec ) {
     $pages[ $spec['label'] ] = kreativ_audit_page( $base_url, $cache_token, $spec );
 }
 
+// A successful HTML response cannot detect a browser blocking a script after
+// an HTTPS-to-HTTP redirect. Require the affiliate asset to load directly.
+if ( ! empty( $pages['Font post'] ) ) {
+    $affiliate_scripts = $pages['Font post']['xpath']->query( '//script[@id="kreativ-cj-affiliate-js"]' );
+    $affiliate_src     = 1 === $affiliate_scripts->length ? $affiliate_scripts->item( 0 )->getAttribute( 'src' ) : '';
+    $expected_src      = 'https://www.qksrv.net/am_gen/100743026/include/allCj/generate/onLoad/impressions/page/am.js';
+
+    if ( $expected_src !== $affiliate_src ) {
+        kreativ_audit_fail( 'Affiliate script: missing or unexpected CJ endpoint' );
+    } else {
+        $affiliate_response = kreativ_audit_fetch_headers( $affiliate_src );
+
+        if ( 200 === $affiliate_response['status'] && '' === $affiliate_response['location'] ) {
+            kreativ_audit_pass( 'Affiliate script: direct HTTPS endpoint without redirects' );
+        } else {
+            kreativ_audit_fail( "Affiliate script: expected a direct HTTP 200, received {$affiliate_response['status']} ({$affiliate_response['location']})" );
+        }
+    }
+}
+
 if ( ! empty( $pages['Virtual collection route'] ) ) {
     $stylesheet_nodes     = $pages['Virtual collection route']['xpath']->query( '//link[contains(concat(" ", normalize-space(@rel), " "), " stylesheet ")]' );
     $has_collection_style = false;

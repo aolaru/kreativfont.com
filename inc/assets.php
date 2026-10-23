@@ -294,6 +294,20 @@ function kreativ_is_probable_automated_request() {
     return (bool) preg_match( '/bot|crawler|spider|slurp|bingpreview|facebookexternalhit|pinterestbot|twitterbot|discordbot|whatsapp|telegrambot|headlesschrome|phantomjs|lighthouse/i', $user_agent );
 }
 
+function kreativ_enqueue_affiliate_assets() {
+    // Keep link conversion in every cached page variant, including pages warmed
+    // by crawlers. Visitor analytics can still exclude automated requests.
+    wp_enqueue_script(
+        'kreativ-cj-affiliate',
+        'https://www.qksrv.net/am_gen/100743026/include/allCj/generate/onLoad/impressions/page/am.js',
+        array(),
+        null,
+        false
+    );
+    kreativ_add_script_attributes( 'kreativ-cj-affiliate', array( 'async' => true ) );
+}
+add_action( 'wp_enqueue_scripts', 'kreativ_enqueue_affiliate_assets', 20 );
+
 function kreativ_enqueue_tracking_assets() {
     if ( kreativ_is_probable_automated_request() ) {
         return;
@@ -307,15 +321,6 @@ function kreativ_enqueue_tracking_assets() {
         false
     );
     kreativ_add_script_attributes( 'kreativ-google-tag', array( 'async' => true ) );
-
-    wp_enqueue_script(
-        'kreativ-cj-affiliate',
-        'https://www.anrdoezrs.net/am/100743026/include/allCj/generate/onLoad/impressions/page/am.js',
-        array(),
-        null,
-        false
-    );
-    kreativ_add_script_attributes( 'kreativ-cj-affiliate', array( 'async' => true ) );
 
     wp_enqueue_script(
         'kreativ-cloudflare-web-analytics',
