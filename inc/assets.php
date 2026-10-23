@@ -311,7 +311,9 @@ function kreativ_enqueue_affiliate_assets() {
         file_get_contents( get_template_directory() . '/js/kreativ-cj-impressions.js' ),
         'before'
     );
-    kreativ_add_script_attributes( 'kreativ-cj-affiliate', array( 'async' => true ) );
+    // The legacy tag filter rebuilds tags and drops inline scripts. Native
+    // WordPress async handling preserves the compatibility code above.
+    wp_script_add_data( 'kreativ-cj-affiliate', 'strategy', 'async' );
 }
 add_action( 'wp_enqueue_scripts', 'kreativ_enqueue_affiliate_assets', 20 );
 

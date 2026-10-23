@@ -31,6 +31,7 @@ jobs:
           node --check assets/assets/components/init.js
           find js -maxdepth 1 -type f -name '*.js' -print0 | xargs -0 -r -n 1 node --check
           node scripts/test-cj-impressions.cjs
+          php scripts/test-cj-enqueue.php
           php -l scripts/audit-production.php
 
   deploy:
