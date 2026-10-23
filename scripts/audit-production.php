@@ -236,15 +236,12 @@ if ( ! empty( $pages['Font post'] ) ) {
     $affiliate_scripts = $pages['Font post']['xpath']->query( '//script[@id="kreativ-cj-affiliate-js"]' );
     $affiliate_src     = 1 === $affiliate_scripts->length ? $affiliate_scripts->item( 0 )->getAttribute( 'src' ) : '';
     $expected_src      = 'https://www.qksrv.net/am_gen/100743026/include/allCj/generate/onLoad/impressions/page/am.js';
-    $compatibility_scripts = $pages['Font post']['xpath']->query( '//script[@id="kreativ-cj-affiliate-js"]/preceding::script[@id="kreativ-cj-impressions-js"]' );
+    $compatibility_scripts = $pages['Font post']['xpath']->query( '//script[@id="kreativ-cj-affiliate-js"]/preceding::script[@id="kreativ-cj-affiliate-js-before"]' );
 
     if ( 1 !== $compatibility_scripts->length ) {
         kreativ_audit_fail( 'Affiliate impressions: compatibility script must load before CJ' );
     } else {
-        $compatibility_src = $compatibility_scripts->item( 0 )->getAttribute( 'src' );
-        $compatibility_response = kreativ_audit_fetch( $compatibility_src );
-
-        if ( 200 === $compatibility_response['status'] && false !== strpos( $compatibility_response['body'], 'kreativCjImpressionsConfigured' ) ) {
+        if ( false !== strpos( $compatibility_scripts->item( 0 )->textContent, 'kreativCjImpressionsConfigured' ) ) {
             kreativ_audit_pass( 'Affiliate impressions: compatibility script deployed before CJ' );
         } else {
             kreativ_audit_fail( 'Affiliate impressions: compatibility script unavailable or outdated' );

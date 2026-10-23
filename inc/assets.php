@@ -298,21 +298,18 @@ function kreativ_enqueue_affiliate_assets() {
     // Keep link conversion in every cached page variant, including pages warmed
     // by crawlers. Visitor analytics can still exclude automated requests.
     wp_enqueue_script(
-        'kreativ-cj-impressions',
-        get_template_directory_uri() . '/js/kreativ-cj-impressions.js',
-        array(),
-        kreativ_asset_version( '/js/kreativ-cj-impressions.js' ),
-        false
-    );
-    // This must execute before CJ, even when script optimization is enabled.
-    kreativ_add_script_attributes( 'kreativ-cj-impressions', array( 'data-jetpack-boost' => 'ignore' ) );
-
-    wp_enqueue_script(
         'kreativ-cj-affiliate',
         'https://www.qksrv.net/am_gen/100743026/include/allCj/generate/onLoad/impressions/page/am.js',
-        array( 'kreativ-cj-impressions' ),
+        array(),
         null,
         false
+    );
+    // Attach directly before CJ so WordPress.com asset bundling cannot separate
+    // the compatibility fix from the async script that immediately sends XHR.
+    wp_add_inline_script(
+        'kreativ-cj-affiliate',
+        file_get_contents( get_template_directory() . '/js/kreativ-cj-impressions.js' ),
+        'before'
     );
     kreativ_add_script_attributes( 'kreativ-cj-affiliate', array( 'async' => true ) );
 }
