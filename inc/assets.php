@@ -298,9 +298,19 @@ function kreativ_enqueue_affiliate_assets() {
     // Keep link conversion in every cached page variant, including pages warmed
     // by crawlers. Visitor analytics can still exclude automated requests.
     wp_enqueue_script(
+        'kreativ-cj-impressions',
+        get_template_directory_uri() . '/js/kreativ-cj-impressions.js',
+        array(),
+        kreativ_asset_version( '/js/kreativ-cj-impressions.js' ),
+        false
+    );
+    // This must execute before CJ, even when script optimization is enabled.
+    kreativ_add_script_attributes( 'kreativ-cj-impressions', array( 'data-jetpack-boost' => 'ignore' ) );
+
+    wp_enqueue_script(
         'kreativ-cj-affiliate',
         'https://www.qksrv.net/am_gen/100743026/include/allCj/generate/onLoad/impressions/page/am.js',
-        array(),
+        array( 'kreativ-cj-impressions' ),
         null,
         false
     );
