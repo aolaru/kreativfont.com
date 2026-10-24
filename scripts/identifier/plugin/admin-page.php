@@ -6,6 +6,9 @@ add_action('admin_menu', function () {
 });
 
 add_action('admin_init', function () {
+    register_setting('gpt_font_id', 'gpt_font_id_model', [
+        'type' => 'string', 'default' => 'gpt-4o', 'sanitize_callback' => 'gpt_font_id_sanitize_model',
+    ]);
     register_setting('gpt_font_id', 'gpt_font_id_api_key', [
         'sanitize_callback' => function ($value) {
             $value = sanitize_text_field($value);
@@ -23,9 +26,31 @@ add_action('admin_init', function () {
     }
 });
 
+function gpt_font_id_sanitize_model($value)
+{
+    $current = gpt_font_id_active_model();
+    if (!is_string($value) || !isset(gpt_font_id_models()[$value])) {
+        add_settings_error('gpt_font_id_model', 'unsupported_model', 'Unsupported model; the live model was not changed.');
+        return $current;
+    }
+    if ($value !== $current && ($_POST['gpt_font_id_model_ack'] ?? '') !== 'yes') {
+        add_settings_error('gpt_font_id_model', 'confirm_model', 'Confirm the live-model change before saving. Benchmarking never changes it.');
+        return $current;
+    }
+    return $value;
+}
+
 function gpt_font_id_settings_page()
 {
     if (!current_user_can('manage_options')) { return; }
+    wp_enqueue_script('gpt-font-id-admin', plugin_dir_url(__FILE__) . 'assets/admin.js', ['jquery'], KREATIV_GPT_FONT_ID_VERSION, true);
+    wp_add_inline_script('gpt-font-id-admin', 'var GPTFontIdAdmin = ' . wp_json_encode([
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'benchmarkNonce' => wp_create_nonce('gpt_font_id_benchmark_nonce'),
+        'accessNonce' => wp_create_nonce('gpt_test_api_nonce'),
+        'activeModel' => gpt_font_id_active_model(), 'profiles' => gpt_font_id_models(),
+        'version' => KREATIV_GPT_FONT_ID_VERSION,
+    ]) . ';', 'before');
     ?>
     <div class="wrap">
         <h1>Kreativ Font Identifier — Settings</h1>
@@ -35,6 +60,15 @@ function gpt_font_id_settings_page()
         <form method="post" action="options.php">
             <?php settings_fields('gpt_font_id'); ?>
             <table class="form-table" role="presentation">
+                <tr><th><label for="gpt_font_id_model">Live identification model</label></th><td>
+                    <select id="gpt_font_id_model" name="gpt_font_id_model">
+                    <?php foreach (gpt_font_id_models() as $model => $profile) : ?>
+                        <option value="<?php echo esc_attr($model); ?>" <?php selected(gpt_font_id_active_model(), $model); ?>><?php echo esc_html($profile['label']); ?></option>
+                    <?php endforeach; ?>
+                    </select>
+                    <p class="description">Default: GPT-4o. This controls both the website and installed Chrome extensions. Models are not promoted automatically, and visitors cannot override this setting. Check account access and benchmark before switching.</p>
+                    <label><input type="checkbox" name="gpt_font_id_model_ack" value="yes"> I intend to change the live model when saving these settings.</label>
+                </td></tr>
                 <tr><th><label for="gpt_font_id_api_key">OpenAI API key</label></th><td>
                     <input type="password" id="gpt_font_id_api_key" name="gpt_font_id_api_key" value="" autocomplete="new-password" class="regular-text" placeholder="Leave blank to keep the existing key">
                     <p class="description">The saved key is never displayed here. Leave blank to keep it unchanged.</p>
@@ -50,33 +84,41 @@ function gpt_font_id_settings_page()
             </table>
             <?php submit_button('Save Settings'); ?>
         </form>
+        <hr>
+        <section id="kfi-benchmark" aria-labelledby="kfi-benchmark-title">
+            <h2 id="kfi-benchmark-title">Model benchmark lab (admin only)</h2>
+            <p><strong>Live model: <?php echo esc_html(gpt_font_id_active_model()); ?>. Benchmark runs do not change it.</strong></p>
+            <p>Use only synthetic or non-sensitive samples you may send to OpenAI. No benchmark images, reports or review records are retained on the site. Results stay in this browser until you export them. Keep this tab open while running.</p>
+            <p>Daily benchmark guard: $5 estimated token usage and 160 generation requests, separate from visitor limits. Calls with unknown usage retain a conservative $0.10 reservation. Prices are estimates from the standard model rates verified on 24 October 2026, not an invoice; other tiers, cache writes, taxes or account terms can differ.</p>
+            <p><label for="kfi-bench-manifest">Labelled sample manifest (JSON)</label><br><input id="kfi-bench-manifest" type="file" accept="application/json,.json"></p>
+            <p><label for="kfi-bench-images">Matching sample images</label><br><input id="kfi-bench-images" type="file" accept="image/png,image/jpeg,image/webp" multiple></p>
+            <fieldset><legend>Models to compare</legend>
+            <?php foreach (gpt_font_id_models() as $model => $profile) : ?>
+                <label style="display:block;margin:8px 0"><input type="checkbox" class="kfi-bench-model" value="<?php echo esc_attr($model); ?>" checked> <?php echo esc_html($profile['label']); ?></label>
+            <?php endforeach; ?>
+            </fieldset>
+            <p><button type="button" class="button button-primary" id="kfi-bench-run">Run benchmark (paid API calls)</button> <button type="button" class="button" id="kfi-bench-stop" disabled>Stop after current request</button> <button type="button" class="button" id="kfi-bench-export" disabled>Export results JSON</button></p>
+            <p id="kfi-bench-status" role="status" aria-live="polite">Choose the manifest and its images. Expected font names are scored locally and are never included in the model request.</p>
+            <pre id="kfi-bench-summary" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
+            <div style="overflow:auto"><table class="widefat striped" id="kfi-bench-table"><thead><tr><th>Sample</th><th>Model</th><th>Outcome</th><th>Top 1 / Top 3</th><th>Seconds</th><th>Estimated USD</th><th>Suggestions</th></tr></thead><tbody></tbody></table></div>
+        </section>
     </div>
-    <script>
-    jQuery(function ($) {
-        $('#gpt-test-api').on('click', function () {
-            const button = $(this).prop('disabled', true);
-            $('#gpt-test-result').text('Checking…');
-            $.ajax({url: ajaxurl, method: 'POST', timeout: 15000, data: {
-                action: 'gpt_test_api_key', nonce: <?php echo wp_json_encode(wp_create_nonce('gpt_test_api_nonce')); ?>
-            }}).done(function (response) {
-                $('#gpt-test-result').text(response.success ? 'Saved key can access the configured model.' : 'Could not confirm model access. Check the saved key and account.');
-            }).fail(function () { $('#gpt-test-result').text('The check could not complete. Try again.'); })
-              .always(function () { button.prop('disabled', false); });
-        });
-    });
-    </script>
     <?php
 }
 
-add_action('wp_ajax_gpt_test_api_key', function () {
+add_action('wp_ajax_gpt_test_api_key', 'gpt_font_id_check_model_access');
+function gpt_font_id_check_model_access() {
     if (!current_user_can('manage_options')) { wp_send_json_error('Not permitted.', 403); }
     check_ajax_referer('gpt_test_api_nonce', 'nonce');
     $key = get_option('gpt_font_id_api_key', '');
     if (!$key) { wp_send_json_error('No key configured.'); }
+    $model = $_POST['model'] ?? gpt_font_id_active_model();
+    if (!is_string($model) || !isset(gpt_font_id_models()[$model])) { wp_send_json_error('Unsupported model.'); }
     // Read-only model access check; no paid generation or uploaded content.
-    $response = wp_remote_get('https://api.openai.com/v1/models/gpt-4o', [
+    $response = wp_remote_get('https://api.openai.com/v1/models/' . rawurlencode($model), [
         'timeout' => 10, 'headers' => ['Authorization' => 'Bearer ' . $key],
     ]);
-    if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200) { wp_send_json_success('OK'); }
-    wp_send_json_error('Could not confirm model access.');
-});
+    $status = is_wp_error($response) ? 0 : wp_remote_retrieve_response_code($response);
+    if ($status === 200) { wp_send_json_success(['model' => $model, 'available' => true]); }
+    wp_send_json_error(['model' => $model, 'available' => false, 'http_status' => $status, 'message' => 'Could not confirm access to this exact model. No generation was attempted.']);
+}

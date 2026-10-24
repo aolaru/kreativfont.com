@@ -7,6 +7,8 @@ $fixture = $_GET['fixture'] ?? 'normal';
 $options = ['gpt_font_id_api_key' => 'fixture-not-a-key', 'gpt_font_id_auto_post' => 'yes', 'gpt_font_id_post_status' => 'publish'];
 $transients = []; $actions = []; $filters = []; $shortcodes = []; $posts = []; $metas = []; $api_calls = [];
 if ($fixture === 'review_off') { $options['gpt_font_id_allow_review'] = 'no'; }
+if ($fixture === 'live_sol') { $options['gpt_font_id_model'] = 'gpt-6.1-sol'; }
+if ($fixture === 'bad_model') { $options['gpt_font_id_model'] = 'untrusted-model'; }
 class WP_Error {
     public function __construct(public $code, public $message) {}
     public function get_error_message() { return $this->message; }
@@ -41,13 +43,21 @@ function wp_add_inline_script($handle, $code, $position) { echo '<script>' . $co
 function wp_create_nonce($action) { return 'fixture-nonce'; }
 function check_ajax_referer($action, $field = false, $stop = true) { return ($_POST[$field ?: '_ajax_nonce'] ?? '') === 'fixture-nonce'; }
 function nocache_headers() { header('Cache-Control: no-store'); }
-function current_user_can($cap) { return false; }
+function current_user_can($cap) { return str_starts_with($GLOBALS['fixture'], 'admin'); }
+function register_setting(...$args) {}
+function add_settings_error(...$args) {}
+function selected($a, $b) { if ($a === $b) echo 'selected'; }
+function checked($a, $b) { if ($a === $b) echo 'checked'; }
+function settings_fields($group) {}
+function submit_button($text) { echo '<button type="submit">' . esc_html($text) . '</button>'; }
+function wp_remote_get($url, $args) { return ['code'=>$GLOBALS['fixture'] === 'admin_unavailable' && !str_ends_with($url,'gpt-4o') ? 404 : 200, 'body'=>'']; }
 function wp_remote_post($url, $args) {
     $request = json_decode($args['body'], true);
     $GLOBALS['api_calls'][] = [
         'store' => $request['store'], 'model' => $request['model'],
         'format' => $request['text']['format']['type'], 'max_output_tokens' => $request['max_output_tokens'],
-        'temporary_file_deleted' => !file_exists($_FILES['font_image']['tmp_name']),
+        'temporary_file_deleted' => !file_exists($_FILES['font_image']['tmp_name'] ?? '/nonexistent-test-upload'),
+        'reasoning' => $request['reasoning'] ?? null,
     ];
     if ($GLOBALS['fixture'] === 'failure') return ['code' => 500, 'body' => 'secret-provider-details-DO-NOT-EXPOSE'];
     if ($GLOBALS['fixture'] === 'network') return new WP_Error('network', 'secret-network-debug');
@@ -65,7 +75,7 @@ function wp_remote_post($url, $args) {
         $result['candidates'][] = $result['candidates'][1];
     }
     $text = $GLOBALS['fixture'] === 'malformed' ? 'not JSON' : json_encode($result);
-    return ['code'=>200,'body'=>json_encode(['status'=>'completed','output'=>[['type'=>'reasoning'],['content'=>[['type'=>'output_text','text'=>$text]]]]])];
+    return ['code'=>200,'body'=>json_encode(['status'=>'completed','usage'=>['input_tokens'=>1000,'input_tokens_details'=>['cached_tokens'=>100],'output_tokens'=>300,'output_tokens_details'=>['reasoning_tokens'=>100]],'output'=>[['type'=>'reasoning'],['content'=>[['type'=>'output_text','text'=>$text]]]]])];
 }
 function wp_remote_retrieve_body($response) { return $response['body']; }
 function wp_remote_retrieve_response_code($response) { return $response['code']; }
@@ -90,6 +100,17 @@ if (($_SERVER['REQUEST_URI'] ?? '') === '/unit') {
     $checks = [];
     for ($i = 0; $i < 6; $i++) { $checks[] = !is_wp_error(gpt_font_id_check_rate_limit()); }
     $filter = $filters['wp_insert_post_data'][0];
+    $model_before = gpt_font_id_active_model();
+    $sanitized_without_ack = gpt_font_id_sanitize_model('gpt-6-luna');
+    $_POST['gpt_font_id_model_ack'] = 'yes';
+    $sanitized_with_ack = gpt_font_id_sanitize_model('gpt-6-luna');
+    $sanitized_invalid = gpt_font_id_sanitize_model('untrusted');
+    $profiles = [];
+    foreach (array_keys(gpt_font_id_models()) as $model) {
+        $metrics = null;
+        gpt_font_id_request_matches('data:image/png;base64,fixture', 'test-key', $model, $metrics);
+        $profiles[$model] = $metrics;
+    }
     header('Content-Type: application/json');
     echo json_encode([
         'rate_sequence' => $checks,
@@ -97,14 +118,23 @@ if (($_SERVER['REQUEST_URI'] ?? '') === '/unit') {
         'publishing' => $filter(['post_type'=>'kfi_review','post_status'=>'publish'])['post_status'],
         'trashing' => $filter(['post_type'=>'kfi_review','post_status'=>'trash'])['post_status'],
         'ordinary_post' => $filter(['post_type'=>'post','post_status'=>'publish'])['post_status'],
+        'model_before'=>$model_before, 'model_after'=>gpt_font_id_active_model(),
+        'without_ack'=>$sanitized_without_ack, 'with_ack'=>$sanitized_with_ack, 'invalid'=>$sanitized_invalid,
+        'profiles'=>$profiles, 'payloads'=>$api_calls,
     ]); exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try { gpt_font_id_identify(); }
+    if ($fixture === 'admin_budget') { $transients['gpt_font_id_bench_' . gmdate('Ymd')] = ['calls'=>160,'estimated_usd'=>5]; }
+    try {
+        if (($_POST['action'] ?? '') === 'gpt_font_id_benchmark') { gpt_font_id_benchmark(); }
+        elseif (($_POST['action'] ?? '') === 'gpt_test_api_key') { gpt_font_id_check_model_access(); }
+        else { gpt_font_id_identify(); }
+    }
     catch (TestReply $reply) {
         header('Content-Type: application/json');
-        $reply->payload['_test'] = ['calls'=>$api_calls,'posts'=>$posts,'metas'=>$metas,'type'=>$GLOBALS['review_type']];
+        $reply->payload['_test'] = ['calls'=>$api_calls,'posts'=>$posts,'metas'=>$metas,'type'=>$GLOBALS['review_type'],
+            'active_model'=>gpt_font_id_active_model(),'benchmark_locked'=>isset($options['gpt_font_id_benchmark_lock'])];
         echo json_encode($reply->payload); exit;
     }
 }
@@ -113,6 +143,11 @@ if (($_SERVER['REQUEST_URI'] ?? '') === '/plugin/assets/script.js') {
 }
 if (($_SERVER['REQUEST_URI'] ?? '') === '/plugin/assets/style.css') {
     header('Content-Type: text/css'); readfile(dirname(__DIR__) . '/plugin/assets/style.css'); exit;
+}
+if (str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/admin')) {
+    echo '<!doctype html><html><meta charset="utf-8"><body>';
+    gpt_font_id_settings_page();
+    echo '</body></html>'; exit;
 }
 echo '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Identifier integration test</title><link rel="stylesheet" href="/plugin/assets/style.css"><body style="font-family:system-ui;max-width:850px;margin:30px auto;padding:0 16px"><main>';
 echo $shortcodes['gpt_font_identifier']();

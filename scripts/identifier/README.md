@@ -1,10 +1,58 @@
-# Kreativ Font Identifier 0.6.0
+# Kreativ Font Identifier 0.7.0
 
 Authoritative source for the existing WordPress plugin installed in
 `/htdocs/wp-content/plugins/kreativ-gpt-font-dentifier/` (the historical directory
 spelling is intentionally preserved). The theme deployment excludes `scripts/`.
-The dedicated plugin workflow backs up and uploads only these four plugin files.
+The dedicated plugin workflow backs up the installed plugin and uploads only the
+reviewed PHP/frontend/admin assets.
 No credentials or saved API key are included in this source.
+
+## Configurable model and benchmark lab
+
+The default and existing live model remain **GPT-4o**. Settings → Font Identifier
+now has a fixed allowlist of GPT-4o, GPT-6.1 Sol and GPT-6 Luna. Changing the saved
+live model requires a separate confirmation checkbox. Public AJAX fields cannot
+override it; no automatic model promotion or fallback is performed. The existing
+shortcode, extension nonce/config fields and HTML/JSON response remain compatible.
+
+The administrator-only benchmark lab checks exact model access before generation.
+It uses the same image prompt, high-detail inputs, response schema, parser and
+model profiles as the public identifier. GPT-4o keeps its 1600-token cap; the two
+reasoning candidates use low effort and a 4096-token cap, explicitly recorded in
+each result. An incomplete response stops a full run for profile adjustment.
+No benchmark changes `gpt_font_id_model`, creates review records, or consumes the
+visitor counters. Images go through the same temporary-file removal path.
+
+Benchmark generation is serialized, with a 160-call / $5 estimated UTC-day budget.
+A $0.10 reservation is committed before each call; known token costs reconcile it,
+and failures with unknown usage keep the reservation. Usage estimates include
+reported reasoning output and discounted cached input, using standard rates
+verified 2026-10-24. Requests explicitly select standard/default service. Estimates
+are not invoices and do not include taxes, cache-write fees or account-specific
+terms. Access checks do not generate content. Stop on access/quota changes rather
+than silently substitute a different model or retry.
+
+Generate a reproducible synthetic dataset with Pillow on a Mac that has the named
+fonts installed (font files themselves are never copied):
+
+```
+python benchmark/generate-fixtures.py /absolute/new/output-directory
+```
+
+It makes 40 labelled specimens (20 families × clean/compressed) plus four no-glyph
+controls, each with a checksum and exact rendering provenance. Import the manifest
+and images into the benchmark lab. Labels/aliases stay client-side, never in the
+model request. The lab exports per-sample predictions, strict top-1/top-3 family
+scores, abstentions, errors, latency, usage, estimated costs and access failures.
+Errors count as misses, not successful abstentions. Unavailable models have no
+accuracy score. Family variants are correlated; this is a small Latin/system-font
+baseline, not proof of general commercial-font or logo identification quality.
+Results stay in the admin browser until explicitly exported.
+
+Sources: official [Sol](https://developers.openai.com/api/docs/models/gpt-6.1-sol),
+[Luna](https://developers.openai.com/api/docs/models/gpt-6-luna),
+[GPT-4o](https://developers.openai.com/api/docs/models/gpt-4o), and
+[reasoning/output budgets](https://developers.openai.com/api/docs/guides/reasoning).
 
 ## Privacy and review
 
@@ -68,10 +116,11 @@ confidential samples for production checks or use fabricated confidence scores.
 ## Deployment and rollback
 
 Pushes affecting this folder trigger `.github/workflows/deploy-identifier.yml`.
-The workflow saves the previous four files as a private GitHub Actions artifact
+The workflow saves the installed plugin as a private GitHub Actions artifact
 `identifier-before-<sha>` (90-day retention) before changing production. It does
 not mirror/delete the plugin directory or alter unrelated plugins/settings.
-For rollback, restore all four snapshot files to the same exact plugin paths.
+For rollback, restore the snapshot files to the same exact plugin paths; a new
+admin.js asset left by an older rollback is inert because the old PHP never loads it.
 Do not restore the insecure public-storage behavior without a visitor notice.
 Clear WordPress edge/object caches after deployment and check live default and
 explicit-review requests. Never store rollback PHP in the public plugin folder.
