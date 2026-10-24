@@ -1,0 +1,35 @@
+#gpt-font-id-form, #gpt-font-id-result { --kfi-surface:#fff; --kfi-ink:#192235; --kfi-muted:#526079; --kfi-line:#d9dfee; --kfi-accent:#5143d9; color:var(--kfi-ink); background:var(--kfi-surface); border:1px solid var(--kfi-line); border-radius:20px; padding:clamp(20px,4vw,36px); margin:24px 0; }
+body.dark-mode #gpt-font-id-form, body.dark-mode #gpt-font-id-result { --kfi-surface:#101827; --kfi-ink:#f1f5fb; --kfi-muted:#bdc9dd; --kfi-line:#38465d; --kfi-accent:#b5acff; }
+#gpt-font-id-form *, #gpt-font-id-result * { box-sizing:border-box; }
+#gpt-font-id-form h2, #gpt-font-id-result h2, #gpt-font-id-result h3 { color:var(--kfi-ink); }
+#gpt-font-id-form p, #gpt-font-id-result p { line-height:1.65; }
+#gpt-font-id-form .kfi-upload-label { display:block; font-size:1.15rem; font-weight:700; border:2px dashed var(--kfi-line); border-radius:12px; padding:24px; cursor:pointer; margin:20px 0 12px; }
+#gpt-font-id-form.dragover .kfi-upload-label { border-color:var(--kfi-accent); background:#7870ef15; }
+#gpt-font-id-form input[type=file] { display:block; max-width:100%; margin:12px 0; color:var(--kfi-ink); }
+#gpt-font-id-form input[type=file]::file-selector-button { padding:10px 14px; margin-right:10px; border:1px solid var(--kfi-line); border-radius:8px; cursor:pointer; }
+#gpt-font-id-form #kfi-file-help { font-size:.875rem; color:var(--kfi-muted); }
+#gpt-font-preview { margin:20px 0; }
+#gpt-font-preview img { display:block; max-width:100%; max-height:340px; object-fit:contain; border:1px solid var(--kfi-line); border-radius:10px; background:#f1f2f5; }
+#gpt-font-preview p { overflow-wrap:anywhere; font-size:.875rem; color:var(--kfi-muted); }
+#gpt-font-id-form .kfi-image-actions { display:flex; flex-wrap:wrap; gap:10px; }
+#gpt-font-id-form #kfi-privacy { border:1px solid var(--kfi-line); border-radius:12px; padding:18px; margin:24px 0; text-align:left; }
+#kfi-privacy p { font-size:.9rem; color:var(--kfi-muted); }
+#kfi-privacy label { display:block; margin:14px 0; font-size:.95rem; line-height:1.55; cursor:pointer; }
+#kfi-privacy input[type=checkbox] { width:18px; height:18px; margin-right:8px; vertical-align:middle; accent-color:var(--kfi-accent); }
+#gpt-font-id-form button { border-radius:10px; padding:12px 18px; cursor:pointer; border:1px solid var(--kfi-line); background:var(--kfi-surface); color:var(--kfi-ink); font:inherit; font-weight:600; }
+#gpt-font-id-form button[type=submit] { background:#5143d9; color:#fff; border-color:#5143d9; min-height:48px; }
+#gpt-font-id-form button:disabled { opacity:.55; cursor:not-allowed; }
+#gpt-font-id-form :focus-visible, #gpt-font-id-result a:focus-visible { outline:3px solid var(--kfi-accent); outline-offset:4px; }
+#gpt-font-id-loading { padding:20px; text-align:center; }
+#gpt-font-id-loading .gpt-spinner { display:inline-block; width:28px; height:28px; border:3px solid #d9dfee; border-top-color:#5143d9; border-radius:50%; animation:kfi-spin 1s linear infinite; }
+@keyframes kfi-spin { to { transform:rotate(360deg); } }
+#gpt-font-id-result .kfi-match { padding:20px; border:1px solid var(--kfi-line); border-radius:12px; margin:16px 0; }
+#gpt-font-id-result .kfi-match h3 { margin:6px 0 10px; font-size:1.3rem; }
+#gpt-font-id-result .kfi-match-kind { font-size:.8rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--kfi-muted); margin:0; }
+#gpt-font-id-result a, #kfi-privacy a { color:var(--kfi-accent); text-decoration:underline; text-underline-offset:3px; }
+#gpt-font-id-result .kfi-sample-text { padding:14px; border-left:3px solid var(--kfi-accent); overflow-wrap:anywhere; }
+#gpt-font-id-result .kfi-result-notice { font-size:.9rem; color:var(--kfi-muted); }
+#gpt-font-id-result.error { border-color:#b3261e; }
+#gpt-font-id-form [hidden], #gpt-font-id-loading[hidden], #gpt-font-id-result[hidden] { display:none !important; }
+@media (prefers-reduced-motion:reduce) { #gpt-font-id-loading .gpt-spinner { animation:none; } }
+@media (max-width:480px) { #gpt-font-id-form button[type=submit] { width:100%; } #gpt-font-id-form .kfi-upload-label { padding:18px 12px; } }

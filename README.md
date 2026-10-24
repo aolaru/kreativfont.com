@@ -98,6 +98,7 @@ The audit verifies top-page HTTP responses, document structure, metadata, search
 - `assets/package.json`: frontend asset tooling entry point
 - `assets/Gruntfile.js`: legacy asset build workflow
 - `scripts/audit-production.php`: repeatable post-deploy production checks
+- `scripts/identifier/`: separately deployed Font Identifier plugin source and privacy/compatibility tests; see its README for the dedicated backup/deploy workflow
 
 ## Quarantined Legacy Templates
 

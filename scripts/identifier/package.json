@@ -1,0 +1,11 @@
+{
+  "name": "kreativ-font-identifier-checks",
+  "private": true,
+  "scripts": {
+    "test": "node tests/verify.cjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1",
+    "jquery": "3.7.1"
+  }
+}

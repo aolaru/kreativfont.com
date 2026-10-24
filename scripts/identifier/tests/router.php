@@ -1,0 +1,117 @@
+<?php
+// Local integration harness only. This directory is never deployed to WordPress.
+define('ABSPATH', __DIR__ . '/');
+define('DAY_IN_SECONDS', 86400);
+$fixture = $_GET['fixture'] ?? 'normal';
+$options = ['gpt_font_id_api_key' => 'fixture-not-a-key', 'gpt_font_id_auto_post' => 'yes', 'gpt_font_id_post_status' => 'publish'];
+$transients = []; $actions = []; $filters = []; $shortcodes = []; $posts = []; $metas = []; $api_calls = [];
+if ($fixture === 'review_off') { $options['gpt_font_id_allow_review'] = 'no'; }
+class WP_Error {
+    public function __construct(public $code, public $message) {}
+    public function get_error_message() { return $this->message; }
+}
+class TestReply extends Exception { public function __construct(public $payload) { parent::__construct('reply'); } }
+function add_action($name, $callback) { $GLOBALS['actions'][$name][] = $callback; }
+function add_filter($name, $callback) { $GLOBALS['filters'][$name][] = $callback; }
+function add_shortcode($name, $callback) { $GLOBALS['shortcodes'][$name] = $callback; }
+function register_post_type($name, $args) { $GLOBALS['review_type'] = $args; }
+function add_meta_box(...$args) {}
+function is_wp_error($value) { return $value instanceof WP_Error; }
+function get_option($name, $default = false) { return $GLOBALS['options'][$name] ?? $default; }
+function add_option($name, $value, ...$args) { if (isset($GLOBALS['options'][$name])) return false; $GLOBALS['options'][$name] = $value; return true; }
+function delete_option($name) { unset($GLOBALS['options'][$name]); }
+function get_transient($name) { return $GLOBALS['fixture'] === 'rate' && str_starts_with($name, 'kfi_ip_') ? 5 : ($GLOBALS['transients'][$name] ?? false); }
+function set_transient($name, $value, $ttl) { $GLOBALS['transients'][$name] = $value; }
+function wp_hash($value) { return hash_hmac('sha256', $value, 'test-only-salt'); }
+function wp_generate_password(...$args) { return bin2hex(random_bytes(6)); }
+function wp_json_encode($value) { return json_encode($value); }
+function sanitize_text_field($text) { return trim(strip_tags($text)); }
+function esc_html($text) { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8'); }
+function esc_attr($text) { return esc_html($text); }
+function esc_url($text) { return esc_html($text); }
+function home_url($path = '') { return 'https://kreativfont.com' . $path; }
+function admin_url($path = '') { return 'https://kreativfont.com/wp-admin/' . $path; }
+function add_query_arg($key, $value, $url) { return $url . '?' . http_build_query([$key => $value]); }
+function plugin_dir_url($file) { return '/plugin/'; }
+function wp_enqueue_style(...$args) {}
+function wp_enqueue_script(...$args) {}
+function wp_localize_script($handle, $name, $config) { echo '<script>var ' . $name . '=' . json_encode($config) . ';</script>'; }
+function wp_create_nonce($action) { return 'fixture-nonce'; }
+function check_ajax_referer($action, $field = false, $stop = true) { return ($_POST[$field ?: '_ajax_nonce'] ?? '') === 'fixture-nonce'; }
+function nocache_headers() { header('Cache-Control: no-store'); }
+function current_user_can($cap) { return false; }
+function wp_remote_post($url, $args) {
+    $request = json_decode($args['body'], true);
+    $GLOBALS['api_calls'][] = [
+        'store' => $request['store'], 'model' => $request['model'],
+        'format' => $request['text']['format']['type'], 'max_output_tokens' => $request['max_output_tokens'],
+        'temporary_file_deleted' => !file_exists($_FILES['font_image']['tmp_name']),
+    ];
+    if ($GLOBALS['fixture'] === 'failure') return ['code' => 500, 'body' => 'secret-provider-details-DO-NOT-EXPOSE'];
+    if ($GLOBALS['fixture'] === 'network') return new WP_Error('network', 'secret-network-debug');
+    if ($GLOBALS['fixture'] === 'refusal') return ['code' => 200, 'body' => json_encode(['status'=>'completed','output'=>[['content'=>[['type'=>'refusal','refusal'=>'private details']]]]] )];
+    if ($GLOBALS['fixture'] === 'incomplete') return ['code' => 200, 'body' => json_encode(['status'=>'incomplete','output'=>[]])];
+    $result = ['readable'=>true,'sample_text'=>'Kreativ Serif','note'=>'Check the lowercase terminals against the original.','candidates'=>[
+        ['name'=>'Georgia','reason'=>'Bracketed serifs and a generous x-height resemble the sample.','kind'=>'possible_match'],
+        ['name'=>'Bitter','reason'=>'A similar serif direction; proportions differ.','kind'=>'similar_alternative'],
+    ]];
+    if ($GLOBALS['fixture'] === 'no_text') { $result['readable'] = false; }
+    if ($GLOBALS['fixture'] === 'hostile') {
+        $result['candidates'][0]['name'] = '<script>alert(1)</script>Georgia';
+        $result['candidates'][0]['reason'] = '<img src=x onerror=alert(1)>Good serifs';
+        $result['candidates'][0]['url'] = 'javascript:alert(1)';
+        $result['candidates'][] = $result['candidates'][1];
+    }
+    $text = $GLOBALS['fixture'] === 'malformed' ? 'not JSON' : json_encode($result);
+    return ['code'=>200,'body'=>json_encode(['status'=>'completed','output'=>[['type'=>'reasoning'],['content'=>[['type'=>'output_text','text'=>$text]]]]])];
+}
+function wp_remote_retrieve_body($response) { return $response['body']; }
+function wp_remote_retrieve_response_code($response) { return $response['code']; }
+function wp_insert_post($post, ...$args) {
+    foreach ($GLOBALS['filters']['wp_insert_post_data'] ?? [] as $filter) $post = $filter($post);
+    $GLOBALS['posts'][] = $post; return count($GLOBALS['posts']);
+}
+function add_post_meta($id, $key, $value, $unique) {
+    if ($GLOBALS['fixture'] === 'review_fail' && $key === '_kfi_review_image') return false;
+    $GLOBALS['metas'][] = ['key'=>$key,'private_image'=>str_starts_with($value, 'data:image/')]; return 1;
+}
+function wp_trash_post($id) { $GLOBALS['posts'][$id-1]['post_status'] = 'trash'; }
+function wp_send_json_error($message, $code = null) { throw new TestReply(['success'=>false,'data'=>$message]); }
+function wp_send_json_success($data) { throw new TestReply(['success'=>true,'data'=>$data]); }
+function wp_handle_upload(...$args) { throw new Exception('PUBLIC UPLOAD STORAGE MUST NEVER BE USED'); }
+function wp_insert_attachment(...$args) { throw new Exception('MEDIA LIBRARY MUST NEVER BE USED'); }
+
+require dirname(__DIR__) . '/plugin/gpt-font-id.php';
+foreach ($actions['init'] as $callback) $callback();
+
+if (($_SERVER['REQUEST_URI'] ?? '') === '/unit') {
+    $checks = [];
+    for ($i = 0; $i < 6; $i++) { $checks[] = !is_wp_error(gpt_font_id_check_rate_limit()); }
+    $filter = $filters['wp_insert_post_data'][0];
+    header('Content-Type: application/json');
+    echo json_encode([
+        'rate_sequence' => $checks,
+        'counter_keys' => array_keys($transients),
+        'publishing' => $filter(['post_type'=>'kfi_review','post_status'=>'publish'])['post_status'],
+        'trashing' => $filter(['post_type'=>'kfi_review','post_status'=>'trash'])['post_status'],
+        'ordinary_post' => $filter(['post_type'=>'post','post_status'=>'publish'])['post_status'],
+    ]); exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try { gpt_font_id_identify(); }
+    catch (TestReply $reply) {
+        header('Content-Type: application/json');
+        $reply->payload['_test'] = ['calls'=>$api_calls,'posts'=>$posts,'metas'=>$metas,'type'=>$GLOBALS['review_type']];
+        echo json_encode($reply->payload); exit;
+    }
+}
+if (($_SERVER['REQUEST_URI'] ?? '') === '/plugin/assets/script.js') {
+    header('Content-Type: application/javascript'); readfile(dirname(__DIR__) . '/plugin/assets/script.js'); exit;
+}
+if (($_SERVER['REQUEST_URI'] ?? '') === '/plugin/assets/style.css') {
+    header('Content-Type: text/css'); readfile(dirname(__DIR__) . '/plugin/assets/style.css'); exit;
+}
+echo '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Identifier integration test</title><link rel="stylesheet" href="/plugin/assets/style.css"><body style="font-family:system-ui;max-width:850px;margin:30px auto;padding:0 16px"><main>';
+echo $shortcodes['gpt_font_identifier']();
+echo '</main></body></html>';
