@@ -1,4 +1,4 @@
-# Kreativ Font Identifier 0.8.3
+# Kreativ Font Identifier 0.8.4
 
 Authoritative source for the existing WordPress plugin installed in
 `/htdocs/wp-content/plugins/kreativ-gpt-font-dentifier/` (the historical directory
@@ -118,6 +118,25 @@ Real website crops are distinct from generated images. Scores are family-level,
 stratified by declared style, source and independently checked catalogue coverage;
 they do not certify exact weight/style identification. Archived 44-sample results
 remain a separate historical reference, never pooled into fresh paired scores.
+
+An interrupted paired evaluation can import its exported checkpoint alongside the
+identical manifest/images. Profiles, model, pipelines and the complete dataset
+must match. Existing outcomes, including failed trials, are retained and skipped;
+no completed image is rerun. Resumed requests are paced two seconds apart. Safe
+provider error categories can distinguish throttling from insufficient quota;
+raw provider messages, keys and images are never recorded in telemetry.
+
+Generate the local HTML/CSV/JSON comparison report (including the archived run as
+a separate reference) with:
+
+```
+node benchmark/compare-report.cjs /absolute/results.json /absolute/report-directory /absolute/old-results.json
+```
+
+The frozen manifest must be at `../dataset/manifest.json` relative to the report
+directory. Comparative scores use complete pairs only, with errors as misses;
+cost/error totals also retain any unpaired outcomes. Family-cluster bootstrap
+intervals account for repeated variants, without claiming representative traffic.
 
 The default and existing live model remain **GPT-4o**. Settings → Font Identifier
 now has a fixed allowlist of GPT-4o, GPT-6.1 Sol and GPT-6 Luna. Changing the saved

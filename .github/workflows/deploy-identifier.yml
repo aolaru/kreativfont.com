@@ -33,6 +33,7 @@ jobs:
           find scripts/identifier -name '*.php' -print0 | xargs -0 -n 1 php -l
           find scripts/identifier/plugin/assets -name '*.js' -print0 | xargs -0 -n 1 node --check
           node scripts/identifier/tests/verify.cjs
+          node scripts/identifier/tests/paired-report.cjs
           php scripts/identifier/tests/raster.php
 
   deploy:

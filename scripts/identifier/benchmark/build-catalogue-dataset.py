@@ -84,11 +84,13 @@ def main():
     for index, record in enumerate(families):
         for style, spec in record['styles'].items():
             face=ImageFont.truetype(str(spec['path']),64,index=spec.get('collection_index',0))
+            style_label='medium' if style=='regular' and 'medium' in face.getname()[1].casefold() else style
+            face_alias=[record['family']+' '+face.getname()[1]]
             text=TEXTS[index%len(TEXTS)];image=Image.new('RGB',(1150,190),'white')
             ImageDraw.Draw(image).text((32,38),text,font=face,fill='#202020')
             prov={key:str(value) if isinstance(value,Path) else value for key,value in spec.items()}
             prov.update({'text':text,'render_size':64,'source':record['source'],'condition':'Independent Pillow rasterization, known source font; one line; no family label in image'})
-            add(image,record['family'],style,'clean',prov)
+            add(image,record['family'],style_label,'clean',prov,face_alias)
             if style=='regular' and index in [0,1,2,3,4,5,12,13,14,15,16,17]:
                 if index%2==0:
                     degraded=image.resize((690,114),Image.Resampling.LANCZOS).filter(ImageFilter.GaussianBlur(.25))
@@ -96,7 +98,7 @@ def main():
                 else:
                     degraded=image.rotate(3.5,resample=Image.Resampling.BICUBIC,expand=True,fillcolor='white')
                     variant='angled'
-                add(degraded,record['family'],style,variant,{**prov,'condition':'Synthetic degradation, not a real photograph'})
+                add(degraded,record['family'],style_label,variant,{**prov,'condition':'Synthetic degradation, not a real photograph'},face_alias)
     excluded=[];real=[]
     for filename in ['real-world.json','real-world-italic.json']:
         source=dest/filename

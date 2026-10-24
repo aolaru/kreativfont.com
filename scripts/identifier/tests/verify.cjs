@@ -29,7 +29,7 @@ function png(width=240,height=80) {
     for(let i=0;i<30;i++){try{await fetch(base);break;}catch{await new Promise(r=>setTimeout(r,100));}}
     const pageHtml=await(await fetch(base)).text();
     const config=JSON.parse(pageHtml.match(/var GPTFontId\s*=\s*(\{.*?\});/s)[1]);
-    assert.equal(config.version,'0.8.3');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
+    assert.equal(config.version,'0.8.4');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
     const unit=await(await fetch(`${base}/unit`)).json();
     assert.deepEqual(unit.rate_sequence,[true,true,true,true,true,false]);
     assert.ok(unit.counter_keys.every(key=>!key.includes('127.0.0.1')));
@@ -180,6 +180,13 @@ function png(width=240,height=80) {
       assert.equal(comparison.mode,'paired');assert.equal(comparison.rows.length,2);assert.equal(comparison.fixed_model,'gpt-4o');
       assert.ok(comparison.rows.every(row=>row.outcome.active_model==='gpt-4o'&&row.outcome.pipeline===row.model));
       assert.equal(comparison.rows.find(row=>row.model==='catalogue_082').outcome.metrics.call_count,3);
+      comparison.completed=false;comparison.rows[0].outcome.ok=false;comparison.rows[0].outcome.note='Preserved failed trial';
+      await page.locator('#kfi-bench-resume').setInputFiles({name:'checkpoint.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(comparison))});
+      await page.locator('#kfi-bench-run').click();
+      await page.waitForFunction(()=>window.kfiBenchmarkReport?.sessions?.length===2&&window.kfiBenchmarkReport.completed);
+      const resumed=await page.evaluate(()=>window.kfiBenchmarkReport);
+      assert.equal(resumed.rows.length,2);assert.equal(resumed.rows[0].outcome.ok,false);assert.equal(resumed.rows[0].score.top1,false);
+      assert.equal(resumed.rows[0].outcome.note,'Preserved failed trial');
       await page.screenshot({path:'/tmp/kreativ-identifier-benchmark-local.png',fullPage:true});
       assert.deepEqual(pageErrors,[]);
       await browser.close();console.log('PASS: browser upload/consent gating; safe results and links; optional review; rotation consent reset; mobile layout; provider failure recovery.');

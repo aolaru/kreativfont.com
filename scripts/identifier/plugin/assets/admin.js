@@ -86,7 +86,20 @@
         }
         running=true;stopped=false;run.disabled=true;stop.disabled=false;
         document.querySelector('#kfi-bench-table tbody').replaceChildren();
-        const report={schema_version:1,plugin_version:cfg.version,mode:paired?'paired':'models',fixed_model:paired?'gpt-4o':null,started_at:new Date().toISOString(),active_model_before:cfg.activeModel,models,profiles:cfg.profiles,dataset:manifest,access:{},rows:[],completed:false};
+        const resumeFile=document.querySelector('#kfi-bench-resume')?.files[0];
+        const checkpoint=resumeFile?JSON.parse(await resumeFile.text()):null;
+        if(checkpoint&&(!paired||checkpoint.mode!=='paired'||checkpoint.fixed_model!=='gpt-4o'||checkpoint.active_model_before!==cfg.activeModel||JSON.stringify(checkpoint.dataset)!==JSON.stringify(manifest)||JSON.stringify(checkpoint.models)!==JSON.stringify(models)||JSON.stringify(checkpoint.profiles)!==JSON.stringify(cfg.profiles)))throw new Error('Checkpoint dataset, pipelines, model or profiles differ. Nothing was rerun.');
+        const report={schema_version:1,plugin_version:cfg.version,mode:paired?'paired':'models',fixed_model:paired?'gpt-4o':null,started_at:checkpoint?.started_at||new Date().toISOString(),active_model_before:cfg.activeModel,models,profiles:cfg.profiles,dataset:manifest,access:{},rows:[],completed:false,
+          sessions:[...(checkpoint?.sessions||[{started_at:checkpoint?.started_at||new Date().toISOString(),plugin_version:checkpoint?.plugin_version||cfg.version,pacing_ms:0,stopped_reason:checkpoint?.error||null}]),...(checkpoint?[{started_at:new Date().toISOString(),plugin_version:cfg.version,pacing_ms:2000}]:[])]};
+        if(checkpoint){
+          const seenRows=new Set();
+          for(const row of checkpoint.rows){
+            const sample=manifest.samples.find(item=>item.id===row.sample.id),key=row.sample.id+':'+row.model;
+            if(!sample||row.sample.sha256!==sample.sha256||!models.includes(row.model)||seenRows.has(key)||row.outcome?.active_model!==cfg.activeModel)throw new Error('Invalid or duplicate checkpoint outcome.');
+            seenRows.add(key);const preserved={...row,sample,score:score(sample,row.outcome)};report.rows.push(preserved);addRow(preserved);
+          }
+          display(report);
+        }
         window.kfiBenchmarkReport=report;
         for (const model of models) {
           status.textContent='Checking access: '+model;
@@ -100,6 +113,9 @@
         for (const [sampleIndex,sample] of manifest.samples.entries()) {
           for (const model of paired&&sampleIndex%2?[...available].reverse():available) {
             if (stopped) break;
+            if(report.rows.some(row=>row.sample.id===sample.id&&row.model===model))continue;
+            if(checkpoint)await new Promise(resolve=>setTimeout(resolve,2000));
+            if(stopped)break;
             status.textContent=`Running ${report.rows.length+1}/${manifest.samples.length*available.length}: ${sample.id} · ${model}. Live model remains ${cfg.activeModel}.`;
             const body=new FormData();body.append('action',paired?'gpt_font_id_compare':'gpt_font_id_benchmark');body.append('nonce',cfg.benchmarkNonce);body.append(paired?'pipeline':'model',model);body.append('font_image',files.get(sample.file),'benchmark-sample.'+sample.file.split('.').pop());
             // Ground truth stays in this client. Do not send labels, aliases, or font filenames.

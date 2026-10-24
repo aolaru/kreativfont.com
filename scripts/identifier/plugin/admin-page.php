@@ -95,6 +95,7 @@ function gpt_font_id_settings_page()
             <p>Daily benchmark guard: $5 estimated token usage and 160 generation requests, separate from visitor limits. Calls with unknown usage retain a conservative $0.10 reservation. Prices are estimates from the standard model rates verified on 24 October 2026, not an invoice; other tiers, cache writes, taxes or account terms can differ.</p>
             <p><label for="kfi-bench-manifest">Labelled sample manifest (JSON)</label><br><input id="kfi-bench-manifest" type="file" accept="application/json,.json"></p>
             <p><label for="kfi-bench-images">Matching sample images</label><br><input id="kfi-bench-images" type="file" accept="image/png,image/jpeg,image/webp" multiple></p>
+            <p><label for="kfi-bench-resume">Optional checkpoint JSON to resume</label><br><input id="kfi-bench-resume" type="file" accept="application/json,.json"><br>Resumes only an identical paired dataset/profile. Completed outcomes, including errors, are preserved and never rerun.</p>
             <fieldset><legend>Models to compare</legend>
             <?php foreach (gpt_font_id_models() as $model => $profile) : ?>
                 <label style="display:block;margin:8px 0"><input type="checkbox" class="kfi-bench-model" value="<?php echo esc_attr($model); ?>" checked> <?php echo esc_html($profile['label']); ?></label>

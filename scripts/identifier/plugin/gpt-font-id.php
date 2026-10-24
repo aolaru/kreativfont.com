@@ -2,12 +2,12 @@
 /**
  * Plugin Name: Kreativ Font Identifier
  * Description: Image-based font suggestions, with no public upload storage and optional admin-only review.
- * Version: 0.8.3
+ * Version: 0.8.4
  * Author: Andrei Olaru
  */
 
 defined('ABSPATH') || exit;
-define('KREATIV_GPT_FONT_ID_VERSION', '0.8.3');
+define('KREATIV_GPT_FONT_ID_VERSION', '0.8.4');
 require_once __DIR__ . '/admin-page.php';
 require_once __DIR__ . '/raster.php';
 require_once __DIR__ . '/catalogue.php';
@@ -246,6 +246,9 @@ function gpt_font_id_request_matches($image, $api_key, $model = null, &$metrics 
     $code = wp_remote_retrieve_response_code($response);
     $metrics['http_status'] = $code;
     if ($code !== 200) {
+        $error = json_decode(wp_remote_retrieve_body($response), true);
+        $safe_code = $error['error']['code'] ?? '';
+        $metrics['provider_error_code'] = in_array($safe_code, ['rate_limit_exceeded', 'insufficient_quota', 'billing_hard_limit_reached', 'model_not_found', 'invalid_api_key'], true) ? $safe_code : 'unclassified';
         // Do not send provider response bodies, credentials or debug details to visitors.
         return new WP_Error('provider', $code === 429 ? 'The analysis service is busy. Please try again shortly.' : 'The analysis service is temporarily unavailable. Please try again later.');
     }
