@@ -92,6 +92,7 @@ function wp_remote_post($url, $args) {
         'image_count' => count(array_filter($request['input'][0]['content'], static fn($item) => $item['type'] === 'input_image')),
         'style_schema' => isset($request['text']['format']['schema']['properties']['style']),
     ];
+    if (in_array($GLOBALS['fixture'], ['credit', 'admin_credit'], true)) return ['code'=>429,'headers'=>['x-request-id'=>'fixture-id'],'body'=>json_encode(['error'=>['code'=>'credit_balance_exhausted','type'=>'insufficient_quota','message'=>'private-provider-details']])];
     if ($GLOBALS['fixture'] === 'failure') return ['code' => 500, 'body' => 'secret-provider-details-DO-NOT-EXPOSE'];
     if ($GLOBALS['fixture'] === 'network') return new WP_Error('network', 'secret-network-debug');
     if ($GLOBALS['fixture'] === 'refusal') return ['code' => 200, 'body' => json_encode(['status'=>'completed','output'=>[['content'=>[['type'=>'refusal','refusal'=>'private details']]]]] )];

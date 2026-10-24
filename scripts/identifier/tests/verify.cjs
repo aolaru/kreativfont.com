@@ -29,7 +29,7 @@ function png(width=240,height=80) {
     for(let i=0;i<30;i++){try{await fetch(base);break;}catch{await new Promise(r=>setTimeout(r,100));}}
     const pageHtml=await(await fetch(base)).text();
     const config=JSON.parse(pageHtml.match(/var GPTFontId\s*=\s*(\{.*?\});/s)[1]);
-    assert.equal(config.version,'0.8.5');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
+    assert.equal(config.version,'0.8.6');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
     const unit=await(await fetch(`${base}/unit`)).json();
     assert.deepEqual(unit.rate_sequence,[true,true,true,true,true,false]);
     assert.ok(unit.counter_keys.every(key=>!key.includes('127.0.0.1')));
@@ -63,6 +63,9 @@ function png(width=240,height=80) {
     assert.equal(paired._test.posts.length,0);assert.equal(paired._test.metas.length,0);assert.equal(paired._test.active_model,'gpt-4o');
     const badPipeline=await submit('admin',{...pairedFields,pipeline:'arbitrary'});assert.equal(badPipeline.success,false);assert.equal(badPipeline._test.calls.length,0);
     const pairedBudget=await submit('admin_compare_budget',pairedFields);assert.equal(pairedBudget.success,false);assert.equal(pairedBudget._test.calls.length,0);assert.equal(pairedBudget._test.benchmark_locked,false);
+    const credit=await submit('credit');assert.equal(credit.success,false);assert.ok(credit.data.includes('temporarily unavailable'));assert.ok(!JSON.stringify(credit.data).includes('credit_balance'));
+    const creditAdmin=await submit('admin_credit',pairedFields);assert.equal(creditAdmin.data.ok,false);assert.equal(creditAdmin.data.metrics.calls[0].provider_error_code,'credit_balance_exhausted');
+    assert.equal(creditAdmin.data.metrics.calls[0].provider_error_type,'insufficient_quota');assert.ok(!JSON.stringify(creditAdmin).includes('private-provider-details'));
     const scoring=require('../plugin/assets/admin.js');
     assert.equal(scoring.score({kind:'known_font',font:'Gill Sans',aliases:['Gill Sans MT']},{ok:true,candidates:[{name:'Gill Sans MT'}]}).top1,true);
     assert.equal(scoring.score({kind:'known_font',font:'Arial',aliases:[]},{ok:true,candidates:[{name:'Arial Narrow'}]}).top1,false);

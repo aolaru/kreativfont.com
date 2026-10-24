@@ -2,12 +2,12 @@
 /**
  * Plugin Name: Kreativ Font Identifier
  * Description: Image-based font suggestions, with no public upload storage and optional admin-only review.
- * Version: 0.8.5
+ * Version: 0.8.6
  * Author: Andrei Olaru
  */
 
 defined('ABSPATH') || exit;
-define('KREATIV_GPT_FONT_ID_VERSION', '0.8.5');
+define('KREATIV_GPT_FONT_ID_VERSION', '0.8.6');
 require_once __DIR__ . '/admin-page.php';
 require_once __DIR__ . '/raster.php';
 require_once __DIR__ . '/catalogue.php';
@@ -259,7 +259,8 @@ function gpt_font_id_request_matches($image, $api_key, $model = null, &$metrics 
         $metrics['retry_after_seconds'] = is_numeric($retry) ? max(0, min(86400, (int) $retry)) : null;
         $metrics['provider_request_id_present'] = (bool) wp_remote_retrieve_header($response, 'x-request-id');
         // Do not send provider response bodies, credentials or debug details to visitors.
-        return new WP_Error('provider', $code === 429 ? 'The analysis service is busy. Please try again shortly.' : 'The analysis service is temporarily unavailable. Please try again later.');
+        $quota = $metrics['provider_error_type'] === 'insufficient_quota' || in_array($metrics['provider_error_code'], ['credit_balance_exhausted', 'insufficient_quota', 'billing_hard_limit_reached'], true);
+        return new WP_Error('provider', $code === 429 && !$quota ? 'The analysis service is busy. Please try again shortly.' : 'The analysis service is temporarily unavailable. Please try again later.');
     }
     $body = json_decode(wp_remote_retrieve_body($response), true);
     $metrics['resolved_model'] = gpt_font_id_clean_text($body['model'] ?? '', 80);
