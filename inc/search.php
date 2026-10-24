@@ -44,7 +44,7 @@ function kreativ_get_search_cache_key( $group, $data = array() ) {
             array(
                 'group'   => $group,
                 'version' => kreativ_get_search_cache_version(),
-                'schema'  => '2026-07-30.1',
+                'schema'  => '2026-10-24.1',
                 'data'    => $data,
             )
         )
@@ -71,17 +71,55 @@ function kreativ_set_cached_search_value( $cache_key, $value, $ttl = 900 ) {
     );
 }
 
+function kreativ_normalize_search_title( $text ) {
+    $text = html_entity_decode( (string) $text, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+    $text = remove_accents( wp_strip_all_tags( $text ) );
+    $text = trim( preg_replace( '/[\s\p{Z}]+/u', ' ', $text ) );
+
+    return function_exists( 'mb_strtolower' ) ? mb_strtolower( $text, 'UTF-8' ) : strtolower( $text );
+}
+
+function kreativ_get_search_font_title_suffixes() {
+    // Longest first. Keep these labels shared with SQL candidate ordering.
+    return array( ' Font Free Download (Commercial Use)', ' Font Free Download', ' Free Download (Commercial Use)', ' Free Download', ' Font' );
+}
+
+function kreativ_get_search_font_title_separators() {
+    return array( ' – ', ' — ', ' - ' );
+}
+
+function kreativ_get_search_font_name( $title ) {
+    $name = kreativ_normalize_search_title( $title );
+
+    foreach ( kreativ_get_search_font_title_separators() as $separator ) {
+        $position = strpos( $name, $separator );
+
+        if ( false !== $position ) {
+            $name = substr( $name, 0, $position );
+        }
+    }
+
+    foreach ( kreativ_get_search_font_title_suffixes() as $suffix ) {
+        $suffix = kreativ_normalize_search_title( $suffix );
+        $suffix = ' ' . $suffix;
+
+        if ( strlen( $name ) > strlen( $suffix ) && substr( $name, -strlen( $suffix ) ) === $suffix ) {
+            return substr( $name, 0, -strlen( $suffix ) );
+        }
+    }
+
+    return $name;
+}
+
 function kreativ_get_search_title_match_score( $title, $search_string ) {
-    $normalized_title = remove_accents( wp_strip_all_tags( (string) $title ) );
-    $normalized_query = remove_accents( wp_strip_all_tags( trim( (string) $search_string ) ) );
-    $normalized_title = function_exists( 'mb_strtolower' ) ? mb_strtolower( $normalized_title ) : strtolower( $normalized_title );
-    $normalized_query = function_exists( 'mb_strtolower' ) ? mb_strtolower( $normalized_query ) : strtolower( $normalized_query );
+    $normalized_title = kreativ_normalize_search_title( $title );
+    $normalized_query = kreativ_normalize_search_title( $search_string );
 
     if ( '' === $normalized_query ) {
         return 0;
     }
 
-    if ( $normalized_title === $normalized_query ) {
+    if ( $normalized_title === $normalized_query || kreativ_get_search_font_name( $title ) === $normalized_query ) {
         return 1800;
     }
 
@@ -499,10 +537,23 @@ function kreativ_get_structured_search_post_ids( $search_string, $active_refinem
     }
 
     $post_ids = array_keys( $scores );
+    $exact_name_matches = array();
+
+    foreach ( $post_ids as $post_id ) {
+        $exact_name_matches[ $post_id ] = 1800 === kreativ_get_search_title_match_score( get_the_title( $post_id ), $search_string );
+    }
 
     usort(
         $post_ids,
-        static function ( $left, $right ) use ( $scores, $sort_hints ) {
+        static function ( $left, $right ) use ( $scores, $sort_hints, $exact_name_matches ) {
+            // An exact family name must win even when a variant has more
+            // taxonomy matches, or was published more recently.
+            $exact_order = (int) $exact_name_matches[ $right ] <=> (int) $exact_name_matches[ $left ];
+
+            if ( 0 !== $exact_order ) {
+                return $exact_order;
+            }
+
             $left_score  = $scores[ $left ] ?? 0;
             $right_score = $scores[ $right ] ?? 0;
 
@@ -937,6 +988,20 @@ function kreativ_search_orderby( $orderby, $query ) {
         AND t.slug = 'fonts'
     ) THEN 25 ELSE 0 END";
 
+    // Promote exact font-name candidates before applying the SQL result limit.
+    // Otherwise an older exact family could be absent from autocomplete's pool.
+    $name_conditions = array( $wpdb->prepare( "{$wpdb->posts}.post_title = %s", $search_string ) );
+
+    foreach ( kreativ_get_search_font_title_suffixes() as $suffix ) {
+        $name_conditions[] = $wpdb->prepare( "{$wpdb->posts}.post_title = %s", $search_string . $suffix );
+    }
+
+    foreach ( kreativ_get_search_font_title_separators() as $separator ) {
+        $name_conditions[] = $wpdb->prepare( "{$wpdb->posts}.post_title LIKE %s", $wpdb->esc_like( $search_string . $separator ) . '%' );
+    }
+
+    $exact_name_order = 'CASE WHEN (' . implode( ' OR ', $name_conditions ) . ') THEN 1 ELSE 0 END';
+
     $score_parts = array_merge(
         array(
             $exact_title,
@@ -949,7 +1014,7 @@ function kreativ_search_orderby( $orderby, $query ) {
         $term_scores
     );
 
-    return '( ' . implode( ' + ', $score_parts ) . " ) DESC, {$wpdb->posts}.post_date DESC";
+    return $exact_name_order . ' DESC, ( ' . implode( ' + ', $score_parts ) . " ) DESC, {$wpdb->posts}.post_date DESC";
 }
 add_filter( 'posts_orderby', 'kreativ_search_orderby', 10, 2 );
 
