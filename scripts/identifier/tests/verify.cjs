@@ -29,7 +29,7 @@ function png(width=240,height=80) {
     for(let i=0;i<30;i++){try{await fetch(base);break;}catch{await new Promise(r=>setTimeout(r,100));}}
     const pageHtml=await(await fetch(base)).text();
     const config=JSON.parse(pageHtml.match(/var GPTFontId\s*=\s*(\{.*?\});/s)[1]);
-    assert.equal(config.version,'0.8.0');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
+    assert.equal(config.version,'0.8.1');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
     const unit=await(await fetch(`${base}/unit`)).json();
     assert.deepEqual(unit.rate_sequence,[true,true,true,true,true,false]);
     assert.ok(unit.counter_keys.every(key=>!key.includes('127.0.0.1')));
@@ -68,8 +68,9 @@ function png(width=240,height=80) {
     assert.equal(legacy._test.calls[0].temporary_file_deleted,true);assert.equal(legacy._test.calls[0].store,false);
     assert.equal(legacy._test.calls[0].format,'json_schema');assert.equal(legacy.data.candidates.length,2);
     assert.equal(legacy.data.candidates[0].url,'https://kreativfont.com/fonts/georgia');
-    assert.equal(legacy._test.calls.length,2);assert.ok(legacy._test.calls.every(call=>call.model==='gpt-4o'&&call.store===false&&call.temporary_file_deleted));
-    assert.equal(legacy._test.calls[1].comparison,true);assert.equal(legacy._test.calls[1].image_count,4);
+    assert.equal(legacy._test.calls.length,3);assert.ok(legacy._test.calls.every(call=>call.model==='gpt-4o'&&call.store===false&&call.temporary_file_deleted));
+    assert.equal(legacy._test.calls[1].selection,true);assert.equal(legacy._test.calls[1].image_count,1);
+    assert.equal(legacy._test.calls[2].comparison,true);assert.equal(legacy._test.calls[2].selection,false);assert.equal(legacy._test.calls[2].image_count,3);
     assert.equal(legacy.data.catalogue.status,'compared');assert.equal(legacy.data.candidates[0].catalogue_status,'listed');
     assert.equal(legacy.data.candidates[0].evidence,'specimen_compared');assert.ok(legacy.data.html.includes('Exact identification is unverified'));
     assert.ok(legacy.data.candidates.every(candidate=>candidate.id===301||candidate.id===302));
@@ -78,11 +79,11 @@ function png(width=240,height=80) {
       assert.ok(response.data.candidates.every(candidate=>candidate.catalogue_status==='not_found'),fixture);
       assert.equal(response._test.posts.length,0);
     }
-    for(const fixture of ['no_previews','unsafe_previews','comparison_failure']) {
+    for(const fixture of ['no_previews','unsafe_previews','comparison_failure','selection_failure']) {
       const response=await submit(fixture);assert.equal(response.success,true,fixture);
       assert.equal(response.data.candidates[0].catalogue_status,'listed',fixture);assert.equal(response.data.candidates[0].evidence,'name_lookup',fixture);
       assert.equal(response.data.candidates[0].url,'https://kreativfont.com/fonts/georgia');
-      assert.equal(response._test.calls.length,fixture==='comparison_failure'?2:1);
+      assert.equal(response._test.calls.length,fixture==='comparison_failure'?3:2);
       assert.ok(!JSON.stringify(response.data).includes('attacker.test'));assert.equal(response._test.posts.length,0);
     }
     const invalidKey=await submit('invalid_key');assert.deepEqual(invalidKey.data.candidates,[]);
@@ -90,7 +91,7 @@ function png(width=240,height=80) {
     const unlisted=await submit('unlisted');assert.equal(unlisted.data.candidates[0].name,'Unknown Serif');
     assert.equal(unlisted.data.candidates[0].catalogue_status,'not_found');assert.equal(unlisted.data.candidates[0].evidence,'ai_only');
     assert.ok(unlisted.data.candidates[0].url.startsWith('https://kreativfont.com/?s='));
-    const styleOnly=await submit('style_only');assert.equal(styleOnly._test.calls.length,2);assert.equal(styleOnly.data.candidates[0].name,'Georgia');
+    const styleOnly=await submit('style_only');assert.equal(styleOnly._test.calls.length,3);assert.equal(styleOnly.data.candidates[0].name,'Georgia');
     const oneFlag=await submit('normal',{share_for_review:'yes'});assert.equal(oneFlag._test.posts.length,0);
     const review=await submit('normal',{share_for_review:'yes',review_consent:'yes'});
     assert.equal(review.data.review_submitted,true);assert.equal(review.data.post_url,'');assert.equal(review._test.posts.length,1);

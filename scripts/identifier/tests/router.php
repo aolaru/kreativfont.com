@@ -85,6 +85,7 @@ function wp_remote_post($url, $args) {
         'temporary_file_deleted' => !file_exists($_FILES['font_image']['tmp_name'] ?? '/nonexistent-test-upload'),
         'reasoning' => $request['reasoning'] ?? null,
         'comparison' => isset($request['text']['format']['schema']['properties']['candidates']['items']['properties']['name']['enum']),
+        'selection' => ($request['text']['format']['schema']['properties']['candidates']['maxItems'] ?? 3) === 6,
         'image_count' => count(array_filter($request['input'][0]['content'], static fn($item) => $item['type'] === 'input_image')),
     ];
     if ($GLOBALS['fixture'] === 'failure') return ['code' => 500, 'body' => 'secret-provider-details-DO-NOT-EXPOSE'];
@@ -92,7 +93,9 @@ function wp_remote_post($url, $args) {
     if ($GLOBALS['fixture'] === 'refusal') return ['code' => 200, 'body' => json_encode(['status'=>'completed','output'=>[['content'=>[['type'=>'refusal','refusal'=>'private details']]]]] )];
     if ($GLOBALS['fixture'] === 'incomplete') return ['code' => 200, 'body' => json_encode(['status'=>'incomplete','output'=>[]])];
     $comparison = end($GLOBALS['api_calls'])['comparison'];
-    if ($comparison && $GLOBALS['fixture'] === 'comparison_failure') { return ['code' => 500, 'body' => 'secret-comparison-failure']; }
+    $selection = end($GLOBALS['api_calls'])['selection'];
+    if ($comparison && !$selection && $GLOBALS['fixture'] === 'comparison_failure') { return ['code' => 500, 'body' => 'secret-comparison-failure']; }
+    if ($selection && $GLOBALS['fixture'] === 'selection_failure') { return ['code' => 500, 'body' => 'secret-selection-failure']; }
     $result = ['readable'=>true,'sample_text'=>'Kreativ Serif','note'=>'Check the lowercase terminals against the original.','style'=>'serif','features'=>[],'candidates'=>[
         ['name'=>'Georgia','reason'=>'Bracketed serifs and a generous x-height resemble the sample.','kind'=>'possible_match'],
         ['name'=>'Bitter','reason'=>'A similar serif direction; proportions differ.','kind'=>'similar_alternative'],

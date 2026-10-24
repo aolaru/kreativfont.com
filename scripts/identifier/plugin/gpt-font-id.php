@@ -2,12 +2,12 @@
 /**
  * Plugin Name: Kreativ Font Identifier
  * Description: Image-based font suggestions, with no public upload storage and optional admin-only review.
- * Version: 0.8.0
+ * Version: 0.8.1
  * Author: Andrei Olaru
  */
 
 defined('ABSPATH') || exit;
-define('KREATIV_GPT_FONT_ID_VERSION', '0.8.0');
+define('KREATIV_GPT_FONT_ID_VERSION', '0.8.1');
 require_once __DIR__ . '/admin-page.php';
 require_once __DIR__ . '/catalogue.php';
 
@@ -221,13 +221,14 @@ function gpt_font_id_request_matches($image, $api_key, $model = null, &$metrics 
         $payload['instructions'] = $comparison['instructions'];
         $payload['input'][0]['content'] = $comparison['content'];
         $payload['text']['format']['schema']['properties']['candidates']['items']['properties']['name']['enum'] = $comparison['keys'];
+        $payload['text']['format']['schema']['properties']['candidates']['maxItems'] = $comparison['limit'] ?? 3;
     } else {
         $payload['instructions'] .= ' Also classify the dominant font style and up to three visible features using the allowed vocabulary. Use unknown when the style is unclear. These attributes retrieve catalogue references; do not infer a font from text content or a brand name.';
     }
     if ($profile['reasoning'] !== null) { $payload['reasoning'] = ['effort' => $profile['reasoning']]; }
     $started = microtime(true);
     $response = wp_remote_post('https://api.openai.com/v1/responses', [
-        'timeout' => $comparison === null ? 30 : 25,
+        'timeout' => $comparison['timeout'] ?? 25,
         'headers' => ['Authorization' => 'Bearer ' . $api_key, 'Content-Type' => 'application/json'],
         'body' => wp_json_encode($payload),
     ]);
@@ -257,7 +258,7 @@ function gpt_font_id_request_matches($image, $api_key, $model = null, &$metrics 
             $metrics['output_tokens'] * $profile['output_rate']
         ) / 1000000, 8);
     }
-    return gpt_font_id_parse_response($body);
+    return gpt_font_id_parse_response($body, $comparison['limit'] ?? 3);
 }
 
 /** A benchmark never writes the live model setting, images, reports or review records. */
@@ -318,7 +319,7 @@ function gpt_font_id_clean_text($value, $limit)
     return function_exists('mb_substr') ? mb_substr($text, 0, $limit) : substr($text, 0, $limit);
 }
 
-function gpt_font_id_parse_response($body)
+function gpt_font_id_parse_response($body, $limit = 3)
 {
     if (!is_array($body) || ($body['status'] ?? '') !== 'completed') {
         return new WP_Error('format', 'The analysis did not complete. Please try a clearer, smaller crop.');
@@ -338,7 +339,7 @@ function gpt_font_id_parse_response($body)
     }
     $candidates = [];
     $seen = [];
-    foreach (array_slice($result['candidates'], 0, 3) as $item) {
+    foreach (array_slice($result['candidates'], 0, min(6, $limit)) as $item) {
         if (!is_array($item)) { continue; }
         $name = gpt_font_id_clean_text($item['name'] ?? '', 100);
         $reason = gpt_font_id_clean_text($item['reason'] ?? '', 500);

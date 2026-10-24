@@ -1,4 +1,4 @@
-# Kreativ Font Identifier 0.8.0
+# Kreativ Font Identifier 0.8.1
 
 Authoritative source for the existing WordPress plugin installed in
 `/htdocs/wp-content/plugins/kreativ-gpt-font-dentifier/` (the historical directory
@@ -13,14 +13,20 @@ The live website and existing Chrome extensions still use GPT-4o. The first pass
 suggests names and controlled style/features. Local WordPress queries retrieve
 published, unprotected font posts from Fonts/Free Fonts, excluding tools, blog,
 identified reports and non-font categories. Title searches include a distinctive
-word for close family names; a style/feature query can retrieve references even
-when no name is suggested. At most six distinct catalogue families proceed.
+word for close family names; a style query can retrieve references even when no
+name is suggested. Feature labels boost retrieval without excluding the broader
+style pool. At most 600 distinct catalogue families enter a constrained name
+selection pass; up to six proceed to the specimen comparison. Attachment metadata
+is resolved only for these selected references and exact-name fallbacks.
 Only canonical same-site permalinks and the site's own public upload specimen
 images (including its WordPress image CDN) are accepted. No visitor image or
 result is added to an index, transient, log or public upload.
 
-A second request to the same saved model compares the visitor crop with available
-catalogue specimens. Its schema restricts selections to server-supplied keys;
+A second request to the same saved model sees the query image and the broad
+family-name pool, selecting up to six promising references. This gives real
+catalogue families omitted by the initial guesses a chance to be compared. A
+third request compares the crop with the selected public catalogue specimens.
+Both schemas restrict selections to server-supplied keys;
 the server independently rejects unknown/changed keys, ignores model URLs/names,
 and attaches canonical catalogue names, IDs, previews and direct font-page links.
 Initial suggestions outside the shortlist may remain, explicitly unverified,
@@ -29,13 +35,29 @@ does not establish absence from the entire catalogue, exact visual identity,
 licensing or current pricing. Artwork containing multiple fonts can be ambiguous.
 This is specimen-assisted retrieval, not a trained visual index of every font.
 
-If there are no safe specimens, or comparison fails, initial suggestions survive
+If there are no safe specimens, or selection/comparison fails, initial suggestions survive
 with exact-name catalogue links where available and a clear comparison-unavailable
-notice. Fuzzy retrieval alone never claims visual evidence. Initial/comparison
-provider timeouts are 30/25 seconds; one extra paid API request is possible per
-visitor upload, with up to six public reference images. Both requests use
+notice. Fuzzy retrieval alone never claims visual evidence. Initial/selection/
+comparison provider timeouts are 25/15/20 seconds; two extra paid API requests are
+possible per visitor upload, with up to six public reference images. All requests use
 `store:false`. No default storage, optional dual-consent private review, shortcode,
 AJAX fields and the legacy extension HTML response shape are preserved.
+
+The first live smoke run exposed that six references retrieved directly from the
+initial guesses missed the known families in three synthetic samples. Version
+0.8.1 adds the broad family selection pass before visual comparison. Smoke checks
+exercise the complete pipeline and existing MV3 extension against the real site:
+
+```
+KFI_LIVE_GENERATION=1 KFI_NODE_MODULES=/absolute/node_modules \
+  node tests/live-smoke.cjs /absolute/synthetic-1.png /absolute/synthetic-2.png
+```
+
+Optionally set `KFI_EXTENSION_ROOT` to the unpacked existing extension and
+`KFI_CHROMIUM_EXECUTABLE` to an extension-capable Chromium binary. This test makes
+paid calls through the normal endpoint and rate limits, checks that comparisons
+finish, and writes local results/screenshots to ignored `dist/catalogue-smoke`.
+It does not assert a general accuracy uplift or create public reports.
 
 ## Configurable model and benchmark lab
 
