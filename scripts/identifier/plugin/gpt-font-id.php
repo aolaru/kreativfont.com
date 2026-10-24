@@ -7,7 +7,7 @@
  */
 
 defined('ABSPATH') || exit;
-define('KFI_VERSION', '0.6.0');
+define('KREATIV_GPT_FONT_ID_VERSION', '0.6.0');
 require_once __DIR__ . '/admin-page.php';
 
 add_action('init', function () {
@@ -47,14 +47,14 @@ add_action('add_meta_boxes_kfi_review', function () {
 });
 
 add_shortcode('gpt_font_identifier', function () {
-    wp_enqueue_style('gpt-font-id-css', plugin_dir_url(__FILE__) . 'assets/style.css', [], KFI_VERSION);
-    wp_enqueue_script('gpt-font-id-js', plugin_dir_url(__FILE__) . 'assets/script.js', ['jquery'], KFI_VERSION, true);
+    wp_enqueue_style('gpt-font-id-css', plugin_dir_url(__FILE__) . 'assets/style.css', [], KREATIV_GPT_FONT_ID_VERSION);
+    wp_enqueue_script('gpt-font-id-js', plugin_dir_url(__FILE__) . 'assets/script.js', ['jquery'], KREATIV_GPT_FONT_ID_VERSION, true);
     // Keep this global, its keys, nonce action and endpoint stable for installed extensions.
     // wp_localize_script coerces booleans to strings; this is configuration, not l10n.
     wp_add_inline_script('gpt-font-id-js', 'var GPTFontId = ' . wp_json_encode([
         'ajaxurl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('gpt_font_id_nonce'),
-        'version' => KFI_VERSION, 'publicStorage' => false, 'reviewRequiresOptIn' => true,
+        'version' => KREATIV_GPT_FONT_ID_VERSION, 'publicStorage' => false, 'reviewRequiresOptIn' => true,
     ]) . ';', 'before');
     ob_start(); ?>
     <form id="gpt-font-id-form" enctype="multipart/form-data">
@@ -272,7 +272,7 @@ function gpt_font_id_submit_review($result, $image)
         wp_trash_post($post_id);
         return false;
     }
-    add_post_meta($post_id, '_kfi_consent', 'admin-only-review:' . KFI_VERSION, true);
+    add_post_meta($post_id, '_kfi_consent', 'admin-only-review:' . KREATIV_GPT_FONT_ID_VERSION, true);
     return true;
 }
 

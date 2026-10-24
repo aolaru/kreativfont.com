@@ -2,6 +2,7 @@
 // Local integration harness only. This directory is never deployed to WordPress.
 define('ABSPATH', __DIR__ . '/');
 define('DAY_IN_SECONDS', 86400);
+define('KFI_VERSION', 'other-plugin-version'); // Another active Kreativ plugin owns this generic name.
 $fixture = $_GET['fixture'] ?? 'normal';
 $options = ['gpt_font_id_api_key' => 'fixture-not-a-key', 'gpt_font_id_auto_post' => 'yes', 'gpt_font_id_post_status' => 'publish'];
 $transients = []; $actions = []; $filters = []; $shortcodes = []; $posts = []; $metas = []; $api_calls = [];
