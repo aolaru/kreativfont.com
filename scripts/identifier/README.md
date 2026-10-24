@@ -49,6 +49,18 @@ accuracy score. Family variants are correlated; this is a small Latin/system-fon
 baseline, not proof of general commercial-font or logo identification quality.
 Results stay in the admin browser until explicitly exported.
 
+After exporting the JSON, make a local HTML report and per-sample CSV without
+any more API calls:
+
+```
+node benchmark/summarize.cjs /absolute/export.json /absolute/report-directory
+```
+
+The report retains access failures, error-inclusive denominators, unknown usage
+and the live-model checks. It does not turn missing measurements into zero cost
+or a successful abstention. Keep the manifest/rendered specimens with the export
+if you need to audit the scores later.
+
 Sources: official [Sol](https://developers.openai.com/api/docs/models/gpt-6.1-sol),
 [Luna](https://developers.openai.com/api/docs/models/gpt-6-luna),
 [GPT-4o](https://developers.openai.com/api/docs/models/gpt-4o), and

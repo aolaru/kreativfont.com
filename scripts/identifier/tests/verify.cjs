@@ -56,6 +56,11 @@ function png(width=240,height=80) {
     assert.equal(scoring.score({kind:'known_font',font:'Arial',aliases:[]},{ok:true,candidates:[{name:'Arial Narrow'}]}).top1,false);
     assert.equal(scoring.score({kind:'no_text'},{ok:true,candidates:[{name:'Arial'}]}).falsePositive,true);
     assert.equal(scoring.score({kind:'no_text'},{ok:false,candidates:[]}).abstained,false);
+    const counted=scoring.summary({models:['gpt-4o'],access:{},rows:[
+      {model:'gpt-4o',sample:{kind:'known_font'},outcome:{ok:false,metrics:{elapsed_ms:10,estimated_cost_usd:null}},score:{top1:false,top3:false}},
+      {model:'gpt-4o',sample:{kind:'no_text'},outcome:{ok:false,metrics:{elapsed_ms:20,estimated_cost_usd:null}},score:{abstained:false,falsePositive:false}},
+    ]})[0];
+    assert.equal(counted.known_samples,1);assert.equal(counted.top1,0);assert.equal(counted.control_abstentions,0);assert.equal(counted.unknown_cost_calls,2);assert.equal(counted.estimated_usd,null);
     const legacy=await submit();
     assert.equal(legacy.success,true);assert.equal(legacy.data.post_url,'');assert.equal(typeof legacy.data.html,'string');
     assert.equal(legacy.data.review_submitted,false);assert.equal(legacy._test.posts.length,0);assert.equal(legacy._test.metas.length,0);
