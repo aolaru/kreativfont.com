@@ -79,7 +79,7 @@ jobs:
           WP_SSH_PASSWORD: ${{ secrets.WP_SSH_PASSWORD }}
         run: |
           timeout 3m lftp -u "${WP_SSH_USER},${WP_SSH_PASSWORD}" \
-            -e "set cmd:fail-exit yes; set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20; put scripts/identifier/plugin/raster.php -o ${PLUGIN_PATH}/raster.php; put scripts/identifier/plugin/catalogue.php -o ${PLUGIN_PATH}/catalogue.php; put scripts/identifier/plugin/assets/admin.js -o ${PLUGIN_PATH}/assets/admin.js; put scripts/identifier/plugin/gpt-font-id.php -o ${PLUGIN_PATH}/gpt-font-id.php; put scripts/identifier/plugin/admin-page.php -o ${PLUGIN_PATH}/admin-page.php; put scripts/identifier/plugin/assets/style.css -o ${PLUGIN_PATH}/assets/style.css; put scripts/identifier/plugin/assets/script.js -o ${PLUGIN_PATH}/assets/script.js; bye" \
+            -e "set cmd:fail-exit yes; set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20; put scripts/identifier/plugin/evaluation.php -o ${PLUGIN_PATH}/evaluation.php; put scripts/identifier/plugin/raster.php -o ${PLUGIN_PATH}/raster.php; put scripts/identifier/plugin/catalogue.php -o ${PLUGIN_PATH}/catalogue.php; put scripts/identifier/plugin/assets/admin.js -o ${PLUGIN_PATH}/assets/admin.js; put scripts/identifier/plugin/gpt-font-id.php -o ${PLUGIN_PATH}/gpt-font-id.php; put scripts/identifier/plugin/admin-page.php -o ${PLUGIN_PATH}/admin-page.php; put scripts/identifier/plugin/assets/style.css -o ${PLUGIN_PATH}/assets/style.css; put scripts/identifier/plugin/assets/script.js -o ${PLUGIN_PATH}/assets/script.js; bye" \
             "sftp://${WP_SSH_HOST}:${WP_SSH_PORT}"
       - name: Verify the published frontend bytes
         run: |

@@ -71,10 +71,11 @@
       try {
         const manifestFile=document.querySelector('#kfi-bench-manifest').files[0];
         const files=new Map(Array.from(document.querySelector('#kfi-bench-images').files).map(file=>[file.name,file]));
-        const models=Array.from(document.querySelectorAll('.kfi-bench-model:checked')).map(input=>input.value);
+        const paired=document.querySelector('#kfi-bench-mode')?.value==='paired';
+        const models=paired?['ai_legacy','catalogue_082']:Array.from(document.querySelectorAll('.kfi-bench-model:checked')).map(input=>input.value);
         if (!manifestFile || !models.length) throw new Error('Choose a sample manifest, its image files and at least one model.');
         const manifest=JSON.parse(await manifestFile.text());
-        if (manifest.schema_version !== 1 || !Array.isArray(manifest.samples) || !manifest.samples.length || manifest.samples.length>50) throw new Error('Use a version-1 manifest with 1–50 samples.');
+        if (manifest.schema_version !== 1 || !Array.isArray(manifest.samples) || !manifest.samples.length || manifest.samples.length>100) throw new Error('Use a version-1 manifest with 1–100 samples.');
         const ids=new Set();
         for (const sample of manifest.samples) {
           if (!sample.id || ids.has(sample.id) || !['known_font','no_text'].includes(sample.kind) || (sample.kind==='known_font' && typeof sample.font!=='string') || !/^[a-f0-9]{64}$/.test(sample.sha256)) throw new Error('Invalid or duplicate labelled sample.');
@@ -85,22 +86,22 @@
         }
         running=true;stopped=false;run.disabled=true;stop.disabled=false;
         document.querySelector('#kfi-bench-table tbody').replaceChildren();
-        const report={schema_version:1,plugin_version:cfg.version,started_at:new Date().toISOString(),active_model_before:cfg.activeModel,models,profiles:cfg.profiles,dataset:manifest,access:{},rows:[],completed:false};
+        const report={schema_version:1,plugin_version:cfg.version,mode:paired?'paired':'models',fixed_model:paired?'gpt-4o':null,started_at:new Date().toISOString(),active_model_before:cfg.activeModel,models,profiles:cfg.profiles,dataset:manifest,access:{},rows:[],completed:false};
         window.kfiBenchmarkReport=report;
         for (const model of models) {
           status.textContent='Checking access: '+model;
-          const response=await $.ajax({url:cfg.ajaxurl,type:'POST',timeout:15000,data:{action:'gpt_test_api_key',nonce:cfg.accessNonce,model}});
+          const response=await $.ajax({url:cfg.ajaxurl,type:'POST',timeout:15000,data:{action:'gpt_test_api_key',nonce:cfg.accessNonce,model:paired?'gpt-4o':model}});
           report.access[model]=response.data;
           display(report);
         }
         const available=models.filter(model=>report.access[model]?.available);
         report.all_models_accessible=available.length===models.length;
         // Sample-major order interleaves models to reduce time/order bias.
-        for (const sample of manifest.samples) {
-          for (const model of available) {
+        for (const [sampleIndex,sample] of manifest.samples.entries()) {
+          for (const model of paired&&sampleIndex%2?[...available].reverse():available) {
             if (stopped) break;
             status.textContent=`Running ${report.rows.length+1}/${manifest.samples.length*available.length}: ${sample.id} · ${model}. Live model remains ${cfg.activeModel}.`;
-            const body=new FormData();body.append('action','gpt_font_id_benchmark');body.append('nonce',cfg.benchmarkNonce);body.append('model',model);body.append('font_image',files.get(sample.file),'benchmark-sample.'+sample.file.split('.').pop());
+            const body=new FormData();body.append('action',paired?'gpt_font_id_compare':'gpt_font_id_benchmark');body.append('nonce',cfg.benchmarkNonce);body.append(paired?'pipeline':'model',model);body.append('font_image',files.get(sample.file),'benchmark-sample.'+sample.file.split('.').pop());
             // Ground truth stays in this client. Do not send labels, aliases, or font filenames.
             const response=await $.ajax({url:cfg.ajaxurl,type:'POST',timeout:70000,data:body,contentType:false,processData:false});
             if (!response.success) throw new Error(typeof response.data==='string'?response.data:'Benchmark request failed.');

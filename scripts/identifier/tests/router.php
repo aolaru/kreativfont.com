@@ -23,6 +23,7 @@ function is_wp_error($value) { return $value instanceof WP_Error; }
 function get_option($name, $default = false) { return $GLOBALS['options'][$name] ?? $default; }
 function add_option($name, $value, ...$args) { if (isset($GLOBALS['options'][$name])) return false; $GLOBALS['options'][$name] = $value; return true; }
 function delete_option($name) { unset($GLOBALS['options'][$name]); }
+function update_option($name, $value, ...$args) { $GLOBALS['options'][$name] = $value; return true; }
 function get_transient($name) { return $GLOBALS['fixture'] === 'rate' && str_starts_with($name, 'kfi_ip_') ? 5 : ($GLOBALS['transients'][$name] ?? false); }
 function set_transient($name, $value, $ttl) { $GLOBALS['transients'][$name] = $value; }
 function wp_hash($value) { return hash_hmac('sha256', $value, 'test-only-salt'); }
@@ -89,6 +90,7 @@ function wp_remote_post($url, $args) {
         'comparison' => isset($request['text']['format']['schema']['properties']['candidates']['items']['properties']['name']['enum']),
         'selection' => ($request['text']['format']['schema']['properties']['candidates']['maxItems'] ?? 3) === 6,
         'image_count' => count(array_filter($request['input'][0]['content'], static fn($item) => $item['type'] === 'input_image')),
+        'style_schema' => isset($request['text']['format']['schema']['properties']['style']),
     ];
     if ($GLOBALS['fixture'] === 'failure') return ['code' => 500, 'body' => 'secret-provider-details-DO-NOT-EXPOSE'];
     if ($GLOBALS['fixture'] === 'network') return new WP_Error('network', 'secret-network-debug');
@@ -169,9 +171,11 @@ if (($_SERVER['REQUEST_URI'] ?? '') === '/unit') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($fixture === 'admin_compare_budget') { $options['gpt_font_id_compare_' . gmdate('Ymd')] = ['calls'=>320,'estimated_usd'=>5]; }
     if ($fixture === 'admin_budget') { $transients['gpt_font_id_bench_' . gmdate('Ymd')] = ['calls'=>160,'estimated_usd'=>5]; }
     try {
-        if (($_POST['action'] ?? '') === 'gpt_font_id_benchmark') { gpt_font_id_benchmark(); }
+        if (($_POST['action'] ?? '') === 'gpt_font_id_compare') { gpt_font_id_compare(); }
+        elseif (($_POST['action'] ?? '') === 'gpt_font_id_benchmark') { gpt_font_id_benchmark(); }
         elseif (($_POST['action'] ?? '') === 'gpt_test_api_key') { gpt_font_id_check_model_access(); }
         else { gpt_font_id_identify(); }
     }

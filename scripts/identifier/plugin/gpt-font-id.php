@@ -2,15 +2,16 @@
 /**
  * Plugin Name: Kreativ Font Identifier
  * Description: Image-based font suggestions, with no public upload storage and optional admin-only review.
- * Version: 0.8.2
+ * Version: 0.8.3
  * Author: Andrei Olaru
  */
 
 defined('ABSPATH') || exit;
-define('KREATIV_GPT_FONT_ID_VERSION', '0.8.2');
+define('KREATIV_GPT_FONT_ID_VERSION', '0.8.3');
 require_once __DIR__ . '/admin-page.php';
 require_once __DIR__ . '/raster.php';
 require_once __DIR__ . '/catalogue.php';
+require_once __DIR__ . '/evaluation.php';
 
 add_action('init', function () {
     // Neither the review nor its image is a public post or Media Library attachment.
@@ -218,7 +219,11 @@ function gpt_font_id_request_matches($image, $api_key, $model = null, &$metrics 
             ]]],
             'text' => ['format' => ['type' => 'json_schema', 'name' => 'font_suggestions', 'strict' => true, 'schema' => gpt_font_id_response_schema()]],
     ];
-    if ($comparison !== null) {
+    if (!empty($comparison['frozen_ai'])) {
+        // Exact 0.7.0 prompt/schema/profile: do not add catalogue style cues to this control.
+        unset($payload['text']['format']['schema']['properties']['style'], $payload['text']['format']['schema']['properties']['features']);
+        $payload['text']['format']['schema']['required'] = ['readable', 'sample_text', 'note', 'candidates'];
+    } elseif ($comparison !== null) {
         $payload['instructions'] = $comparison['instructions'];
         $payload['input'][0]['content'] = $comparison['content'];
         $payload['text']['format']['schema']['properties']['candidates']['items']['properties']['name']['enum'] = $comparison['keys'];
@@ -228,6 +233,7 @@ function gpt_font_id_request_matches($image, $api_key, $model = null, &$metrics 
     }
     if ($profile['reasoning'] !== null) { $payload['reasoning'] = ['effort' => $profile['reasoning']]; }
     $started = microtime(true);
+    try {
     $response = wp_remote_post('https://api.openai.com/v1/responses', [
         'timeout' => $comparison['timeout'] ?? 25,
         'headers' => ['Authorization' => 'Bearer ' . $api_key, 'Content-Type' => 'application/json'],
@@ -244,6 +250,7 @@ function gpt_font_id_request_matches($image, $api_key, $model = null, &$metrics 
         return new WP_Error('provider', $code === 429 ? 'The analysis service is busy. Please try again shortly.' : 'The analysis service is temporarily unavailable. Please try again later.');
     }
     $body = json_decode(wp_remote_retrieve_body($response), true);
+    $metrics['resolved_model'] = gpt_font_id_clean_text($body['model'] ?? '', 80);
     $metrics['service_tier'] = gpt_font_id_clean_text($body['service_tier'] ?? '', 30);
     $metrics['provider_status'] = gpt_font_id_clean_text($body['status'] ?? '', 30);
     $usage = $body['usage'] ?? [];
@@ -260,6 +267,10 @@ function gpt_font_id_request_matches($image, $api_key, $model = null, &$metrics 
         ) / 1000000, 8);
     }
     return gpt_font_id_parse_response($body, $comparison['limit'] ?? 3);
+    } finally {
+        // Request-scoped admin evaluation telemetry only. Never images, text, credentials or provider bodies.
+        if (isset($GLOBALS['gpt_font_id_eval_calls'])) { $GLOBALS['gpt_font_id_eval_calls'][] = $metrics; }
+    }
 }
 
 /** A benchmark never writes the live model setting, images, reports or review records. */

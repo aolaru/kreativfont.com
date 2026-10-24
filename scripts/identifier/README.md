@@ -1,4 +1,4 @@
-# Kreativ Font Identifier 0.8.2
+# Kreativ Font Identifier 0.8.3
 
 Authoritative source for the existing WordPress plugin installed in
 `/htdocs/wp-content/plugins/kreativ-gpt-font-dentifier/` (the historical directory
@@ -85,6 +85,39 @@ Local independent Pillow-versus-FreeType checks recovered the catalogue Bitter
 and Montserrat samples, with Caveat correctly outside that tested font pool.
 
 ## Configurable model and benchmark lab
+
+Paired evaluation mode compares the exact original 0.7.0 AI-only prompt/schema
+with the frozen 0.8.2 catalogue algorithm, always on GPT-4o. Live matching behaviour,
+model settings and extension contracts are unchanged. Up to 100 hash-verified
+samples can be compared; pipeline order alternates per image. Ground-truth family,
+style, aliases, source and coverage remain in the browser. Only a neutral image
+filename, pipeline key and nonce are sent. There is no public paired endpoint.
+
+Per-call telemetry records usage, resolved provider model, failures and estimated
+costs for all catalogue requests. Report latency includes retrieval and local
+rendering. A separate persistent daily guard reserves a maximum of three calls
+and $0.30 for catalogue processing, or one call and $0.05 for the old baseline,
+then reconciles known usage. Unknown usage keeps its reservation. Limits are 320
+generation calls / $5 estimated; deployment cache clears cannot reset this guard.
+No images/results are retained server-side, and no reviews or visitor counters
+are created/used by evaluation. Existing model-only benchmarks keep their limits.
+
+Create real public website crops with verified Chrome rendered-font metadata,
+then build independent Pillow specimens (including bold/italic), degradations and
+no-text controls. Freeze the manifest before any generation; keep ambiguous
+ground-truth exclusions and capture failures in its provenance. Font binaries
+stay in ignored local artifacts and are never included in the plugin package:
+
+```
+node benchmark/capture-real-world.cjs /absolute/dataset
+KFI_ITALIC_ONLY=1 node benchmark/capture-real-world.cjs /absolute/dataset
+python benchmark/build-catalogue-dataset.py /absolute/dataset
+```
+
+Real website crops are distinct from generated images. Scores are family-level,
+stratified by declared style, source and independently checked catalogue coverage;
+they do not certify exact weight/style identification. Archived 44-sample results
+remain a separate historical reference, never pooled into fresh paired scores.
 
 The default and existing live model remain **GPT-4o**. Settings → Font Identifier
 now has a fixed allowlist of GPT-4o, GPT-6.1 Sol and GPT-6 Luna. Changing the saved

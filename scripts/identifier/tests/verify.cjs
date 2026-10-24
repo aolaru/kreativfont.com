@@ -29,7 +29,7 @@ function png(width=240,height=80) {
     for(let i=0;i<30;i++){try{await fetch(base);break;}catch{await new Promise(r=>setTimeout(r,100));}}
     const pageHtml=await(await fetch(base)).text();
     const config=JSON.parse(pageHtml.match(/var GPTFontId\s*=\s*(\{.*?\});/s)[1]);
-    assert.equal(config.version,'0.8.2');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
+    assert.equal(config.version,'0.8.3');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
     const unit=await(await fetch(`${base}/unit`)).json();
     assert.deepEqual(unit.rate_sequence,[true,true,true,true,true,false]);
     assert.ok(unit.counter_keys.every(key=>!key.includes('127.0.0.1')));
@@ -51,6 +51,18 @@ function png(width=240,height=80) {
     assert.equal(benchmark.data.metrics.reasoning_tokens,100);assert.ok(benchmark.data.metrics.estimated_cost_usd>0);
     const budgeted=await submit('admin_budget',benchFields);assert.equal(budgeted.success,false);assert.equal(budgeted._test.calls.length,0);assert.equal(budgeted._test.benchmark_locked,false);
     const unsupported=await submit('admin',{...benchFields,model:'unknown'});assert.equal(unsupported.success,false);assert.equal(unsupported._test.calls.length,0);
+    const pairedFields={action:'gpt_font_id_compare',nonce:'fixture-nonce',pipeline:'ai_legacy',model:'gpt-6-luna',share_for_review:'yes',review_consent:'yes'};
+    const pairedDenied=await submit('normal',pairedFields);assert.equal(pairedDenied.success,false);assert.equal(pairedDenied._test.calls.length,0);
+    const pairedExpired=await submit('admin',{...pairedFields,nonce:'expired'});assert.equal(pairedExpired.success,false);
+    const frozen=await submit('admin',pairedFields);assert.equal(frozen.success,true);assert.equal(frozen.data.metrics.call_count,1);
+    assert.equal(frozen._test.calls[0].model,'gpt-4o');assert.equal(frozen._test.calls[0].style_schema,false);
+    assert.equal(frozen._test.posts.length,0);assert.equal(frozen._test.active_model,'gpt-4o');assert.equal(frozen._test.benchmark_locked,false);
+    const paired=await submit('admin',{...pairedFields,pipeline:'catalogue_082'});assert.equal(paired.success,true);
+    assert.equal(paired.data.metrics.call_count,3);assert.ok(paired._test.calls.every(call=>call.model==='gpt-4o'&&call.store===false&&call.temporary_file_deleted));
+    assert.ok(Math.abs(paired.data.metrics.estimated_cost_usd-3*0.005375)<1e-10);assert.equal(paired.data.budget.calls,3);
+    assert.equal(paired._test.posts.length,0);assert.equal(paired._test.metas.length,0);assert.equal(paired._test.active_model,'gpt-4o');
+    const badPipeline=await submit('admin',{...pairedFields,pipeline:'arbitrary'});assert.equal(badPipeline.success,false);assert.equal(badPipeline._test.calls.length,0);
+    const pairedBudget=await submit('admin_compare_budget',pairedFields);assert.equal(pairedBudget.success,false);assert.equal(pairedBudget._test.calls.length,0);assert.equal(pairedBudget._test.benchmark_locked,false);
     const scoring=require('../plugin/assets/admin.js');
     assert.equal(scoring.score({kind:'known_font',font:'Gill Sans',aliases:['Gill Sans MT']},{ok:true,candidates:[{name:'Gill Sans MT'}]}).top1,true);
     assert.equal(scoring.score({kind:'known_font',font:'Arial',aliases:[]},{ok:true,candidates:[{name:'Arial Narrow'}]}).top1,false);
@@ -161,6 +173,13 @@ function png(width=240,height=80) {
       assert.equal(bench.rows.length,3);assert.ok(bench.summary.every(row=>row.top1===1&&row.top3===1));
       assert.equal(await page.locator('#gpt_font_id_model').inputValue(),'gpt-4o');
       assert.ok(!lastFields.includes('Georgia'),'Ground truth must not be sent to the model');
+      await page.locator('#kfi-bench-mode').selectOption('paired');
+      await page.locator('#kfi-bench-run').click();
+      await page.waitForFunction(()=>window.kfiBenchmarkReport?.mode==='paired'&&window.kfiBenchmarkReport.completed);
+      const comparison=await page.evaluate(()=>window.kfiBenchmarkReport);
+      assert.equal(comparison.mode,'paired');assert.equal(comparison.rows.length,2);assert.equal(comparison.fixed_model,'gpt-4o');
+      assert.ok(comparison.rows.every(row=>row.outcome.active_model==='gpt-4o'&&row.outcome.pipeline===row.model));
+      assert.equal(comparison.rows.find(row=>row.model==='catalogue_082').outcome.metrics.call_count,3);
       await page.screenshot({path:'/tmp/kreativ-identifier-benchmark-local.png',fullPage:true});
       assert.deepEqual(pageErrors,[]);
       await browser.close();console.log('PASS: browser upload/consent gating; safe results and links; optional review; rotation consent reset; mobile layout; provider failure recovery.');
