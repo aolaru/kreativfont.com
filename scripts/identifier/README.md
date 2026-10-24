@@ -1,4 +1,4 @@
-# Kreativ Font Identifier 0.8.1
+# Kreativ Font Identifier 0.8.2
 
 Authoritative source for the existing WordPress plugin installed in
 `/htdocs/wp-content/plugins/kreativ-gpt-font-dentifier/` (the historical directory
@@ -8,6 +8,25 @@ reviewed PHP/frontend/admin assets.
 No credentials or saved API key are included in this source.
 
 ## Catalogue-assisted identification
+
+For clean, single-line ASCII/Latin crops, the first GPT-4o pass transcribes the
+sample, then GD/FreeType renders that text using existing local catalogue font
+files under `uploads/kreativ-fonts`. Normalized ink shapes and text proportions
+are compared in memory. Only a low shape distance with a clear margin over the
+next family, across at least three comparable families and a completed comparison
+within seven seconds, can return a single local shape-match candidate. Distances
+are retrieval gates, not calibrated confidence scores. This avoids asking a model
+to recognize a regular font from a thin-weight marketing image.
+
+No uploaded/generated sample is written to disk. The renderer reads only existing
+regular/400 TTF assets within each validated font folder; it never downloads fonts
+or follows catalogue paths outside that folder. Decoding is capped at four million
+pixels independently of the upload limit. Missing GD/font files, unsupported
+scripts, coloured/noisy backgrounds, bad OCR, multiple lines, ambiguous distances
+or a time-limited scan fall back to the AI/specimen flow below. Bold/italic styles
+and commercial fonts without local files are not covered by the strong local
+gate. This is still an uncertain family suggestion, not a license or identity
+certificate.
 
 The live website and existing Chrome extensions still use GPT-4o. The first pass
 suggests names and controlled style/features. Local WordPress queries retrieve
@@ -39,7 +58,9 @@ If there are no safe specimens, or selection/comparison fails, initial suggestio
 with exact-name catalogue links where available and a clear comparison-unavailable
 notice. Fuzzy retrieval alone never claims visual evidence. Initial/selection/
 comparison provider timeouts are 25/15/20 seconds; two extra paid API requests are
-possible per visitor upload, with up to six public reference images. All requests use
+possible per visitor upload when local shape matching is inconclusive, with up
+to six public reference images. A strong local shape match needs only the first
+AI transcription request. All requests use
 `store:false`. No default storage, optional dual-consent private review, shortcode,
 AJAX fields and the legacy extension HTML response shape are preserved.
 
@@ -57,7 +78,11 @@ Optionally set `KFI_EXTENSION_ROOT` to the unpacked existing extension and
 `KFI_CHROMIUM_EXECUTABLE` to an extension-capable Chromium binary. This test makes
 paid calls through the normal endpoint and rate limits, checks that comparisons
 finish, and writes local results/screenshots to ignored `dist/catalogue-smoke`.
-It does not assert a general accuracy uplift or create public reports.
+It does not assert a general accuracy uplift or create public reports. The
+three-sample smoke set includes Caveat, which was absent from the live catalogue
+when checked; do not count it as an in-catalogue identification success/failure.
+Local independent Pillow-versus-FreeType checks recovered the catalogue Bitter
+and Montserrat samples, with Caveat correctly outside that tested font pool.
 
 ## Configurable model and benchmark lab
 

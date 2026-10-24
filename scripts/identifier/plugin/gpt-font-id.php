@@ -2,13 +2,14 @@
 /**
  * Plugin Name: Kreativ Font Identifier
  * Description: Image-based font suggestions, with no public upload storage and optional admin-only review.
- * Version: 0.8.1
+ * Version: 0.8.2
  * Author: Andrei Olaru
  */
 
 defined('ABSPATH') || exit;
-define('KREATIV_GPT_FONT_ID_VERSION', '0.8.1');
+define('KREATIV_GPT_FONT_ID_VERSION', '0.8.2');
 require_once __DIR__ . '/admin-page.php';
+require_once __DIR__ . '/raster.php';
 require_once __DIR__ . '/catalogue.php';
 
 add_action('init', function () {

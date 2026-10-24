@@ -32,6 +32,8 @@ function sanitize_text_field($text) { return trim(strip_tags($text)); }
 function wp_strip_all_tags($text) { return strip_tags($text); }
 function remove_accents($text) { return $text; }
 function wp_parse_url($url, $component = -1) { return parse_url($url, $component); }
+function wp_upload_dir() { return ['basedir' => '/nonexistent-test-catalogue']; }
+function sanitize_title($value) { return strtolower(str_replace(' ', '-', $value)); }
 function get_term_by($field, $value, $taxonomy) { return $GLOBALS['fixture'] === 'no_catalogue' ? false : (object) ['slug' => $value]; }
 function get_permalink($post) { return 'https://kreativfont.com/fonts/' . strtolower(str_replace(' ', '-', gpt_font_id_catalogue_name($post->post_title))); }
 function get_post_thumbnail_id($id) { return $id; }

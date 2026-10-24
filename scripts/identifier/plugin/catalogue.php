@@ -133,6 +133,7 @@ function gpt_font_id_catalogue_retrieve($analysis)
 function gpt_font_id_catalogue_label($candidate)
 {
     if (($candidate['catalogue_status'] ?? '') !== 'listed') { return 'AI suggestion; no matching catalogue entry found in this search.'; }
+    if (($candidate['evidence'] ?? '') === 'local_render_match') { return 'Listed in Kreativ; locally rendered letter shapes compared. Exact identification is unverified.'; }
     return ($candidate['evidence'] ?? '') === 'specimen_compared'
         ? 'Listed in Kreativ; catalogue specimen compared by AI. Exact identification is unverified.'
         : 'Listed in Kreativ by name; specimen comparison unavailable. Exact identification is unverified.';
@@ -146,6 +147,21 @@ function gpt_font_id_catalogue_matches($image, $api_key)
     $analysis['catalogue_note'] = '';
     if (!$analysis['readable']) { return $analysis; }
     $rows = gpt_font_id_catalogue_retrieve($analysis);
+    $raster = gpt_font_id_raster_matches($image, $analysis['sample_text'], $rows);
+    if ($raster['strong']) {
+        $best = $raster['matches'][0];
+        foreach ($rows as $row) {
+            if ($row['id'] !== $best['id']) { continue; }
+            $row['preview_url'] = gpt_font_id_catalogue_preview($row['id']);
+            $row['catalogue_status'] = 'listed'; $row['evidence'] = 'local_render_match'; $row['kind'] = 'possible_match';
+            $row['reason'] = 'Rendering your transcribed text in the locally available catalogue fonts produced the closest letter shapes for this family, with a clear separation from the next candidate. Compare the original crop and confirm the exact style before use.';
+            $analysis['candidates'] = [$row];
+            $analysis['note'] = 'This comparison depends on an accurate transcription, a clean single-line crop and the available regular font files. It does not establish licensing or an exact identification.';
+            $analysis['catalogue'] = ['status' => 'local_shape_match', 'retrieved' => count($rows), 'compared' => count($raster['matches']) ? $raster['tested'] : 0];
+            $analysis['catalogue_note'] = 'Compared your text with ' . $raster['tested'] . ' locally available catalogue font files in memory. This family was the strongest shape match; exact identification remains unverified.';
+            return $analysis;
+        }
+    }
     $pool = []; $names = [];
     foreach ($rows as $row) {
         $row['catalogue_status'] = 'listed';

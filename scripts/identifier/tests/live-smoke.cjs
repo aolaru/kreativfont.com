@@ -18,7 +18,7 @@ const {chromium} = require(require.resolve('@playwright/test', {paths:[process.e
     for (const [index, file] of files.entries()) {
       await page.goto('https://kreativfont.com/tools/kreativ-font-identifier?catalogue-check=' + Date.now());
       const config = JSON.parse((await page.content()).match(/var GPTFontId\s*=\s*(\{.*?\});/s)[1]);
-      assert.equal(config.version, '0.8.1'); assert.equal(config.publicStorage, false); assert.equal(config.reviewRequiresOptIn, true);
+      assert.equal(config.version, '0.8.2'); assert.equal(config.publicStorage, false); assert.equal(config.reviewRequiresOptIn, true);
       await page.locator('input[name=font_image]').setInputFiles(file);
       await page.locator('#gpt-font-preview img').waitFor();
       await page.locator('#kfi-analysis-consent').check();
@@ -29,8 +29,8 @@ const {chromium} = require(require.resolve('@playwright/test', {paths:[process.e
       assert.equal(payload.success, true, JSON.stringify(payload.data));
       assert.equal(payload.data.post_url, ''); assert.equal(payload.data.review_submitted, false);
       assert.ok(payload.data.notice.includes('has not saved'));
-      assert.equal(payload.data.catalogue.status, 'compared', 'The live specimen comparison must actually finish.');
-      assert.ok(payload.data.catalogue.compared > 0 && payload.data.catalogue.compared <= 6);
+      assert.ok(['compared','local_shape_match'].includes(payload.data.catalogue.status), 'The live catalogue comparison must actually finish.');
+      assert.ok(payload.data.catalogue.compared > 0 && payload.data.catalogue.compared <= (payload.data.catalogue.status === 'local_shape_match' ? 600 : 6));
       for (const candidate of payload.data.candidates) {
         assert.equal(new URL(candidate.url).hostname, 'kreativfont.com');
         if (candidate.catalogue_status === 'listed') { assert.ok(candidate.id > 0); assert.ok(!new URL(candidate.url).searchParams.has('s')); }
@@ -57,10 +57,10 @@ const {chromium} = require(require.resolve('@playwright/test', {paths:[process.e
       await page.locator('#identify-button').click();
       const payload = await (await pending).json();
       assert.equal(payload.success,true,JSON.stringify(payload.data));
-      assert.equal(payload.data.catalogue.status,'compared');
+      assert.ok(['compared','local_shape_match'].includes(payload.data.catalogue.status));
       assert.equal(payload.data.post_url,''); assert.equal(payload.data.review_submitted,false);
       await page.locator('#result-section:not([hidden])').waitFor();
-      assert.ok((await page.locator('#result-content').innerText()).includes('catalogue specimens'));
+      assert.ok(/catalogue specimens|catalogue font files/.test(await page.locator('#result-content').innerText()));
       assert.ok((await page.locator('#result-content').innerText()).includes('has not saved'));
       assert.equal(await page.locator('#report-link').isVisible(),false);
       await page.screenshot({path:path.join(output,'extension.png')});

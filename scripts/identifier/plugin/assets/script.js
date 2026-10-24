@@ -111,7 +111,7 @@ jQuery(function ($) {
         const listed = candidate.catalogue_status === 'listed';
         if (candidate.catalogue_status) {
           paragraph(listed
-            ? (candidate.evidence === 'specimen_compared' ? 'In Kreativ · specimen compared by AI · identity unverified' : 'In Kreativ · name checked · specimen comparison unavailable')
+            ? (candidate.evidence === 'local_render_match' ? 'In Kreativ · locally rendered letter shapes compared · identity unverified' : (candidate.evidence === 'specimen_compared' ? 'In Kreativ · specimen compared by AI · identity unverified' : 'In Kreativ · name checked · specimen comparison unavailable'))
             : 'AI suggestion · no matching catalogue entry found in this search', card).className = 'kfi-catalogue-evidence';
         }
         const previewHref = listed ? safePreviewUrl(candidate.preview_url) : null;
