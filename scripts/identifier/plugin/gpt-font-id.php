@@ -2,13 +2,14 @@
 /**
  * Plugin Name: Kreativ Font Identifier
  * Description: Image-based font suggestions, with no public upload storage and optional admin-only review.
- * Version: 0.7.0
+ * Version: 0.8.0
  * Author: Andrei Olaru
  */
 
 defined('ABSPATH') || exit;
-define('KREATIV_GPT_FONT_ID_VERSION', '0.7.0');
+define('KREATIV_GPT_FONT_ID_VERSION', '0.8.0');
 require_once __DIR__ . '/admin-page.php';
+require_once __DIR__ . '/catalogue.php';
 
 add_action('init', function () {
     // Neither the review nor its image is a public post or Media Library attachment.
@@ -59,7 +60,7 @@ add_shortcode('gpt_font_identifier', function () {
     ob_start(); ?>
     <form id="gpt-font-id-form" enctype="multipart/form-data">
         <h2>Find possible fonts from an image</h2>
-        <p>Choose one clear line of text. Suggestions are a starting point, not a verified identification.</p>
+        <p>Choose one clear line of text. We check suggested names in the Kreativ catalogue and compare available font specimens. Results are a starting point, not a verified identification.</p>
         <label class="kfi-upload-label" for="kreativ-font-identifier-upload">Choose an image or drop it here</label>
         <input id="kreativ-font-identifier-upload" type="file" name="font_image" accept="image/jpeg,image/png,image/gif,image/webp" aria-describedby="kfi-file-help kfi-privacy" required>
         <p id="kfi-file-help">JPG, PNG, GIF or WebP · up to 4 MB · crop out unrelated text for better matches. Animated images use a single frame.</p>
@@ -156,11 +157,13 @@ function gpt_font_id_response_schema()
 {
     return [
         'type' => 'object', 'additionalProperties' => false,
-        'required' => ['readable', 'sample_text', 'note', 'candidates'],
+        'required' => ['readable', 'sample_text', 'note', 'style', 'features', 'candidates'],
         'properties' => [
             'readable' => ['type' => 'boolean'],
             'sample_text' => ['type' => 'string'],
             'note' => ['type' => 'string'],
+            'style' => ['type' => 'string', 'enum' => array_keys(gpt_font_id_catalogue_styles())],
+            'features' => ['type' => 'array', 'maxItems' => 3, 'items' => ['type' => 'string', 'enum' => gpt_font_id_catalogue_features()]],
             'candidates' => [
                 'type' => 'array', 'maxItems' => 3,
                 'items' => [
@@ -193,7 +196,7 @@ function gpt_font_id_active_model()
     return is_string($saved) && isset(gpt_font_id_models()[$saved]) ? $saved : 'gpt-4o';
 }
 
-function gpt_font_id_request_matches($image, $api_key, $model = null, &$metrics = null)
+function gpt_font_id_request_matches($image, $api_key, $model = null, &$metrics = null, $comparison = null)
 {
     $model = $model ?? gpt_font_id_active_model();
     $profiles = gpt_font_id_models();
@@ -214,10 +217,17 @@ function gpt_font_id_request_matches($image, $api_key, $model = null, &$metrics 
             ]]],
             'text' => ['format' => ['type' => 'json_schema', 'name' => 'font_suggestions', 'strict' => true, 'schema' => gpt_font_id_response_schema()]],
     ];
+    if ($comparison !== null) {
+        $payload['instructions'] = $comparison['instructions'];
+        $payload['input'][0]['content'] = $comparison['content'];
+        $payload['text']['format']['schema']['properties']['candidates']['items']['properties']['name']['enum'] = $comparison['keys'];
+    } else {
+        $payload['instructions'] .= ' Also classify the dominant font style and up to three visible features using the allowed vocabulary. Use unknown when the style is unclear. These attributes retrieve catalogue references; do not infer a font from text content or a brand name.';
+    }
     if ($profile['reasoning'] !== null) { $payload['reasoning'] = ['effort' => $profile['reasoning']]; }
     $started = microtime(true);
     $response = wp_remote_post('https://api.openai.com/v1/responses', [
-        'timeout' => 55,
+        'timeout' => $comparison === null ? 30 : 25,
         'headers' => ['Authorization' => 'Bearer ' . $api_key, 'Content-Type' => 'application/json'],
         'body' => wp_json_encode($payload),
     ]);
@@ -342,17 +352,21 @@ function gpt_font_id_parse_response($body)
         'readable' => $result['readable'],
         'sample_text' => gpt_font_id_clean_text($result['sample_text'], 120),
         'note' => gpt_font_id_clean_text($result['note'], 700),
+        'style' => is_string($result['style'] ?? null) && isset(gpt_font_id_catalogue_styles()[$result['style']]) ? $result['style'] : 'unknown',
+        'features' => array_values(array_intersect(gpt_font_id_catalogue_features(), is_array($result['features'] ?? null) ? array_filter($result['features'], 'is_string') : [])),
         'candidates' => $result['readable'] ? $candidates : [],
     ];
 }
 
 function gpt_font_id_result_html($result)
 {
-    $html = '<h3>Possible font matches</h3><p>AI suggestions, not a verified identification. Compare the letterforms and check the license before use.</p>';
+    $html = '<h3>Possible font matches</h3><p>AI suggestions, not a verified identification. Catalogue listings confirm availability in Kreativ, not an exact visual identification. Compare the letterforms and check the license before use.</p>';
+    if (!empty($result['catalogue_note'])) { $html .= '<p>' . esc_html($result['catalogue_note']) . '</p>'; }
     if ($result['sample_text']) { $html .= '<p>Text sample: ' . esc_html($result['sample_text']) . '</p>'; }
     foreach ($result['candidates'] as $candidate) {
         // Paragraph + name — reason is also understood by existing extension versions.
-        $html .= '<p><a href="' . esc_url($candidate['url']) . '" target="_blank" rel="noopener">' . esc_html($candidate['name']) . '</a> — ' . esc_html($candidate['reason']) . '</p>';
+        $evidence = isset($candidate['catalogue_status']) ? ' ' . gpt_font_id_catalogue_label($candidate) : '';
+        $html .= '<p><a href="' . esc_url($candidate['url']) . '" target="_blank" rel="noopener">' . esc_html($candidate['name']) . '</a> — ' . esc_html($candidate['reason'] . $evidence) . '</p>';
     }
     if (!$result['candidates']) { $html .= '<p>No reliable suggestions from this image. Try a sharper crop with one line of text.</p>'; }
     if ($result['note']) { $html .= '<p>' . esc_html($result['note']) . '</p>'; }
@@ -390,7 +404,7 @@ function gpt_font_id_identify()
     if (!$api_key) { wp_send_json_error('The identifier is temporarily unavailable. Please try again later.'); }
     $rate = gpt_font_id_check_rate_limit();
     if (is_wp_error($rate)) { wp_send_json_error($rate->get_error_message()); }
-    $result = gpt_font_id_request_matches($image, $api_key);
+    $result = gpt_font_id_catalogue_matches($image, $api_key);
     if (is_wp_error($result)) { wp_send_json_error($result->get_error_message()); }
     $sharing = ($_POST['share_for_review'] ?? '') === 'yes' && ($_POST['review_consent'] ?? '') === 'yes';
     $review_submitted = false;
@@ -405,5 +419,6 @@ function gpt_font_id_identify()
         'post_url' => '', // Never expose a private review URL to an anonymous submitter.
         'candidates' => $result['candidates'], 'sample_text' => $result['sample_text'],
         'note' => $result['note'], 'review_submitted' => $review_submitted, 'notice' => $notice,
+        'catalogue_note' => $result['catalogue_note'] ?? '', 'catalogue' => $result['catalogue'] ?? null,
     ]);
 }

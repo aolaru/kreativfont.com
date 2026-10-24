@@ -29,7 +29,7 @@ function png(width=240,height=80) {
     for(let i=0;i<30;i++){try{await fetch(base);break;}catch{await new Promise(r=>setTimeout(r,100));}}
     const pageHtml=await(await fetch(base)).text();
     const config=JSON.parse(pageHtml.match(/var GPTFontId\s*=\s*(\{.*?\});/s)[1]);
-    assert.equal(config.version,'0.7.0');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
+    assert.equal(config.version,'0.8.0');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
     const unit=await(await fetch(`${base}/unit`)).json();
     assert.deepEqual(unit.rate_sequence,[true,true,true,true,true,false]);
     assert.ok(unit.counter_keys.every(key=>!key.includes('127.0.0.1')));
@@ -67,7 +67,30 @@ function png(width=240,height=80) {
     assert.equal(legacy.data.review_submitted,false);assert.equal(legacy._test.posts.length,0);assert.equal(legacy._test.metas.length,0);
     assert.equal(legacy._test.calls[0].temporary_file_deleted,true);assert.equal(legacy._test.calls[0].store,false);
     assert.equal(legacy._test.calls[0].format,'json_schema');assert.equal(legacy.data.candidates.length,2);
-    assert.ok(legacy.data.candidates[0].url.startsWith('https://kreativfont.com/?s='));
+    assert.equal(legacy.data.candidates[0].url,'https://kreativfont.com/fonts/georgia');
+    assert.equal(legacy._test.calls.length,2);assert.ok(legacy._test.calls.every(call=>call.model==='gpt-4o'&&call.store===false&&call.temporary_file_deleted));
+    assert.equal(legacy._test.calls[1].comparison,true);assert.equal(legacy._test.calls[1].image_count,4);
+    assert.equal(legacy.data.catalogue.status,'compared');assert.equal(legacy.data.candidates[0].catalogue_status,'listed');
+    assert.equal(legacy.data.candidates[0].evidence,'specimen_compared');assert.ok(legacy.data.html.includes('Exact identification is unverified'));
+    assert.ok(legacy.data.candidates.every(candidate=>candidate.id===301||candidate.id===302));
+    for(const fixture of ['no_catalogue','empty_catalogue','invalid_rows']) {
+      const response=await submit(fixture);assert.equal(response.success,true,fixture);assert.equal(response._test.calls.length,1,fixture);
+      assert.ok(response.data.candidates.every(candidate=>candidate.catalogue_status==='not_found'),fixture);
+      assert.equal(response._test.posts.length,0);
+    }
+    for(const fixture of ['no_previews','unsafe_previews','comparison_failure']) {
+      const response=await submit(fixture);assert.equal(response.success,true,fixture);
+      assert.equal(response.data.candidates[0].catalogue_status,'listed',fixture);assert.equal(response.data.candidates[0].evidence,'name_lookup',fixture);
+      assert.equal(response.data.candidates[0].url,'https://kreativfont.com/fonts/georgia');
+      assert.equal(response._test.calls.length,fixture==='comparison_failure'?2:1);
+      assert.ok(!JSON.stringify(response.data).includes('attacker.test'));assert.equal(response._test.posts.length,0);
+    }
+    const invalidKey=await submit('invalid_key');assert.deepEqual(invalidKey.data.candidates,[]);
+    const abstained=await submit('comparison_abstain');assert.deepEqual(abstained.data.candidates,[]);
+    const unlisted=await submit('unlisted');assert.equal(unlisted.data.candidates[0].name,'Unknown Serif');
+    assert.equal(unlisted.data.candidates[0].catalogue_status,'not_found');assert.equal(unlisted.data.candidates[0].evidence,'ai_only');
+    assert.ok(unlisted.data.candidates[0].url.startsWith('https://kreativfont.com/?s='));
+    const styleOnly=await submit('style_only');assert.equal(styleOnly._test.calls.length,2);assert.equal(styleOnly.data.candidates[0].name,'Georgia');
     const oneFlag=await submit('normal',{share_for_review:'yes'});assert.equal(oneFlag._test.posts.length,0);
     const review=await submit('normal',{share_for_review:'yes',review_consent:'yes'});
     assert.equal(review.data.review_submitted,true);assert.equal(review.data.post_url,'');assert.equal(review._test.posts.length,1);
@@ -84,7 +107,7 @@ function png(width=240,height=80) {
       assert.ok(!JSON.stringify(response).includes('secret-'),fixture);
       if(fixture==='rate')assert.equal(response._test.calls.length,0);
     }
-    const hostile=await submit('hostile');assert.equal(hostile.success,true);assert.equal(hostile.data.candidates.length,2);
+    const hostile=await submit('hostile');assert.equal(hostile.success,true);assert.equal(hostile.data.candidates.length,1,'A changed/non-allowlisted catalogue key must be discarded');
     assert.ok(!hostile.data.html.includes('<script>'));assert.ok(!hostile.data.html.includes('<img'));assert.ok(!hostile.data.html.includes('javascript:'));
     const noText=await submit('no_text');assert.deepEqual(noText.data.candidates,[]);
     const invalid=await submit('normal',{},Buffer.from('not a real png'));assert.equal(invalid.success,false);assert.equal(invalid._test.calls.length,0);
@@ -109,7 +132,9 @@ function png(width=240,height=80) {
       await open();await select();assert.equal(requests,0);assert.equal(await page.locator('#kfi-identify').isDisabled(),true);
       await page.locator('#kfi-analysis-consent').check();await page.locator('#kfi-identify').click();
       await page.locator('#gpt-font-id-result.success').waitFor();assert.equal(requests,1);assert.ok(!lastFields.includes('share_for_review'));
-      assert.equal(await page.locator('.kfi-match').count(),2);assert.equal(await page.locator('.kfi-match a').first().getAttribute('href'),'https://kreativfont.com/?s=Georgia');
+      assert.equal(await page.locator('.kfi-match').count(),2);assert.equal(await page.locator('.kfi-match a').first().getAttribute('href'),'https://kreativfont.com/fonts/georgia');
+      assert.ok((await page.locator('.kfi-catalogue-evidence').first().innerText()).includes('specimen compared by AI'));
+      assert.equal(await page.locator('.kfi-match a').first().innerText(),'View Georgia in Kreativ →');
       assert.ok((await page.locator('#gpt-font-id-result').innerText()).includes('has not saved'));
       await page.screenshot({path:'/tmp/kreativ-identifier-local-results.png'});
       await page.locator('#kfi-remove').click();await select();await page.locator('#kfi-analysis-consent').check();await page.locator('#kfi-share-review').check();

@@ -29,6 +29,32 @@ function wp_hash($value) { return hash_hmac('sha256', $value, 'test-only-salt');
 function wp_generate_password(...$args) { return bin2hex(random_bytes(6)); }
 function wp_json_encode($value) { return json_encode($value); }
 function sanitize_text_field($text) { return trim(strip_tags($text)); }
+function wp_strip_all_tags($text) { return strip_tags($text); }
+function remove_accents($text) { return $text; }
+function wp_parse_url($url, $component = -1) { return parse_url($url, $component); }
+function get_term_by($field, $value, $taxonomy) { return $GLOBALS['fixture'] === 'no_catalogue' ? false : (object) ['slug' => $value]; }
+function get_permalink($post) { return 'https://kreativfont.com/fonts/' . strtolower(str_replace(' ', '-', gpt_font_id_catalogue_name($post->post_title))); }
+function get_post_thumbnail_id($id) { return $id; }
+function wp_get_attachment_image_src($id, $size) {
+    if ($GLOBALS['fixture'] === 'no_previews') { return false; }
+    return [$GLOBALS['fixture'] === 'unsafe_previews' ? 'https://attacker.test/private.png' : 'https://kreativfont.com/wp-content/uploads/fixture-' . $id . '.png', 768, 432];
+}
+class WP_Query {
+    public $posts = [];
+    public function __construct($args) {
+        if ($args['post_type'] !== 'post' || $args['post_status'] !== 'publish' || $args['has_password'] !== false || empty($args['tax_query'][0]['terms']) || ($args['tax_query'][1]['operator'] ?? '') !== 'NOT IN') { throw new Exception('Unrestricted catalogue query'); }
+        if ($GLOBALS['fixture'] === 'empty_catalogue') { return; }
+        foreach ([301 => 'Georgia Font', 302 => 'Bitter Font Free Download (Commercial Use)', 303 => 'Baskerville'] as $id => $title) {
+            if (isset($args['s']) && !str_contains(strtolower($title), strtolower($args['s']))) { continue; }
+            $this->posts[] = (object) ['ID' => $id, 'post_title' => $title, 'post_type' => 'post', 'post_status' => 'publish', 'post_password' => ''];
+        }
+        if ($GLOBALS['fixture'] === 'invalid_rows') {
+            $this->posts = [(object) ['ID' => 400, 'post_title' => 'Georgia Font', 'post_type' => 'kfi_review', 'post_status' => 'publish', 'post_password' => ''],
+                (object) ['ID' => 401, 'post_title' => 'Georgia Font', 'post_type' => 'post', 'post_status' => 'draft', 'post_password' => ''],
+                (object) ['ID' => 402, 'post_title' => 'Georgia Font', 'post_type' => 'post', 'post_status' => 'publish', 'post_password' => 'secret']];
+        }
+    }
+}
 function esc_html($text) { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8'); }
 function esc_attr($text) { return esc_html($text); }
 function esc_url($text) { return esc_html($text); }
@@ -58,15 +84,28 @@ function wp_remote_post($url, $args) {
         'format' => $request['text']['format']['type'], 'max_output_tokens' => $request['max_output_tokens'],
         'temporary_file_deleted' => !file_exists($_FILES['font_image']['tmp_name'] ?? '/nonexistent-test-upload'),
         'reasoning' => $request['reasoning'] ?? null,
+        'comparison' => isset($request['text']['format']['schema']['properties']['candidates']['items']['properties']['name']['enum']),
+        'image_count' => count(array_filter($request['input'][0]['content'], static fn($item) => $item['type'] === 'input_image')),
     ];
     if ($GLOBALS['fixture'] === 'failure') return ['code' => 500, 'body' => 'secret-provider-details-DO-NOT-EXPOSE'];
     if ($GLOBALS['fixture'] === 'network') return new WP_Error('network', 'secret-network-debug');
     if ($GLOBALS['fixture'] === 'refusal') return ['code' => 200, 'body' => json_encode(['status'=>'completed','output'=>[['content'=>[['type'=>'refusal','refusal'=>'private details']]]]] )];
     if ($GLOBALS['fixture'] === 'incomplete') return ['code' => 200, 'body' => json_encode(['status'=>'incomplete','output'=>[]])];
-    $result = ['readable'=>true,'sample_text'=>'Kreativ Serif','note'=>'Check the lowercase terminals against the original.','candidates'=>[
+    $comparison = end($GLOBALS['api_calls'])['comparison'];
+    if ($comparison && $GLOBALS['fixture'] === 'comparison_failure') { return ['code' => 500, 'body' => 'secret-comparison-failure']; }
+    $result = ['readable'=>true,'sample_text'=>'Kreativ Serif','note'=>'Check the lowercase terminals against the original.','style'=>'serif','features'=>[],'candidates'=>[
         ['name'=>'Georgia','reason'=>'Bracketed serifs and a generous x-height resemble the sample.','kind'=>'possible_match'],
         ['name'=>'Bitter','reason'=>'A similar serif direction; proportions differ.','kind'=>'similar_alternative'],
     ]];
+    if ($GLOBALS['fixture'] === 'unlisted') { $result['candidates'][0]['name'] = 'Unknown Serif'; }
+    if ($GLOBALS['fixture'] === 'style_only') { $result['candidates'] = []; }
+    if ($comparison) {
+        $result['candidates'][0] = ['name' => 'catalogue_301', 'reason' => 'Bracketed serifs resemble the specimen; the exact family is unverified.', 'kind' => 'possible_match'];
+        $result['candidates'][1] = ['name' => 'catalogue_302', 'reason' => 'The slab serifs offer a similar alternative; proportions differ.', 'kind' => 'similar_alternative'];
+        if ($GLOBALS['fixture'] === 'unlisted') { $result['candidates'][0]['name'] = 'ai_0'; }
+        if ($GLOBALS['fixture'] === 'invalid_key') { $result['candidates'][0]['name'] = 'catalogue_999999'; $result['candidates'][1]['name'] = 'https://attacker.test'; }
+        if ($GLOBALS['fixture'] === 'comparison_abstain') { $result['candidates'] = []; }
+    }
     if ($GLOBALS['fixture'] === 'no_text') { $result['readable'] = false; }
     if ($GLOBALS['fixture'] === 'hostile') {
         $result['candidates'][0]['name'] = '<script>alert(1)</script>Georgia';

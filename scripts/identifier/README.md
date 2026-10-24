@@ -1,4 +1,4 @@
-# Kreativ Font Identifier 0.7.0
+# Kreativ Font Identifier 0.8.0
 
 Authoritative source for the existing WordPress plugin installed in
 `/htdocs/wp-content/plugins/kreativ-gpt-font-dentifier/` (the historical directory
@@ -6,6 +6,36 @@ spelling is intentionally preserved). The theme deployment excludes `scripts/`.
 The dedicated plugin workflow backs up the installed plugin and uploads only the
 reviewed PHP/frontend/admin assets.
 No credentials or saved API key are included in this source.
+
+## Catalogue-assisted identification
+
+The live website and existing Chrome extensions still use GPT-4o. The first pass
+suggests names and controlled style/features. Local WordPress queries retrieve
+published, unprotected font posts from Fonts/Free Fonts, excluding tools, blog,
+identified reports and non-font categories. Title searches include a distinctive
+word for close family names; a style/feature query can retrieve references even
+when no name is suggested. At most six distinct catalogue families proceed.
+Only canonical same-site permalinks and the site's own public upload specimen
+images (including its WordPress image CDN) are accepted. No visitor image or
+result is added to an index, transient, log or public upload.
+
+A second request to the same saved model compares the visitor crop with available
+catalogue specimens. Its schema restricts selections to server-supplied keys;
+the server independently rejects unknown/changed keys, ignores model URLs/names,
+and attaches canonical catalogue names, IDs, previews and direct font-page links.
+Initial suggestions outside the shortlist may remain, explicitly unverified,
+with generated search links. Empty results remain empty. A limited retrieval
+does not establish absence from the entire catalogue, exact visual identity,
+licensing or current pricing. Artwork containing multiple fonts can be ambiguous.
+This is specimen-assisted retrieval, not a trained visual index of every font.
+
+If there are no safe specimens, or comparison fails, initial suggestions survive
+with exact-name catalogue links where available and a clear comparison-unavailable
+notice. Fuzzy retrieval alone never claims visual evidence. Initial/comparison
+provider timeouts are 30/25 seconds; one extra paid API request is possible per
+visitor upload, with up to six public reference images. Both requests use
+`store:false`. No default storage, optional dual-consent private review, shortcode,
+AJAX fields and the legacy extension HTML response shape are preserved.
 
 ## Configurable model and benchmark lab
 
@@ -16,8 +46,9 @@ override it; no automatic model promotion or fallback is performed. The existing
 shortcode, extension nonce/config fields and HTML/JSON response remain compatible.
 
 The administrator-only benchmark lab checks exact model access before generation.
-It uses the same image prompt, high-detail inputs, response schema, parser and
-model profiles as the public identifier. GPT-4o keeps its 1600-token cap; the two
+It measures the first AI pass only, using its prompt, high-detail input, response
+schema, parser and model profiles. It does not measure the complete catalogue flow.
+GPT-4o keeps its 1600-token cap; the two
 reasoning candidates use low effort and a 4096-token cap, explicitly recorded in
 each result. An incomplete response stops a full run for profile adjustment.
 No benchmark changes `gpt_font_id_model`, creates review records, or consumes the

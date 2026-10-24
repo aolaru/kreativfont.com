@@ -29,6 +29,8 @@ body.dark-mode #gpt-font-id-form, body.dark-mode #gpt-font-id-result { --kfi-sur
 #gpt-font-id-result a, #kfi-privacy a { color:var(--kfi-accent); text-decoration:underline; text-underline-offset:3px; }
 #gpt-font-id-result .kfi-sample-text { padding:14px; border-left:3px solid var(--kfi-accent); overflow-wrap:anywhere; }
 #gpt-font-id-result .kfi-result-notice { font-size:.9rem; color:var(--kfi-muted); }
+#gpt-font-id-result .kfi-catalogue-evidence { font-size:.85rem; color:var(--kfi-muted); }
+#gpt-font-id-result .kfi-catalogue-preview { display:block; width:100%; max-height:260px; object-fit:contain; border:1px solid var(--kfi-line); border-radius:8px; margin:14px 0; }
 #gpt-font-id-result.error { border-color:#b3261e; }
 #gpt-font-id-form [hidden], #gpt-font-id-loading[hidden], #gpt-font-id-result[hidden] { display:none !important; }
 @media (prefers-reduced-motion:reduce) { #gpt-font-id-loading .gpt-spinner { animation:none; } }

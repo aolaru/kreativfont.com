@@ -88,21 +88,42 @@ jQuery(function ($) {
       return url.protocol === 'https:' && url.origin === new URL(GPTFontId.ajaxurl).origin ? url.href : null;
     } catch { return null; }
   }
+  function safePreviewUrl(value) {
+    try {
+      const url = new URL(value), site = new URL(GPTFontId.ajaxurl);
+      const own = url.origin === site.origin && url.pathname.startsWith('/wp-content/uploads/');
+      const cdn = ['i0.wp.com', 'i1.wp.com', 'i2.wp.com'].includes(url.hostname) && url.pathname.startsWith('/' + site.hostname + '/wp-content/uploads/');
+      return url.protocol === 'https:' && !url.username && !url.password && !url.port && (own || cdn) && /\.(png|jpe?g|webp)$/i.test(url.pathname) ? url.href : null;
+    } catch { return null; }
+  }
   function showSuccess(data) {
     clearResult(); result.hidden = false; result.className = 'success';
     const title = document.createElement('h2'); title.textContent = 'Your font shortlist'; result.appendChild(title);
     paragraph('AI suggestions, not a verified identification. Compare the letterforms and check licensing before use.');
     if (data && typeof data === 'object' && Array.isArray(data.candidates)) {
+      if (data.catalogue_note) paragraph(data.catalogue_note).className = 'kfi-catalogue-note';
       if (data.sample_text) paragraph('Text sample: ' + data.sample_text).className = 'kfi-sample-text';
       if (!data.candidates.length) paragraph('No reliable suggestions from this image. Try a sharper crop with one line of text.');
       data.candidates.slice(0, 3).forEach(candidate => {
         const card = document.createElement('article'); card.className = 'kfi-match';
         const tag = paragraph(candidate.kind === 'similar_alternative' ? 'Similar alternative' : 'Possible match', card); tag.className = 'kfi-match-kind';
         const heading = document.createElement('h3'); heading.textContent = candidate.name; card.appendChild(heading);
+        const listed = candidate.catalogue_status === 'listed';
+        if (candidate.catalogue_status) {
+          paragraph(listed
+            ? (candidate.evidence === 'specimen_compared' ? 'In Kreativ · specimen compared by AI · identity unverified' : 'In Kreativ · name checked · specimen comparison unavailable')
+            : 'AI suggestion · no matching catalogue entry found in this search', card).className = 'kfi-catalogue-evidence';
+        }
+        const previewHref = listed ? safePreviewUrl(candidate.preview_url) : null;
+        if (previewHref) {
+          const image = document.createElement('img'); image.src = previewHref; image.alt = candidate.name + ' catalogue specimen';
+          image.loading = 'lazy'; image.decoding = 'async'; image.className = 'kfi-catalogue-preview';
+          image.addEventListener('error', () => image.remove(), {once: true}); card.appendChild(image);
+        }
         paragraph(candidate.reason, card);
         const href = safeSiteUrl(candidate.url);
         if (href) {
-          const link = document.createElement('a'); link.href = href; link.textContent = 'Find ' + candidate.name + ' in Kreativ →'; card.appendChild(link);
+          const link = document.createElement('a'); link.href = href; link.textContent = (listed ? 'View ' : 'Search for ') + candidate.name + ' in Kreativ →'; card.appendChild(link);
         }
         result.appendChild(card);
       });
