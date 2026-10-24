@@ -2,12 +2,12 @@
 /**
  * Plugin Name: Kreativ Font Identifier
  * Description: Image-based font suggestions, with no public upload storage and optional admin-only review.
- * Version: 0.8.4
+ * Version: 0.8.5
  * Author: Andrei Olaru
  */
 
 defined('ABSPATH') || exit;
-define('KREATIV_GPT_FONT_ID_VERSION', '0.8.4');
+define('KREATIV_GPT_FONT_ID_VERSION', '0.8.5');
 require_once __DIR__ . '/admin-page.php';
 require_once __DIR__ . '/raster.php';
 require_once __DIR__ . '/catalogue.php';
@@ -247,8 +247,17 @@ function gpt_font_id_request_matches($image, $api_key, $model = null, &$metrics 
     $metrics['http_status'] = $code;
     if ($code !== 200) {
         $error = json_decode(wp_remote_retrieve_body($response), true);
-        $safe_code = $error['error']['code'] ?? '';
-        $metrics['provider_error_code'] = in_array($safe_code, ['rate_limit_exceeded', 'insufficient_quota', 'billing_hard_limit_reached', 'model_not_found', 'invalid_api_key'], true) ? $safe_code : 'unclassified';
+        foreach (['code', 'type'] as $field) {
+            $value = $error['error'][$field] ?? '';
+            $metrics['provider_error_' . $field] = is_string($value) && preg_match('/^[a-z_]{3,64}$/D', $value) ? $value : 'unclassified';
+        }
+        $metrics['provider_response_format'] = is_array($error) ? 'json' : 'non_json';
+        $diagnostic = strtolower(wp_remote_retrieve_body($response));
+        $metrics['provider_limit_hint'] = preg_match('/quota|billing|credit|daily|per day|budget/', $diagnostic) ? 'quota_or_budget'
+            : (preg_match('/rate.limit|too many requests|per minute|try again/', $diagnostic) ? 'throttling' : 'unclassified');
+        $retry = wp_remote_retrieve_header($response, 'retry-after');
+        $metrics['retry_after_seconds'] = is_numeric($retry) ? max(0, min(86400, (int) $retry)) : null;
+        $metrics['provider_request_id_present'] = (bool) wp_remote_retrieve_header($response, 'x-request-id');
         // Do not send provider response bodies, credentials or debug details to visitors.
         return new WP_Error('provider', $code === 429 ? 'The analysis service is busy. Please try again shortly.' : 'The analysis service is temporarily unavailable. Please try again later.');
     }

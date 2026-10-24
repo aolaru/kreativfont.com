@@ -18,7 +18,7 @@ const {chromium} = require(require.resolve('@playwright/test', {paths:[process.e
     for (const [index, file] of files.entries()) {
       await page.goto('https://kreativfont.com/tools/kreativ-font-identifier?catalogue-check=' + Date.now());
       const config = JSON.parse((await page.content()).match(/var GPTFontId\s*=\s*(\{.*?\});/s)[1]);
-      assert.equal(config.version, '0.8.4'); assert.equal(config.publicStorage, false); assert.equal(config.reviewRequiresOptIn, true);
+      assert.equal(config.version, '0.8.5'); assert.equal(config.publicStorage, false); assert.equal(config.reviewRequiresOptIn, true);
       await page.locator('input[name=font_image]').setInputFiles(file);
       await page.locator('#gpt-font-preview img').waitFor();
       await page.locator('#kfi-analysis-consent').check();

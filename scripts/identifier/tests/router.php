@@ -125,6 +125,7 @@ function wp_remote_post($url, $args) {
 }
 function wp_remote_retrieve_body($response) { return $response['body']; }
 function wp_remote_retrieve_response_code($response) { return $response['code']; }
+function wp_remote_retrieve_header($response, $header) { return $response['headers'][$header] ?? ''; }
 function wp_insert_post($post, ...$args) {
     foreach ($GLOBALS['filters']['wp_insert_post_data'] ?? [] as $filter) $post = $filter($post);
     $GLOBALS['posts'][] = $post; return count($GLOBALS['posts']);
