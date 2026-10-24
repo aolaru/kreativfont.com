@@ -36,6 +36,7 @@ function plugin_dir_url($file) { return '/plugin/'; }
 function wp_enqueue_style(...$args) {}
 function wp_enqueue_script(...$args) {}
 function wp_localize_script($handle, $name, $config) { echo '<script>var ' . $name . '=' . json_encode($config) . ';</script>'; }
+function wp_add_inline_script($handle, $code, $position) { echo '<script>' . $code . '</script>'; }
 function wp_create_nonce($action) { return 'fixture-nonce'; }
 function check_ajax_referer($action, $field = false, $stop = true) { return ($_POST[$field ?: '_ajax_nonce'] ?? '') === 'fixture-nonce'; }
 function nocache_headers() { header('Cache-Control: no-store'); }
