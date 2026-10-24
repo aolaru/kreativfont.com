@@ -5,7 +5,8 @@ const {summary} = require('../plugin/assets/admin.js');
 const report = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 const output = path.resolve(process.argv[3] || path.dirname(process.argv[2]));
 fs.mkdirSync(output, {recursive:true});
-const models = summary(report);
+const models = summary(report); // Recalculate from immutable per-request data, including conventional even-N medians.
+fs.writeFileSync(path.join(output,'summary.json'),JSON.stringify(models,null,2)+'\n');
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const csv = value => '"' + String(value ?? '').replaceAll('"','""') + '"';
 const rate = (n,d) => d ? `${n}/${d} (${(100*n/d).toFixed(1)}%)` : 'not measured';

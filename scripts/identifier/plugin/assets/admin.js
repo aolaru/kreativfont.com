@@ -20,7 +20,7 @@
         known_samples:known.length, top1:known.filter(row=>row.score.top1).length, top3:known.filter(row=>row.score.top3).length,
         controls:controls.length, false_positives:controls.filter(row=>row.score.falsePositive).length,
         control_abstentions:controls.filter(row=>row.outcome.ok && row.score.abstained).length,
-        median_ms:times.length ? times[Math.floor(times.length/2)] : null,
+        median_ms:times.length ? (times.length%2 ? times[Math.floor(times.length/2)] : (times[times.length/2-1]+times[times.length/2])/2) : null,
         estimated_usd:costs.length ? costs.reduce((a,b)=>a+b,0) : null, unknown_cost_calls:rows.length-costs.length};
     });
   }

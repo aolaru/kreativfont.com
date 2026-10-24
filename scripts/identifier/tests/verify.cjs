@@ -61,6 +61,7 @@ function png(width=240,height=80) {
       {model:'gpt-4o',sample:{kind:'no_text'},outcome:{ok:false,metrics:{elapsed_ms:20,estimated_cost_usd:null}},score:{abstained:false,falsePositive:false}},
     ]})[0];
     assert.equal(counted.known_samples,1);assert.equal(counted.top1,0);assert.equal(counted.control_abstentions,0);assert.equal(counted.unknown_cost_calls,2);assert.equal(counted.estimated_usd,null);
+    assert.equal(counted.median_ms,15,'Even sample counts use the mean of the two middle timings');
     const legacy=await submit();
     assert.equal(legacy.success,true);assert.equal(legacy.data.post_url,'');assert.equal(typeof legacy.data.html,'string');
     assert.equal(legacy.data.review_submitted,false);assert.equal(legacy._test.posts.length,0);assert.equal(legacy._test.metas.length,0);
