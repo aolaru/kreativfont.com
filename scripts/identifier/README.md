@@ -1,4 +1,4 @@
-# Kreativ Font Identifier 0.8.6
+# Kreativ Font Identifier 0.9.0
 
 Authoritative source for the existing WordPress plugin installed in
 `/htdocs/wp-content/plugins/kreativ-gpt-font-dentifier/` (the historical directory
@@ -9,94 +9,71 @@ No credentials or saved API key are included in this source.
 
 ## Catalogue-assisted identification
 
-For clean, single-line ASCII/Latin crops, the first GPT-4o pass transcribes the
-sample, then GD/FreeType renders that text using existing local catalogue font
-files under `uploads/kreativ-fonts`. Normalized ink shapes and text proportions
-are compared in memory. Only a low shape distance with a clear margin over the
-next family, across at least three comparable families and a completed comparison
-within seven seconds, can return a single local shape-match candidate. Distances
-are retrieval gates, not calibrated confidence scores. This avoids asking a model
-to recognize a regular font from a thin-weight marketing image.
+The website and existing Chrome extensions keep the saved GPT-4o configuration,
+shortcode, nonce, upload fields, privacy flags and legacy HTML response contract.
 
-No uploaded/generated sample is written to disk. The renderer reads only existing
-regular/400 TTF assets within each validated font folder; it never downloads fonts
-or follows catalogue paths outside that folder. Decoding is capped at four million
-pixels independently of the upload limit. Missing GD/font files, unsupported
-scripts, coloured/noisy backgrounds, bad OCR, multiple lines, ambiguous distances
-or a time-limited scan fall back to the AI/specimen flow below. Bold/italic styles
-and commercial fonts without local files are not covered by the strong local
-gate. This is still an uncertain family suggestion, not a license or identity
-certificate.
+Each visitor analysis now makes one existing AI transcription/suggestion request.
+Local WordPress queries retrieve up to 600 published, unprotected font families.
+GD/FreeType compares their actual regular, bold, italic and bold-italic TTF files
+in memory. It never synthesizes weight/slant, downloads fonts, stores generated
+samples, or follows filesystem paths outside a validated family folder. Existing
+aliases regular/400, 700/bold, italic/400italic and 700italic/bolditalic are supported.
+Missing faces are skipped rather than silently replaced by regular.
 
-The live website and existing Chrome extensions still use GPT-4o. The first pass
-suggests names and controlled style/features. Local WordPress queries retrieve
-published, unprotected font posts from Fonts/Free Fonts, excluding tools, blog,
-identified reports and non-font categories. Title searches include a distinctive
-word for close family names; a style query can retrieve references even when no
-name is suggested. Feature labels boost retrieval without excluding the broader
-style pool. At most 600 distinct catalogue families enter a constrained name
-selection pass; up to six proceed to the specimen comparison. Attachment metadata
-is resolved only for these selected references and exact-name fallbacks.
-Only canonical same-site permalinks and the site's own public upload specimen
-images (including its WordPress image CDN) are accepted. No visitor image or
-result is added to an index, transient, log or public upload.
+Small renders shortlist twelve distinct families; every available face of those
+families receives a higher-resolution comparison. The acceptance margin is between
+families, not sibling faces. Decoding is capped at four million pixels. A six-second
+shortlist/seven-second total comparison limit protects visitor latency. Partial
+scans cannot promote a match. Sparse text, unsupported scripts, noisy backgrounds,
+bad OCR and ambiguous comparisons retain the initial AI suggestions.
 
-A second request to the same saved model sees the query image and the broad
-family-name pool, selecting up to six promising references. This gives real
-catalogue families omitted by the initial guesses a chance to be compared. A
-third request compares the crop with the selected public catalogue specimens.
-Both schemas restrict selections to server-supplied keys;
-the server independently rejects unknown/changed keys, ignores model URLs/names,
-and attaches canonical catalogue names, IDs, previews and direct font-page links.
-Initial suggestions outside the shortlist may remain, explicitly unverified,
-with generated search links. Empty results remain empty. A limited retrieval
-does not establish absence from the entire catalogue, exact visual identity,
-licensing or current pricing. Artwork containing multiple fonts can be ambiguous.
-This is specimen-assisted retrieval, not a trained visual index of every font.
+A nearest local font cannot establish identity when the actual font is absent.
+A candidate is promoted only when a strict shape/aspect check agrees with an
+existing AI possible-match family. Exact family/explicit face suffixes are accepted
+for corroboration; fuzzy title matches and distinct families such as Arial Narrow
+versus Arial do not qualify. An AI-labelled alternative never becomes an identity.
 
-If there are no safe specimens, or selection/comparison fails, initial suggestions survive
-with exact-name catalogue links where available and a clear comparison-unavailable
-notice. Fuzzy retrieval alone never claims visual evidence. Initial/selection/
-comparison provider timeouts are 25/15/20 seconds; two extra paid API requests are
-possible per visitor upload when local shape matching is inconclusive, with up
-to six public reference images. A strong local shape match needs only the first
-AI transcription request. All requests use
-`store:false`. No default storage, optional dual-consent private review, shortcode,
-AJAX fields and the legacy extension HTML response shape are preserved.
+Conflicting nearest fonts are returned separately as `catalogue_alternatives`,
+always labelled similar alternatives, with the compared file style. All original
+AI suggestions retain their order unless a corroborated candidate is promoted.
+This prevents Georgia → Gelasio and Times New Roman → Jomolhari substitutions from
+being presented as identifications. It does not guarantee all font IDs are correct.
 
-The first live smoke run exposed that six references retrieved directly from the
-initial guesses missed the known families in three synthetic samples. Version
-0.8.1 adds the broad family selection pass before visual comparison. Smoke checks
-exercise the complete pipeline and existing MV3 extension against the real site:
+The previous two extra AI selection/specimen-ranking requests are removed. Catalogue
+gaps cannot erase plausible initial suggestions or force an invented match. Direct
+font-page links and preview images come only from public same-site catalogue rows,
+not model-provided URLs. Legacy extensions still receive paragraphs in the form
+"name — reason", with a separate alternatives heading. No default image/report
+storage and optional explicit private review remain unchanged.
 
-```
-KFI_LIVE_GENERATION=1 KFI_NODE_MODULES=/absolute/node_modules \
-  node tests/live-smoke.cjs /absolute/synthetic-1.png /absolute/synthetic-2.png
-```
+## Offline checks (no paid API calls)
 
-Optionally set `KFI_EXTENSION_ROOT` to the unpacked existing extension and
-`KFI_CHROMIUM_EXECUTABLE` to an extension-capable Chromium binary. This test makes
-paid calls through the normal endpoint and rate limits, checks that comparisons
-finish, and writes local results/screenshots to ignored `dist/catalogue-smoke`.
-It does not assert a general accuracy uplift or create public reports. The
-three-sample smoke set includes Caveat, which was absent from the live catalogue
-when checked; do not count it as an in-catalogue identification success/failure.
-Local independent Pillow-versus-FreeType checks recovered the catalogue Bitter
-and Montserrat samples, with Caveat correctly outside that tested font pool.
+`benchmark/build-offline-fixtures.py` prepares existing cached font assets and
+independent Pillow specimens. `benchmark/local-eval.php` throws if a model request
+is attempted. It replays saved images with their known transcription, and uses
+saved AI-only outputs only for a separate policy check. The font pool is reduced;
+these are component tests, not a new end-to-end identifier accuracy score.
+
+The 0.9.0 local check covered 101 images: 70 saved cases plus 31 new specimens.
+All 31 held-out clean specimens ranked the correct family and face (12 regular,
+8 bold, 8 italic, 3 bold italic). Both saved false-match cases were rejected as
+primary catalogue matches and retained only as explicitly labelled alternatives.
+No paid calls were made. The historical partial report/data remain unchanged.
 
 ## Configurable model and benchmark lab
 
-Paired evaluation mode compares the exact original 0.7.0 AI-only prompt/schema
-with the frozen 0.8.2 catalogue algorithm, always on GPT-4o. Live matching behaviour,
-model settings and extension contracts are unchanged. Up to 100 hash-verified
+Paired evaluation mode compares the original 0.7.0 AI-only prompt/schema with the
+versioned 0.9.0 catalogue flow, always on GPT-4o. Historic 0.8.2 checkpoints are
+rejected before generation; they cannot be mixed into this algorithm. Existing
+reports still support both pipeline versions. Model settings and extension
+contracts remain unchanged. Up to 100 hash-verified
 samples can be compared; pipeline order alternates per image. Ground-truth family,
 style, aliases, source and coverage remain in the browser. Only a neutral image
 filename, pipeline key and nonce are sent. There is no public paired endpoint.
 
 Per-call telemetry records usage, resolved provider model, failures and estimated
 costs for all catalogue requests. Report latency includes retrieval and local
-rendering. A separate persistent daily guard reserves a maximum of three calls
-and $0.30 for catalogue processing, or one call and $0.05 for the old baseline,
+rendering. A separate persistent daily guard reserves one call and $0.05 for either pipeline,
 then reconciles known usage. Unknown usage keeps its reservation. Limits are 320
 generation calls / $5 estimated; deployment cache clears cannot reset this guard.
 No images/results are retained server-side, and no reviews or visitor counters

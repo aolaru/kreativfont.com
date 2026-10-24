@@ -1,11 +1,11 @@
 <?php
-/** Admin-only paired evaluation. Live catalogue algorithm is frozen at 0.8.2. */
+/** Admin-only paired evaluation. Versioned keys prevent mixing different matching algorithms. */
 defined('ABSPATH') || exit;
 add_action('wp_ajax_gpt_font_id_compare', 'gpt_font_id_compare');
 
 function gpt_font_id_compare_metrics($calls, $started)
 {
-    $metrics = ['model' => 'gpt-4o', 'pipeline_version' => '0.8.2', 'elapsed_ms' => (int) round((microtime(true) - $started) * 1000),
+    $metrics = ['model' => 'gpt-4o', 'pipeline_version' => '0.9.0', 'elapsed_ms' => (int) round((microtime(true) - $started) * 1000),
         'call_count' => count($calls), 'calls' => $calls, 'estimated_cost_usd' => 0, 'input_tokens' => 0, 'output_tokens' => 0,
         'provider_status' => 'completed', 'http_status' => 200];
     foreach ($calls as $call) {
@@ -25,7 +25,7 @@ function gpt_font_id_compare()
     if (!current_user_can('manage_options')) { wp_send_json_error('Not permitted.', 403); }
     if (!check_ajax_referer('gpt_font_id_benchmark_nonce', 'nonce', false)) { wp_send_json_error('Refresh this settings page before benchmarking.', 403); }
     $pipeline = $_POST['pipeline'] ?? '';
-    if (!is_string($pipeline) || !in_array($pipeline, ['ai_legacy', 'catalogue_082'], true)) { wp_send_json_error('Unsupported comparison pipeline.'); }
+    if (!is_string($pipeline) || !in_array($pipeline, ['ai_legacy', 'catalogue_090'], true)) { wp_send_json_error('This comparison pipeline is not available. Historic 0.8.2 results cannot be resumed with the new matching algorithm.'); }
     $image = gpt_font_id_prepare_image($_FILES['font_image'] ?? null);
     if (is_wp_error($image)) { wp_send_json_error($image->get_error_message()); }
     $key = get_option('gpt_font_id_api_key', '');
@@ -40,8 +40,8 @@ function gpt_font_id_compare()
         // A persistent option survives deployment cache clears. Separate from visitor and model-lab counters.
         $budget_key = 'gpt_font_id_compare_' . gmdate('Ymd', $now);
         $budget = get_option($budget_key, ['calls' => 0, 'estimated_usd' => 0]);
-        $reserved_calls = $pipeline === 'catalogue_082' ? 3 : 1;
-        $reserve = $pipeline === 'catalogue_082' ? 0.30 : 0.05;
+        $reserved_calls = 1;
+        $reserve = 0.05;
         if ($budget['calls'] + $reserved_calls > 320 || $budget['estimated_usd'] + $reserve > 5.00) {
             $response = new WP_Error('budget', 'The paired benchmark daily guard ($5 estimated / 320 generation requests) has been reached. Export partial results.');
         } else {
@@ -56,7 +56,7 @@ function gpt_font_id_compare()
             }
             $calls = $GLOBALS['gpt_font_id_eval_calls'];
             $metrics = gpt_font_id_compare_metrics($calls, $started);
-            $metrics['pipeline_version'] = $pipeline === 'ai_legacy' ? '0.7.0' : '0.8.2';
+            $metrics['pipeline_version'] = $pipeline === 'ai_legacy' ? '0.7.0' : '0.9.0';
             $budget['calls'] += count($calls) - $reserved_calls;
             if ($metrics['estimated_cost_usd'] !== null) { $budget['estimated_usd'] += $metrics['estimated_cost_usd'] - $reserve; }
             update_option($budget_key, $budget, false);

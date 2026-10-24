@@ -2,12 +2,12 @@
 /**
  * Plugin Name: Kreativ Font Identifier
  * Description: Image-based font suggestions, with no public upload storage and optional admin-only review.
- * Version: 0.8.6
+ * Version: 0.9.0
  * Author: Andrei Olaru
  */
 
 defined('ABSPATH') || exit;
-define('KREATIV_GPT_FONT_ID_VERSION', '0.8.6');
+define('KREATIV_GPT_FONT_ID_VERSION', '0.9.0');
 require_once __DIR__ . '/admin-page.php';
 require_once __DIR__ . '/raster.php';
 require_once __DIR__ . '/catalogue.php';
@@ -395,6 +395,12 @@ function gpt_font_id_result_html($result)
         $html .= '<p><a href="' . esc_url($candidate['url']) . '" target="_blank" rel="noopener">' . esc_html($candidate['name']) . '</a> — ' . esc_html($candidate['reason'] . $evidence) . '</p>';
     }
     if (!$result['candidates']) { $html .= '<p>No reliable suggestions from this image. Try a sharper crop with one line of text.</p>'; }
+    if (!empty($result['catalogue_alternatives'])) {
+        $html .= '<h3>Similar catalogue alternatives</h3><p>These are comparison options, not identifications of the original font.</p>';
+        foreach (array_slice($result['catalogue_alternatives'], 0, 2) as $candidate) {
+            $html .= '<p><a href="' . esc_url($candidate['url']) . '" target="_blank" rel="noopener">' . esc_html($candidate['name']) . '</a> — Similar catalogue alternative, not an identification. ' . esc_html($candidate['reason']) . '</p>';
+        }
+    }
     if ($result['note']) { $html .= '<p>' . esc_html($result['note']) . '</p>'; }
     return $html;
 }
@@ -446,5 +452,6 @@ function gpt_font_id_identify()
         'candidates' => $result['candidates'], 'sample_text' => $result['sample_text'],
         'note' => $result['note'], 'review_submitted' => $review_submitted, 'notice' => $notice,
         'catalogue_note' => $result['catalogue_note'] ?? '', 'catalogue' => $result['catalogue'] ?? null,
+        'catalogue_alternatives' => $result['catalogue_alternatives'] ?? [],
     ]);
 }

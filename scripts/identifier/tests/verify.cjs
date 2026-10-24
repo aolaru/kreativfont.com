@@ -29,8 +29,9 @@ function png(width=240,height=80) {
     for(let i=0;i<30;i++){try{await fetch(base);break;}catch{await new Promise(r=>setTimeout(r,100));}}
     const pageHtml=await(await fetch(base)).text();
     const config=JSON.parse(pageHtml.match(/var GPTFontId\s*=\s*(\{.*?\});/s)[1]);
-    assert.equal(config.version,'0.8.6');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
+    assert.equal(config.version,'0.9.0');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
     const unit=await(await fetch(`${base}/unit`)).json();
+    assert.ok(unit.alternative_html.includes('Similar catalogue alternatives'));assert.ok(unit.alternative_html.includes('Gelasio</a> — Similar catalogue alternative, not an identification.'));
     assert.deepEqual(unit.rate_sequence,[true,true,true,true,true,false]);
     assert.ok(unit.counter_keys.every(key=>!key.includes('127.0.0.1')));
     assert.equal(unit.publishing,'pending');assert.equal(unit.trashing,'trash');assert.equal(unit.ordinary_post,'publish');
@@ -57,9 +58,10 @@ function png(width=240,height=80) {
     const frozen=await submit('admin',pairedFields);assert.equal(frozen.success,true);assert.equal(frozen.data.metrics.call_count,1);
     assert.equal(frozen._test.calls[0].model,'gpt-4o');assert.equal(frozen._test.calls[0].style_schema,false);
     assert.equal(frozen._test.posts.length,0);assert.equal(frozen._test.active_model,'gpt-4o');assert.equal(frozen._test.benchmark_locked,false);
-    const paired=await submit('admin',{...pairedFields,pipeline:'catalogue_082'});assert.equal(paired.success,true);
-    assert.equal(paired.data.metrics.call_count,3);assert.ok(paired._test.calls.every(call=>call.model==='gpt-4o'&&call.store===false&&call.temporary_file_deleted));
-    assert.ok(Math.abs(paired.data.metrics.estimated_cost_usd-3*0.005375)<1e-10);assert.equal(paired.data.budget.calls,3);
+    const retired=await submit('admin',{...pairedFields,pipeline:'catalogue_082'});assert.equal(retired.success,false);assert.equal(retired._test.calls.length,0);
+    const paired=await submit('admin',{...pairedFields,pipeline:'catalogue_090'});assert.equal(paired.success,true);
+    assert.equal(paired.data.metrics.call_count,1);assert.ok(paired._test.calls.every(call=>call.model==='gpt-4o'&&call.store===false&&call.temporary_file_deleted));
+    assert.ok(Math.abs(paired.data.metrics.estimated_cost_usd-0.005375)<1e-10);assert.equal(paired.data.budget.calls,1);
     assert.equal(paired._test.posts.length,0);assert.equal(paired._test.metas.length,0);assert.equal(paired._test.active_model,'gpt-4o');
     const badPipeline=await submit('admin',{...pairedFields,pipeline:'arbitrary'});assert.equal(badPipeline.success,false);assert.equal(badPipeline._test.calls.length,0);
     const pairedBudget=await submit('admin_compare_budget',pairedFields);assert.equal(pairedBudget.success,false);assert.equal(pairedBudget._test.calls.length,0);assert.equal(pairedBudget._test.benchmark_locked,false);
@@ -83,11 +85,9 @@ function png(width=240,height=80) {
     assert.equal(legacy._test.calls[0].temporary_file_deleted,true);assert.equal(legacy._test.calls[0].store,false);
     assert.equal(legacy._test.calls[0].format,'json_schema');assert.equal(legacy.data.candidates.length,2);
     assert.equal(legacy.data.candidates[0].url,'https://kreativfont.com/fonts/georgia');
-    assert.equal(legacy._test.calls.length,3);assert.ok(legacy._test.calls.every(call=>call.model==='gpt-4o'&&call.store===false&&call.temporary_file_deleted));
-    assert.equal(legacy._test.calls[1].selection,true);assert.equal(legacy._test.calls[1].image_count,1);
-    assert.equal(legacy._test.calls[2].comparison,true);assert.equal(legacy._test.calls[2].selection,false);assert.equal(legacy._test.calls[2].image_count,3);
-    assert.equal(legacy.data.catalogue.status,'compared');assert.equal(legacy.data.candidates[0].catalogue_status,'listed');
-    assert.equal(legacy.data.candidates[0].evidence,'specimen_compared');assert.ok(legacy.data.html.includes('Exact identification is unverified'));
+    assert.equal(legacy._test.calls.length,1);assert.ok(legacy._test.calls.every(call=>call.model==='gpt-4o'&&call.store===false&&call.temporary_file_deleted));
+    assert.equal(legacy.data.catalogue.status,'lookup_only');assert.equal(legacy.data.candidates[0].catalogue_status,'listed');
+    assert.equal(legacy.data.candidates[0].evidence,'name_lookup');assert.ok(legacy.data.html.includes('does not verify'));
     assert.ok(legacy.data.candidates.every(candidate=>candidate.id===301||candidate.id===302));
     for(const fixture of ['no_catalogue','empty_catalogue','invalid_rows']) {
       const response=await submit(fixture);assert.equal(response.success,true,fixture);assert.equal(response._test.calls.length,1,fixture);
@@ -98,15 +98,14 @@ function png(width=240,height=80) {
       const response=await submit(fixture);assert.equal(response.success,true,fixture);
       assert.equal(response.data.candidates[0].catalogue_status,'listed',fixture);assert.equal(response.data.candidates[0].evidence,'name_lookup',fixture);
       assert.equal(response.data.candidates[0].url,'https://kreativfont.com/fonts/georgia');
-      assert.equal(response._test.calls.length,fixture==='comparison_failure'?3:2);
+      assert.equal(response._test.calls.length,1);
       assert.ok(!JSON.stringify(response.data).includes('attacker.test'));assert.equal(response._test.posts.length,0);
     }
-    const invalidKey=await submit('invalid_key');assert.deepEqual(invalidKey.data.candidates,[]);
-    const abstained=await submit('comparison_abstain');assert.deepEqual(abstained.data.candidates,[]);
+    const initialOrder=await submit();assert.deepEqual(initialOrder.data.candidates.map(item=>item.name),['Georgia','Bitter']);
     const unlisted=await submit('unlisted');assert.equal(unlisted.data.candidates[0].name,'Unknown Serif');
     assert.equal(unlisted.data.candidates[0].catalogue_status,'not_found');assert.equal(unlisted.data.candidates[0].evidence,'ai_only');
     assert.ok(unlisted.data.candidates[0].url.startsWith('https://kreativfont.com/?s='));
-    const styleOnly=await submit('style_only');assert.equal(styleOnly._test.calls.length,3);assert.equal(styleOnly.data.candidates[0].name,'Georgia');
+    const styleOnly=await submit('style_only');assert.equal(styleOnly._test.calls.length,1);assert.deepEqual(styleOnly.data.candidates,[]);
     const oneFlag=await submit('normal',{share_for_review:'yes'});assert.equal(oneFlag._test.posts.length,0);
     const review=await submit('normal',{share_for_review:'yes',review_consent:'yes'});
     assert.equal(review.data.review_submitted,true);assert.equal(review.data.post_url,'');assert.equal(review._test.posts.length,1);
@@ -123,7 +122,7 @@ function png(width=240,height=80) {
       assert.ok(!JSON.stringify(response).includes('secret-'),fixture);
       if(fixture==='rate')assert.equal(response._test.calls.length,0);
     }
-    const hostile=await submit('hostile');assert.equal(hostile.success,true);assert.equal(hostile.data.candidates.length,1,'A changed/non-allowlisted catalogue key must be discarded');
+    const hostile=await submit('hostile');assert.equal(hostile.success,true);assert.equal(hostile.data.candidates.length,2);
     assert.ok(!hostile.data.html.includes('<script>'));assert.ok(!hostile.data.html.includes('<img'));assert.ok(!hostile.data.html.includes('javascript:'));
     const noText=await submit('no_text');assert.deepEqual(noText.data.candidates,[]);
     const invalid=await submit('normal',{},Buffer.from('not a real png'));assert.equal(invalid.success,false);assert.equal(invalid._test.calls.length,0);
@@ -149,7 +148,7 @@ function png(width=240,height=80) {
       await page.locator('#kfi-analysis-consent').check();await page.locator('#kfi-identify').click();
       await page.locator('#gpt-font-id-result.success').waitFor();assert.equal(requests,1);assert.ok(!lastFields.includes('share_for_review'));
       assert.equal(await page.locator('.kfi-match').count(),2);assert.equal(await page.locator('.kfi-match a').first().getAttribute('href'),'https://kreativfont.com/fonts/georgia');
-      assert.ok((await page.locator('.kfi-catalogue-evidence').first().innerText()).includes('specimen compared by AI'));
+      assert.ok((await page.locator('.kfi-catalogue-evidence').first().innerText()).includes('name checked'));
       assert.equal(await page.locator('.kfi-match a').first().innerText(),'View Georgia in Kreativ →');
       assert.ok((await page.locator('#gpt-font-id-result').innerText()).includes('has not saved'));
       await page.screenshot({path:'/tmp/kreativ-identifier-local-results.png'});
@@ -165,6 +164,14 @@ function png(width=240,height=80) {
       await page.setViewportSize({width:1280,height:1000});await open();await select();
       fixture='failure';await page.locator('#kfi-analysis-consent').check();await page.locator('#kfi-identify').click();await page.locator('#gpt-font-id-result.error').waitFor();
       assert.equal(await page.locator('#kfi-identify').isEnabled(),true);
+      fixture='ui_alternative';await open();await select();await page.locator('#kfi-analysis-consent').check();await page.locator('#kfi-identify').click();
+      await page.locator('#gpt-font-id-result.success').waitFor();
+      assert.equal(await page.locator('.kfi-match h3').first().innerText(),'Georgia');
+      assert.equal(await page.getByRole('heading',{name:'Similar catalogue alternatives',exact:true}).count(),1);
+      assert.ok((await page.locator('.kfi-match').last().innerText()).includes('Bold italic'));
+      assert.ok((await page.locator('.kfi-match').last().innerText()).includes('original font not identified'));
+      assert.equal(await page.locator('img[src*="attacker.test"]').count(),0);
+      await page.screenshot({path:'/tmp/kreativ-identifier-alternatives-local.png',fullPage:true});
       fixture='admin';await page.goto(base+'/admin?fixture=admin');await page.addScriptTag({path:jqueryPath});await page.addScriptTag({path:path.join(__dirname,'../plugin/assets/admin.js')});
       const crypto=require('node:crypto');
       const manifest={schema_version:1,name:'controlled benchmark test',samples:[{id:'test-1',file:'test.png',kind:'known_font',font:'Georgia',aliases:[],variant:'clean',sha256:crypto.createHash('sha256').update(image).digest('hex')}]};
@@ -182,7 +189,7 @@ function png(width=240,height=80) {
       const comparison=await page.evaluate(()=>window.kfiBenchmarkReport);
       assert.equal(comparison.mode,'paired');assert.equal(comparison.rows.length,2);assert.equal(comparison.fixed_model,'gpt-4o');
       assert.ok(comparison.rows.every(row=>row.outcome.active_model==='gpt-4o'&&row.outcome.pipeline===row.model));
-      assert.equal(comparison.rows.find(row=>row.model==='catalogue_082').outcome.metrics.call_count,3);
+      assert.equal(comparison.rows.find(row=>row.model==='catalogue_090').outcome.metrics.call_count,1);
       comparison.completed=false;comparison.rows[0].outcome.ok=false;comparison.rows[0].outcome.note='Preserved failed trial';
       await page.locator('#kfi-bench-resume').setInputFiles({name:'checkpoint.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(comparison))});
       await page.locator('#kfi-bench-run').click();
@@ -190,6 +197,10 @@ function png(width=240,height=80) {
       const resumed=await page.evaluate(()=>window.kfiBenchmarkReport);
       assert.equal(resumed.rows.length,2);assert.equal(resumed.rows[0].outcome.ok,false);assert.equal(resumed.rows[0].score.top1,false);
       assert.equal(resumed.rows[0].outcome.note,'Preserved failed trial');
+      const oldCheckpoint=structuredClone(resumed);oldCheckpoint.models=['ai_legacy','catalogue_082'];
+      await page.locator('#kfi-bench-resume').setInputFiles({name:'old-checkpoint.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(oldCheckpoint))});
+      await page.locator('#kfi-bench-run').click();
+      await page.waitForFunction(()=>document.querySelector('#kfi-bench-status').textContent.includes('Checkpoint dataset, pipelines, model or profiles differ'));
       await page.screenshot({path:'/tmp/kreativ-identifier-benchmark-local.png',fullPage:true});
       assert.deepEqual(pageErrors,[]);
       await browser.close();console.log('PASS: browser upload/consent gating; safe results and links; optional review; rotation consent reset; mobile layout; provider failure recovery.');

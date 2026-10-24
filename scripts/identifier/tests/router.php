@@ -137,7 +137,12 @@ function add_post_meta($id, $key, $value, $unique) {
 }
 function wp_trash_post($id) { $GLOBALS['posts'][$id-1]['post_status'] = 'trash'; }
 function wp_send_json_error($message, $code = null) { throw new TestReply(['success'=>false,'data'=>$message]); }
-function wp_send_json_success($data) { throw new TestReply(['success'=>true,'data'=>$data]); }
+function wp_send_json_success($data) {
+    if ($GLOBALS['fixture'] === 'ui_alternative') {
+        $data['catalogue_alternatives'] = [['name'=>'Gelasio','kind'=>'similar_alternative','catalogue_status'=>'listed','evidence'=>'local_render_alternative','matched_style'=>'bold_italic','reason'=>'Comparison option, not an identification.','url'=>'https://kreativfont.com/fonts/gelasio','preview_url'=>'https://attacker.test/unsafe.svg']];
+    }
+    throw new TestReply(['success'=>true,'data'=>$data]);
+}
 function wp_handle_upload(...$args) { throw new Exception('PUBLIC UPLOAD STORAGE MUST NEVER BE USED'); }
 function wp_insert_attachment(...$args) { throw new Exception('MEDIA LIBRARY MUST NEVER BE USED'); }
 
@@ -161,6 +166,7 @@ if (($_SERVER['REQUEST_URI'] ?? '') === '/unit') {
     }
     header('Content-Type: application/json');
     echo json_encode([
+        'alternative_html' => gpt_font_id_result_html(['sample_text'=>'Sample','note'=>'','candidates'=>[['name'=>'Georgia','kind'=>'possible_match','reason'=>'AI suggestion','url'=>'https://kreativfont.com/?s=Georgia']],'catalogue_alternatives'=>[['name'=>'Gelasio','kind'=>'similar_alternative','reason'=>'Comparison option.','url'=>'https://kreativfont.com/fonts/gelasio']]]),
         'rate_sequence' => $checks,
         'counter_keys' => array_keys($transients),
         'publishing' => $filter(['post_type'=>'kfi_review','post_status'=>'publish'])['post_status'],

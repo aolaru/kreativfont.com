@@ -72,7 +72,7 @@
         const manifestFile=document.querySelector('#kfi-bench-manifest').files[0];
         const files=new Map(Array.from(document.querySelector('#kfi-bench-images').files).map(file=>[file.name,file]));
         const paired=document.querySelector('#kfi-bench-mode')?.value==='paired';
-        const models=paired?['ai_legacy','catalogue_082']:Array.from(document.querySelectorAll('.kfi-bench-model:checked')).map(input=>input.value);
+        const models=paired?['ai_legacy','catalogue_090']:Array.from(document.querySelectorAll('.kfi-bench-model:checked')).map(input=>input.value);
         if (!manifestFile || !models.length) throw new Error('Choose a sample manifest, its image files and at least one model.');
         const manifest=JSON.parse(await manifestFile.text());
         if (manifest.schema_version !== 1 || !Array.isArray(manifest.samples) || !manifest.samples.length || manifest.samples.length>100) throw new Error('Use a version-1 manifest with 1–100 samples.');

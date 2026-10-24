@@ -23,6 +23,10 @@ const fs=require('node:fs/promises'),os=require('node:os'),path=require('node:pa
   assert.equal(summary.pipelines.catalogue_082.control_abstentions,1);assert.equal(summary.pipelines.catalogue_082.unknown_cost_rows,1);
   assert.equal(summary.paired.wins,1);assert.equal(summary.paired.losses,1);assert.equal(summary.paired.top1_delta,0);
   assert.equal(summary.execution.ai_legacy.known,3);assert.equal(summary.execution.ai_legacy.top1,2);
+  report.models=['ai_legacy','catalogue_090'];for(const row of report.rows){if(row.model==='catalogue_082')row.model='catalogue_090';}
+  await fs.writeFile(input,JSON.stringify(report));
+  execFileSync(process.execPath,[path.join(__dirname,'../benchmark/compare-report.cjs'),input,output],{stdio:'pipe'});
+  const current=JSON.parse(await fs.readFile(path.join(output,'summary.json'),'utf8'));assert.equal(current.pipelines.catalogue_090.top1,1);assert.equal(current.paired.known_pairs,2);
   report.dataset.samples[0].font='Changed label';await fs.writeFile(input,JSON.stringify(report));
   assert.throws(()=>execFileSync(process.execPath,[path.join(__dirname,'../benchmark/compare-report.cjs'),input,output],{stdio:'pipe'}));
   console.log('PASS: paired accuracy excludes unpaired outcomes; failures count as misses; controls, cost uncertainty and frozen-label validation are retained.');

@@ -104,16 +104,18 @@ jQuery(function ($) {
       if (data.catalogue_note) paragraph(data.catalogue_note).className = 'kfi-catalogue-note';
       if (data.sample_text) paragraph('Text sample: ' + data.sample_text).className = 'kfi-sample-text';
       if (!data.candidates.length) paragraph('No reliable suggestions from this image. Try a sharper crop with one line of text.');
-      data.candidates.slice(0, 3).forEach(candidate => {
+      const renderCandidate = candidate => {
         const card = document.createElement('article'); card.className = 'kfi-match';
         const tag = paragraph(candidate.kind === 'similar_alternative' ? 'Similar alternative' : 'Possible match', card); tag.className = 'kfi-match-kind';
         const heading = document.createElement('h3'); heading.textContent = candidate.name; card.appendChild(heading);
         const listed = candidate.catalogue_status === 'listed';
         if (candidate.catalogue_status) {
           paragraph(listed
-            ? (candidate.evidence === 'local_render_match' ? 'In Kreativ · locally rendered letter shapes compared · identity unverified' : (candidate.evidence === 'specimen_compared' ? 'In Kreativ · specimen compared by AI · identity unverified' : 'In Kreativ · name checked · specimen comparison unavailable'))
+            ? (candidate.evidence === 'local_render_alternative' ? 'Catalogue alternative · original font not identified' : (candidate.evidence === 'local_render_match' ? 'AI suggestion supported by a font-file comparison · identity unverified' : 'In Kreativ · name checked · identity unverified'))
             : 'AI suggestion · no matching catalogue entry found in this search', card).className = 'kfi-catalogue-evidence';
         }
+        const faceLabels = {regular:'Regular',bold:'Bold',italic:'Italic',bold_italic:'Bold italic'};
+        if (faceLabels[candidate.matched_style]) paragraph('Compared font file: ' + faceLabels[candidate.matched_style] + '. Exact face remains unverified.', card);
         const previewHref = listed ? safePreviewUrl(candidate.preview_url) : null;
         if (previewHref) {
           const image = document.createElement('img'); image.src = previewHref; image.alt = candidate.name + ' catalogue specimen';
@@ -126,7 +128,13 @@ jQuery(function ($) {
           const link = document.createElement('a'); link.href = href; link.textContent = (listed ? 'View ' : 'Search for ') + candidate.name + ' in Kreativ →'; card.appendChild(link);
         }
         result.appendChild(card);
-      });
+      };
+      data.candidates.slice(0, 3).forEach(renderCandidate);
+      if (Array.isArray(data.catalogue_alternatives) && data.catalogue_alternatives.length) {
+        const alternativesTitle = document.createElement('h2'); alternativesTitle.textContent = 'Similar catalogue alternatives'; result.appendChild(alternativesTitle);
+        paragraph('Comparison options, not identifications of the font in your image.');
+        data.catalogue_alternatives.slice(0, 2).forEach(renderCandidate);
+      }
       if (data.note) paragraph(data.note);
       if (data.notice) paragraph(data.notice).className = 'kfi-result-notice';
     } else {

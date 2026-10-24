@@ -1,8 +1,9 @@
 // Recompute paired scores from raw predictions; never trust exported score/summary fields.
 const fs=require('node:fs/promises'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
 const {score}=require('../plugin/assets/admin.js');
-const pipelines=['ai_legacy','catalogue_082'];
-const labels={ai_legacy:'Original AI-only',catalogue_082:'Catalogue matching'};
+let catalogueKey='catalogue_082';
+let pipelines=['ai_legacy',catalogueKey];
+const labels={ai_legacy:'Original AI-only',catalogue_082:'Catalogue matching',catalogue_090:'Catalogue matching'};
 const escape=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const median=values=>{values=[...values].sort((a,b)=>a-b);return values.length?(values.length%2?values[Math.floor(values.length/2)]:(values[values.length/2-1]+values[values.length/2])/2):null;};
 const percent=(n,d)=>d?(100*n/d).toFixed(1)+'%':'—';
@@ -19,11 +20,11 @@ function aggregate(rows){
 }
 function pairedStats(pairs){
  const known=pairs.filter(pair=>pair.sample.kind==='known_font');let wins=0,losses=0;
- for(const pair of known){if(pair.catalogue_082.score.top1&&!pair.ai_legacy.score.top1)wins++;if(!pair.catalogue_082.score.top1&&pair.ai_legacy.score.top1)losses++;}
+ for(const pair of known){if(pair[catalogueKey].score.top1&&!pair.ai_legacy.score.top1)wins++;if(!pair[catalogueKey].score.top1&&pair.ai_legacy.score.top1)losses++;}
  const families=[...new Set(known.map(pair=>pair.sample.font))],clusters=families.map(font=>known.filter(pair=>pair.sample.font===font));
  let seed=20261024;const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
  const bootstrap=[];
- for(let run=0;run<2000&&clusters.length;run++){let delta=0,count=0;for(let k=0;k<clusters.length;k++){for(const pair of clusters[Math.floor(random()*clusters.length)]){delta+=Number(pair.catalogue_082.score.top1)-Number(pair.ai_legacy.score.top1);count++;}}bootstrap.push(delta/count);}
+ for(let run=0;run<2000&&clusters.length;run++){let delta=0,count=0;for(let k=0;k<clusters.length;k++){for(const pair of clusters[Math.floor(random()*clusters.length)]){delta+=Number(pair[catalogueKey].score.top1)-Number(pair.ai_legacy.score.top1);count++;}}bootstrap.push(delta/count);}
  bootstrap.sort((a,b)=>a-b);
  const discordant=wins+losses;let probability=Math.pow(.5,discordant),tail=probability;
  for(let k=0;k<Math.min(wins,losses);k++){probability*=((discordant-k)/(k+1));tail+=probability;}
@@ -32,12 +33,13 @@ function pairedStats(pairs){
    mcnemar_exact_two_sided:discordant?Math.min(1,2*tail):1};
 }
 function comparisonTable(groups){return '<table><thead><tr><th>Group</th><th>Images</th><th>AI top 1</th><th>Catalogue top 1</th><th>Change</th><th>AI top 3</th><th>Catalogue top 3</th></tr></thead><tbody>'+groups.map(group=>{
- const a=aggregate(group.rows.filter(row=>row.model==='ai_legacy')),b=aggregate(group.rows.filter(row=>row.model==='catalogue_082'));
+ const a=aggregate(group.rows.filter(row=>row.model==='ai_legacy')),b=aggregate(group.rows.filter(row=>row.model===catalogueKey));
  return `<tr><td>${escape(group.label)}</td><td>${a.known}</td><td>${percent(a.top1,a.known)}</td><td>${percent(b.top1,b.known)}</td><td>${a.known?((b.top1-a.top1)*100/a.known).toFixed(1)+' pp':'—'}</td><td>${percent(a.top3,a.known)}</td><td>${percent(b.top3,b.known)}</td></tr>`;
  }).join('')+'</tbody></table>';}
 async function main(){
  const [input,outputArg,historical]=process.argv.slice(2),output=path.resolve(outputArg);const report=JSON.parse(await fs.readFile(input,'utf8'));
  assert.equal(report.mode,'paired');assert.equal(report.fixed_model,'gpt-4o');
+ catalogueKey=report.models?.includes('catalogue_090')?'catalogue_090':'catalogue_082';pipelines=['ai_legacy',catalogueKey];
  const frozenFile=await fs.readFile(path.resolve(output,'../dataset/manifest.json'));
  assert.deepEqual(report.dataset,JSON.parse(frozenFile),'Exported ground truth differs from the frozen manifest');
  let notes=null;try{notes=JSON.parse(await fs.readFile(path.resolve(output,'../evaluation-notes.json'),'utf8'));}catch(error){if(error.code!=='ENOENT')throw error;}
@@ -57,10 +59,10 @@ async function main(){
  const groups=field=>[...new Set(pairedRows.filter(row=>row.sample.kind==='known_font').map(row=>field(row.sample)))].sort().map(label=>({label,rows:pairedRows.filter(row=>field(row.sample)===label)}));
  const coverage=sample=>sample.catalogue_coverage?.listed===true?'Catalogue entry found':sample.catalogue_coverage?.listed===false?'No entry found in bounded lookup':'Coverage unknown';
  const source=sample=>sample.source_type==='real_website'?'Actual website screenshots':sample.variant==='clean'?'Generated clean specimens':'Generated degraded specimens';
- const confident=pairedRows.filter(row=>row.model==='catalogue_082'&&row.outcome.catalogue?.status==='local_shape_match');
+ const confident=pairedRows.filter(row=>row.model===catalogueKey&&['local_shape_match','corroborated_shape_match'].includes(row.outcome.catalogue?.status));
  const incorrectLocal=confident.filter(row=>!row.score.top1);
  const stats=pairedStats(pairs);
- const pathGroups=[...new Set(pairs.filter(p=>p.sample.kind==='known_font').map(p=>p.catalogue_082.outcome.catalogue?.status||'unknown'))].sort().map(label=>({label,rows:pairs.filter(p=>(p.catalogue_082.outcome.catalogue?.status||'unknown')===label).flatMap(p=>pipelines.map(model=>p[model]))}));
+ const pathGroups=[...new Set(pairs.filter(p=>p.sample.kind==='known_font').map(p=>p[catalogueKey].outcome.catalogue?.status||'unknown'))].sort().map(label=>({label,rows:pairs.filter(p=>(p[catalogueKey].outcome.catalogue?.status||'unknown')===label).flatMap(p=>pipelines.map(model=>p[model]))}));
  let archive=null;
  if(historical){const old=JSON.parse(await fs.readFile(historical,'utf8'));const oldRows=old.rows.filter(row=>row.model==='gpt-4o').map(row=>({...row,score:score(row.sample,row.outcome)}));archive={source:path.resolve(historical),...aggregate(oldRows)};}
  const summary={dataset:report.dataset.name,dataset_sha256:crypto.createHash('sha256').update(JSON.stringify(report.dataset)).digest('hex'),
@@ -76,11 +78,11 @@ async function main(){
  const csv=[['sample','font','style','source','coverage','pipeline','ok','top1','top3','predictions','path','elapsed_ms','estimated_usd','generation_calls']];
  for(const row of rows)csv.push([row.sample.id,row.sample.font,row.sample.style,source(row.sample),coverage(row.sample),row.model,row.outcome.ok,row.score.top1,row.score.top3,(row.outcome.candidates||[]).map(c=>c.name).join(' | '),row.outcome.catalogue?.status||'ai_only',row.outcome.metrics?.elapsed_ms,row.outcome.metrics?.estimated_cost_usd,row.outcome.metrics?.call_count]);
  await fs.writeFile(path.join(output,'predictions.csv'),csv.map(row=>row.map(value=>'"'+String(value??'').replace(/"/g,'""')+'"').join(',')).join('\n')+'\n');
- const cards=(items,title)=>`<h2>${title}</h2>`+(items.length?items.slice(0,12).map(pair=>`<article><img loading="lazy" src="../dataset/${escape(path.basename(pair.sample.file))}" alt="${escape(pair.sample.id)}"><p><strong>${escape(pair.sample.font)} · ${escape(pair.sample.style)} · ${escape(pair.sample.id)}</strong></p><p>AI: ${escape((pair.ai_legacy.outcome.candidates||[]).map(c=>c.name).join(', ')||'abstained')}<br>Catalogue: ${escape((pair.catalogue_082.outcome.candidates||[]).map(c=>c.name).join(', ')||'abstained')}</p><p>${escape(pair.catalogue_082.outcome.catalogue?.status||'')}</p></article>`).join(''):'<p>None in this run.</p>');
- const a=summaries.ai_legacy,b=summaries.catalogue_082;
+ const cards=(items,title)=>`<h2>${title}</h2>`+(items.length?items.slice(0,12).map(pair=>`<article><img loading="lazy" src="../dataset/${escape(path.basename(pair.sample.file))}" alt="${escape(pair.sample.id)}"><p><strong>${escape(pair.sample.font)} · ${escape(pair.sample.style)} · ${escape(pair.sample.id)}</strong></p><p>AI: ${escape((pair.ai_legacy.outcome.candidates||[]).map(c=>c.name).join(', ')||'abstained')}<br>Catalogue: ${escape((pair[catalogueKey].outcome.candidates||[]).map(c=>c.name).join(', ')||'abstained')}</p><p>${escape(pair[catalogueKey].outcome.catalogue?.status||'')}</p></article>`).join(''):'<p>None in this run.</p>');
+ const a=summaries.ai_legacy,b=summaries[catalogueKey];
  const html=`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Kreativ catalogue evaluation</title><style>
  body{font:16px/1.6 system-ui,sans-serif;max-width:1150px;margin:36px auto;padding:0 24px;color:#182238;background:#fafbfe}h1{font-size:2.2rem}h2{margin-top:42px}table{border-collapse:collapse;width:100%;background:white;font-size:14px}th,td{text-align:left;padding:11px;border:1px solid #dce2ec}th{background:#eef1fa}article{border:1px solid #dce2ec;border-radius:12px;background:white;padding:18px;margin:16px 0;break-inside:avoid}article img{max-width:100%;max-height:160px;object-fit:contain}code{overflow-wrap:anywhere}.muted{color:#526078}.status{padding:20px;background:#eeedf9;border-radius:12px}a{color:#5143d9}</style>
- <h1>Catalogue matching versus the original AI-only identifier</h1><p class="muted">GPT-4o · ${escape(report.started_at)} · plugin ${escape(report.plugin_version)} · matching algorithm frozen at 0.8.2</p>
+ <h1>Catalogue matching versus the original AI-only identifier</h1><p class="muted">GPT-4o · ${escape(report.started_at)} · plugin ${escape(report.plugin_version)} · matching algorithm ${catalogueKey==='catalogue_090'?'0.9.0':'0.8.2'}</p>
  <p class="status"><strong>${summary.complete?'Complete':'PARTIAL'}: ${pairs.length}/${report.dataset.samples.length} paired images, ${summary.evaluated_families}/${summary.families} declared font families evaluated.</strong><br>Top 1: AI ${percent(a.top1,a.known)} → catalogue ${percent(b.top1,b.known)}. Top 3: ${percent(a.top3,a.known)} → ${percent(b.top3,b.known)}.</p>
  ${!summary.complete&&notes?.blocker?`<p><strong>Blocked by exhausted API credits:</strong> ${escape(notes.blocker.code)} / ${escape(notes.blocker.type)}, confirmed ${escape(notes.blocker.confirmed_at)}. This is shared with live website/extension identification. Fund the API account, then resume the saved checkpoint; do not rerun completed trials. ${report.dataset.samples.length-pairs.length} cases still lack complete pairs.</p>`:''}
  <p>Each completed image was run once through each pipeline. Family labels and aliases were declared before inference and stayed client-side. Errors count as misses. No tuning was performed during this evaluation. These are family-level scores stratified by style, not exact bold/italic-face identification.</p>
@@ -92,9 +94,9 @@ async function main(){
  <h2>Controls and local-match errors</h2><p>No-text controls: AI abstained ${a.control_abstentions}/${a.controls}; catalogue ${b.control_abstentions}/${b.controls}. Errors: AI ${a.errors}; catalogue ${b.errors}. Successful local-shape path: ${confident.length} images, ${incorrectLocal.length} wrong first choices. Catalogue-stage failures falling back to initial guesses: ${b.fallback_failures}.</p>
  <h2>Latency and estimated cost</h2><table><tr><th>Pipeline</th><th>Median full processing</th><th>Generation calls</th><th>Estimated USD</th><th>Unknown-cost outcomes</th></tr>${pipelines.map(model=>{const s=execution[model];return `<tr><td>${labels[model]}</td><td>${s.median_ms===null?'—':(s.median_ms/1000).toFixed(2)+' s'}</td><td>${s.generation_calls}</td><td>${s.estimated_usd===null?'unknown':'$'+s.estimated_usd.toFixed(4)}</td><td>${s.unknown_cost_rows}</td></tr>`;}).join('')}</table><p>All provider calls, retrieval and local rendering are included in new timings, including unpaired outcomes when a run is partial. Costs are token estimates, not invoices. Unknown usage is never treated as free. Resolved provider snapshots: ${escape(summary.resolved_models.join(', '))}.</p>
  ${archive?`<h2>Historical AI-only reference (separate dataset)</h2><p>The earlier 44-image run had ${archive.known} known-font images: top 1 ${percent(archive.top1,archive.known)}, top 3 ${percent(archive.top3,archive.known)}, ${archive.control_abstentions}/${archive.controls} control abstentions. Its 20 installed families and two-line inputs differ from this set; its percentages are not pooled into the paired comparison. Its latency measured the API call only.</p>`:''}
- ${cards(pairs.filter(p=>p.sample.kind==='known_font'&&p.catalogue_082.score.top1&&!p.ai_legacy.score.top1),'Examples improved by catalogue matching')}
- ${cards(pairs.filter(p=>p.sample.kind==='known_font'&&!p.catalogue_082.score.top1&&p.ai_legacy.score.top1),'Regressions to investigate')}
- ${cards(pairs.filter(p=>p.catalogue_082.outcome.catalogue?.status==='local_shape_match'&&!p.catalogue_082.score.top1),'Incorrect local shape matches')}
+ ${cards(pairs.filter(p=>p.sample.kind==='known_font'&&p[catalogueKey].score.top1&&!p.ai_legacy.score.top1),'Examples improved by catalogue matching')}
+ ${cards(pairs.filter(p=>p.sample.kind==='known_font'&&!p[catalogueKey].score.top1&&p.ai_legacy.score.top1),'Regressions to investigate')}
+ ${cards(pairs.filter(p=>['local_shape_match','corroborated_shape_match'].includes(p[catalogueKey].outcome.catalogue?.status)&&!p[catalogueKey].score.top1),'Incorrect local shape matches')}
  <h2>Limits and provenance</h2><p>${escape(report.dataset.limitations)}</p><p>Real-world images are existing website text crops, including browser-rendered italic/bold. Generated compression/rotation cases are synthetic; no camera photographs, physical signage or scanned print are represented. Ambiguous font mappings were excluded before inference and preserved in the manifest. Catalogue absence means no entry found in a bounded title lookup; it is not proof of absence. The live catalogue was queried during this run, rather than a frozen database snapshot. Font binaries are not included in this report.</p>
  <p>Dataset embedded in exported results: <code>${summary.dataset_sha256}</code>. <a href="../results.json">Raw results and dataset</a> · <a href="predictions.csv">Per-image CSV</a> · <a href="summary.json">Summary JSON</a>.</p></html>`;
  await fs.writeFile(path.join(output,'report.html'),html);console.log(JSON.stringify(summary,null,2));
