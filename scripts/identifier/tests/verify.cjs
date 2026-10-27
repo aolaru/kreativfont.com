@@ -23,13 +23,16 @@ function png(width=240,height=80) {
   async function submit(fixture='normal',fields={},bytes=image,name='sample.png') {
     const form=new FormData();form.append('action','gpt_font_id_identify');form.append('_ajax_nonce','fixture-nonce');form.append('font_image',new Blob([bytes],{type:'image/png'}),name);
     for(const [key,value] of Object.entries(fields))form.set(key,value);
-    return (await fetch(`${base}/?fixture=${fixture}`,{method:'POST',body:form})).json();
+    const response=await fetch(`${base}/?fixture=${fixture}`,{method:'POST',body:form});
+    const text=await response.text();
+    try { return JSON.parse(text); } catch { throw new Error(`Invalid local fixture response (${fixture}): ${text.slice(0,1600)}`); }
   }
   try {
     for(let i=0;i<30;i++){try{await fetch(base);break;}catch{await new Promise(r=>setTimeout(r,100));}}
     const pageHtml=await(await fetch(base)).text();
     const config=JSON.parse(pageHtml.match(/var GPTFontId\s*=\s*(\{.*?\});/s)[1]);
-    assert.equal(config.version,'0.9.1');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
+    assert.equal(config.version,'1.0.0');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
+    assert.equal(config.publicationRequiresConsent,true);assert.equal(config.publicationConsentVersion,'public-image-and-results-v1');
     const unit=await(await fetch(`${base}/unit`)).json();
     assert.ok(unit.alternative_html.includes('Similar catalogue alternatives'));assert.ok(unit.alternative_html.includes('Gelasio</a> — Similar catalogue alternative, not an identification.'));
     assert.deepEqual(unit.rate_sequence,[true,true,true,true,true,false]);
@@ -50,6 +53,29 @@ function png(width=240,height=80) {
     assert.equal(terra._test.calls[0].store,false);assert.equal(terra._test.calls[0].temporary_file_deleted,true);
     assert.equal(terra.data.post_url,'');assert.equal(terra._test.posts.length,0);assert.equal(terra._test.metas.length,0);
     const badModel=await submit('bad_model');assert.equal(badModel._test.calls[0].model,'gpt-4o');
+    const publicFields={client:'website',publish_identification:'yes',publication_consent:'public-image-and-results-v1'};
+    for(const fields of [{client:'website'},{publish_identification:'yes'},{publication_consent:'public-image-and-results-v1'},{...publicFields,publication_consent:'yes'}]) {
+      const rejected=await submit('normal',fields);assert.equal(rejected.success,false);assert.equal(rejected._test.calls.length,0);assert.equal(rejected._test.posts.length,0);assert.equal(rejected._test.uploads.length,0);
+    }
+    const published=await submit('live_terra',publicFields,Buffer.concat([image,Buffer.from('PRIVATE_ORIGINAL_METADATA')]),'private-original-name.png');
+    assert.equal(published.success,true);assert.equal(published._test.calls.length,1);assert.equal(published._test.calls[0].model,'gpt-6.1-terra');
+    assert.equal(published._test.posts.length,1);assert.equal(published._test.posts[0].post_type,'post');assert.equal(published._test.posts[0].post_status,'publish');
+    assert.deepEqual(published._test.posts[0].post_category,[77]);assert.equal(published._test.posts[0].comment_status,'closed');
+    assert.ok(published._test.posts[0].post_content.includes('Submitted font sample'));assert.ok(published._test.posts[0].post_content.includes('not a verified identification'));
+    assert.ok(published.data.post_url.startsWith('https://kreativfont.com/identified-fonts/'));assert.equal(published.data.review_submitted,false);
+    assert.equal(published._test.uploads.length,1);assert.equal(published._test.uploads[0].mime,'image/png');assert.equal(published._test.uploads[0].has_private_marker,false);
+    assert.equal(published._test.uploads[0].name,'font-identification-1.png');assert.equal(published._test.attachments[0].deleted,false);
+    const publishedNoMatch=await submit('no_text',publicFields);assert.equal(publishedNoMatch.success,true);
+    assert.equal(publishedNoMatch._test.posts[0].post_status,'publish');assert.ok(publishedNoMatch._test.posts[0].post_title.includes('No clear match'));
+    for(const fixture of ['failure','network','refusal','incomplete','malformed','rate']) {
+      const response=await submit(fixture,publicFields);assert.equal(response.success,false);assert.equal(response._test.posts.length,0);assert.equal(response._test.uploads.length,0);
+    }
+    for(const fixture of ['publication_category_fail','publication_post_fail','publication_upload_fail','publication_attachment_fail','publication_metadata_fail','publication_consent_fail','publication_update_fail']) {
+      const response=await submit(fixture,publicFields);assert.equal(response.success,true,fixture);assert.equal(response.data.post_url,'',fixture);
+      assert.ok(response.data.notice.includes('could not be created'),fixture);assert.ok(response._test.posts.every(post=>post.post_status==='trash'),fixture);
+      assert.ok(response._test.attachments.every(attachment=>attachment.deleted),fixture);
+      if(fixture==='publication_attachment_fail')assert.equal(response._test.deleted_uploads.length,1);
+    }
     const benchFields={action:'gpt_font_id_benchmark',nonce:'fixture-nonce',model:'gpt-6-luna',share_for_review:'yes',review_consent:'yes'};
     const denied=await submit('normal',benchFields);assert.equal(denied.success,false);assert.equal(denied._test.calls.length,0);
     const expiredBench=await submit('admin',{...benchFields,nonce:'expired'});assert.equal(expiredBench.success,false);assert.equal(expiredBench._test.calls.length,0);
@@ -136,7 +162,7 @@ function png(width=240,height=80) {
     const oversize=await submit('normal',{},Buffer.alloc(4*1024*1024+1));assert.equal(oversize.success,false);assert.equal(oversize._test.calls.length,0);
     const tiny=await submit('normal',{},png(1,1));assert.equal(tiny.success,false);
     const expired=await submit('normal',{_ajax_nonce:'expired'});assert.equal(expired.success,false);assert.equal(expired._test.calls.length,0);
-    console.log('PASS: real multipart uploads; temporary cleanup before API; no default storage despite old publish settings; dual-consent admin-only review; extension response contract; schema, safety, failures, limits and file validation.');
+    console.log('PASS: consented public posts and re-encoded images; rollback on publication failures; private legacy requests/reviews; Terra routing; temporary cleanup; schema, limits and upload validation.');
 
     if(process.env.KFI_BROWSER_TESTS==='1') {
       const {chromium}=require(require.resolve('playwright',{paths:[process.env.KFI_NODE_MODULES||path.join(__dirname,'..')]}));
@@ -155,19 +181,24 @@ function png(width=240,height=80) {
       await page.locator('#kfi-analysis-consent').check();await page.locator('#kfi-identify').click();
       await page.locator('#gpt-font-id-result.success').waitFor();assert.equal(requests,1);assert.ok(!lastFields.includes('share_for_review'));
       assert.equal(await page.locator('.kfi-match').count(),2);assert.equal(await page.locator('.kfi-match a').first().getAttribute('href'),'https://kreativfont.com/fonts/georgia');
+      await page.locator('.kfi-comparison-details summary').first().click();
       assert.ok((await page.locator('.kfi-catalogue-evidence').first().innerText()).includes('name checked'));
       assert.equal(await page.locator('.kfi-match a').first().innerText(),'View Georgia in Kreativ →');
-      assert.ok((await page.locator('#gpt-font-id-result').innerText()).includes('has not saved'));
+      assert.ok(lastFields.includes('publication_consent'));assert.ok(lastFields.includes('public-image-and-results-v1'));
+      assert.equal(await page.locator('.kfi-post-link').count(),1);
       await page.screenshot({path:'/tmp/kreativ-identifier-local-results.png'});
-      await page.locator('#kfi-remove').click();await select();await page.locator('#kfi-analysis-consent').check();await page.locator('#kfi-share-review').check();
+      await page.locator('#kfi-remove').click();await select();await page.locator('#kfi-analysis-consent').check();
       await page.locator('#kfi-rotate').click();await page.waitForFunction(()=>document.querySelector('#gpt-font-preview p')?.textContent.includes('rotated'));
-      assert.equal(await page.locator('#kfi-analysis-consent').isChecked(),false);assert.equal(await page.locator('#kfi-share-review').isChecked(),false);
-      await page.locator('#kfi-analysis-consent').check();await page.locator('#kfi-share-review').check();await page.locator('#kfi-identify').click();
-      await page.waitForFunction(()=>document.querySelector('#gpt-font-id-result').textContent.includes('Shared with'));
-      assert.ok(lastFields.includes('share_for_review'));assert.ok(lastFields.includes('review_consent'));
+      assert.equal(await page.locator('#kfi-analysis-consent').isChecked(),false);
+      await page.locator('#kfi-analysis-consent').check();await page.locator('#kfi-identify').click();
+      await page.waitForFunction(()=>document.querySelector('#gpt-font-id-result').textContent.includes('have been published'));
+      assert.ok(!lastFields.includes('share_for_review'));assert.ok(lastFields.includes('publication_consent'));
       await page.setViewportSize({width:390,height:844});await open();await select();
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
       await page.screenshot({path:'/tmp/kreativ-identifier-local-mobile.png'});
+      await page.evaluate(()=>document.body.classList.add('dark-mode'));
+      assert.equal(await page.evaluate(()=>getComputedStyle(document.querySelector('#gpt-font-id-form')).backgroundColor),'rgb(16, 24, 39)');
+      await page.screenshot({path:'/tmp/kreativ-identifier-local-mobile-dark.png'});
       await page.setViewportSize({width:1280,height:1000});await open();await select();
       fixture='failure';await page.locator('#kfi-analysis-consent').check();await page.locator('#kfi-identify').click();await page.locator('#gpt-font-id-result.error').waitFor();
       assert.equal(await page.locator('#kfi-identify').isEnabled(),true);
@@ -175,6 +206,7 @@ function png(width=240,height=80) {
       await page.locator('#gpt-font-id-result.success').waitFor();
       assert.equal(await page.locator('.kfi-match h3').first().innerText(),'Georgia');
       assert.equal(await page.getByRole('heading',{name:'Similar catalogue alternatives',exact:true}).count(),1);
+      await page.locator('.kfi-comparison-details summary').last().click();
       assert.ok((await page.locator('.kfi-match').last().innerText()).includes('Bold italic'));
       assert.ok((await page.locator('.kfi-match').last().innerText()).includes('original font not identified'));
       assert.equal(await page.locator('img[src*="attacker.test"]').count(),0);
@@ -210,7 +242,7 @@ function png(width=240,height=80) {
       await page.waitForFunction(()=>document.querySelector('#kfi-bench-status').textContent.includes('Checkpoint dataset, pipelines, model or profiles differ'));
       await page.screenshot({path:'/tmp/kreativ-identifier-benchmark-local.png',fullPage:true});
       assert.deepEqual(pageErrors,[]);
-      await browser.close();console.log('PASS: browser upload/consent gating; safe results and links; optional review; rotation consent reset; mobile layout; provider failure recovery.');
+      await browser.close();console.log('PASS: browser upload/publication consent; post links; safe results; rotation consent reset; mobile light/dark layout; provider failure recovery.');
     }
     assert.ok(!errors.includes('Fatal error'),errors);
   } finally {server.kill();await once(server,'exit');}

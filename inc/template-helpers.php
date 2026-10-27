@@ -306,6 +306,11 @@ function kreativ_get_single_font_eyebrow( $post = null ) {
     return 'Font';
 }
 
+function kreativ_is_identifier_page( $post = null ) {
+    $post = get_post( $post );
+    return $post instanceof WP_Post && 'kreativ-font-identifier' === $post->post_name;
+}
+
 function kreativ_is_tool_page( $post = null ) {
     $post = get_post( $post );
 

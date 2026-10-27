@@ -1,4 +1,4 @@
-# Kreativ Font Identifier 0.9.1
+# Kreativ Font Identifier 1.0.0
 
 Authoritative source for the existing WordPress plugin installed in
 `/htdocs/wp-content/plugins/kreativ-gpt-font-dentifier/` (the historical directory
@@ -6,6 +6,33 @@ spelling is intentionally preserved). The theme deployment excludes `scripts/`.
 The dedicated plugin workflow backs up the installed plugin and uploads only the
 reviewed PHP/frontend/admin assets.
 No credentials or saved API key are included in this source.
+
+## Website experience and publishing
+
+The identifier uses `partials/font-identifier.php` through the post, page and
+tools-page templates. The slug-specific route bypasses generic heroes and saved
+editorial wrappers. `scripts/test-identifier-layout.php` exercises all three
+routes and checks that unrelated tools retain their existing layout.
+
+The website has one upload control, an image preview with change/rotate/remove
+actions, a compact publication notice and one required analysis/publication
+consent. Every successful website submission creates a public post in
+`identified-fonts` with the submitted image and unverified font suggestions.
+Results provide the post URL, copy-link and another-image actions.
+
+The request must send `publish_identification=yes` and
+`publication_consent=public-image-and-results-v1`. A `client=website` request
+without both fields fails before generation. Existing private-processing or
+review consent is never interpreted as public consent. Legacy extensions keep
+working privately; publishing from an extension requires a client update that
+clearly discloses publication and sends the new consent fields.
+
+Publication re-encodes pixels as a PNG up to 1600 pixels per side, dropping original
+filenames, metadata and appended data. The new post stays a draft until its image
+and consent record are ready. Attachment/post failures roll back the new media
+and draft, and return the usable font suggestions with a publication-failure
+notice. Provider failures create no posts or public files. Public reports remain
+excluded from catalogue retrieval. The active Terra setting is preserved.
 
 ## Catalogue-assisted identification
 
@@ -54,7 +81,8 @@ gaps cannot erase plausible initial suggestions or force an invented match. Dire
 font-page links and preview images come only from public same-site catalogue rows,
 not model-provided URLs. Legacy extensions still receive paragraphs in the form
 "name — reason", with a separate alternatives heading. No default image/report
-storage and optional explicit private review remain unchanged.
+storage for legacy requests and optional explicit private review remain unchanged.
+The website's consented publishing flow is described above.
 
 ## Offline checks (no paid API calls)
 
@@ -188,13 +216,16 @@ Sources: official [Sol](https://developers.openai.com/api/docs/models/gpt-6.1-so
 - Genuine PHP multipart uploads only; validated using actual file bytes, MIME,
   dimensions and size (4 MB / 25 MP maximum).
 - Temporary upload removed before the provider request, also on validation errors.
-  Default identifications never use `wp_handle_upload`, Media Library, posts,
-  cached response data, image URLs or saved reports.
+  Legacy requests without publication consent never use public uploads, Media
+  Library, public posts, cached response data, image URLs or saved reports.
+- Website visitors explicitly agree to publishing the image and suggestions.
+  Only a successful analysis with the versioned publication consent creates a
+  public image attachment and a post in `identified-fonts`.
 - OpenAI Responses requests use `store:false`; this is not a claim of zero provider
   retention. No image/content is logged by this plugin. Hosting and provider
   infrastructure have their own policies.
-- `share_for_review=yes` AND `review_consent=yes` are required to retain anything.
-  Processing consent alone is never interpreted as sharing consent.
+- `share_for_review=yes` AND `review_consent=yes` retain a private review for
+  compatible legacy clients. These fields never authorize public publication.
 - Opt-in creates a non-public `kfi_review` pending record. The image is protected
   database metadata, NOT an uploads file. The type has no public query route,
   rewrite, REST exposure or normal publishing capability. Only `manage_options`
@@ -210,7 +241,9 @@ Sources: official [Sol](https://developers.openai.com/api/docs/models/gpt-6.1-so
 Preserved shortcode `[gpt_font_identifier]`, global `GPTFontId.ajaxurl` + `nonce`,
 AJAX action `gpt_font_id_identify`, nonce action `gpt_font_id_nonce`, and upload
 field `font_image`. Response remains `{success,data:{html,post_url}}` with safe,
-paragraph-based result HTML. `post_url` is always empty. Optional structured fields
+paragraph-based result HTML. `post_url` links to a newly published consented
+identification; it remains empty for private legacy requests/reviews and failed
+publications. Optional structured fields
 are additive. Installed Chrome extension 1.0.3 submits no sharing fields, continues
 to display results, and now receives the no-storage default automatically.
 
@@ -241,6 +274,10 @@ KFI_BROWSER_TESTS=1 KFI_NODE_MODULES=/absolute/node_modules node scripts/identif
 
 The original extension package must also pass its MV3 tests. Do not upload
 confidential samples for production checks or use fabricated confidence scores.
+Publishing checks use a mocked provider and local WordPress stubs, including
+consent rejection before generation, new public-post/image creation, metadata
+stripping and rollback across upload, attachment, metadata, consent and post
+failures. They make no paid calls and do not measure font-identification accuracy.
 
 ## Deployment and rollback
 
@@ -250,6 +287,7 @@ The workflow saves the installed plugin as a private GitHub Actions artifact
 not mirror/delete the plugin directory or alter unrelated plugins/settings.
 For rollback, restore the snapshot files to the same exact plugin paths; a new
 admin.js asset left by an older rollback is inert because the old PHP never loads it.
+The same applies to `publishing.php` when rolling back to a pre-1.0.0 plugin.
 Do not restore the insecure public-storage behavior without a visitor notice.
 Clear WordPress edge/object caches after deployment and check live default and
 explicit-review requests. Never store rollback PHP in the public plugin folder.

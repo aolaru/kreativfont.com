@@ -7,7 +7,8 @@ jQuery(function ($) {
   input.required = false;
   const submit = form.querySelector('button[type="submit"]');
   const consent = form.querySelector('#kfi-analysis-consent');
-  const share = form.querySelector('#kfi-share-review');
+  const dropzone = form.querySelector('.kfi-upload-label');
+  const help = form.querySelector('#kfi-submit-help');
   const loading = document.querySelector('#gpt-font-id-loading');
   const result = document.querySelector('#gpt-font-id-result');
   const actions = form.querySelector('.kfi-image-actions');
@@ -19,10 +20,12 @@ jQuery(function ($) {
 
   function sync() {
     submit.disabled = busy || preparing || !selected || (consent && !consent.checked);
-    submit.textContent = busy ? 'Comparing fonts…' : 'Find font matches';
+    submit.textContent = busy ? 'Finding matches…' : 'Identify & publish';
     input.disabled = busy || preparing;
+    input.tabIndex = selected ? -1 : 0;
     if (consent) consent.disabled = busy || preparing;
-    if (share) share.disabled = busy || preparing;
+    if (dropzone) dropzone.hidden = Boolean(selected);
+    if (help) help.textContent = busy ? 'Finding matches and creating your post…' : (preparing ? 'Preparing your image…' : (!selected ? 'Choose an image to get started.' : (consent && !consent.checked ? 'Confirm public sharing to continue.' : 'Ready to identify your font.')));
     form.querySelectorAll('.kfi-image-actions button').forEach(button => { button.disabled = busy || preparing; });
     form.setAttribute('aria-busy', String(busy || preparing));
     if (loading) { loading.hidden = !busy; loading.style.display = busy ? '' : 'none'; }
@@ -38,7 +41,6 @@ jQuery(function ($) {
   }
   function resetConsent() {
     if (consent) consent.checked = false;
-    if (share) share.checked = false;
   }
   function releasePreview() {
     if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -99,9 +101,26 @@ jQuery(function ($) {
   function showSuccess(data) {
     clearResult(); result.hidden = false; result.className = 'success';
     const title = document.createElement('h2'); title.textContent = 'Your font shortlist'; result.appendChild(title);
-    paragraph('AI suggestions, not a verified identification. Compare the letterforms and check licensing before use.');
+    paragraph('Compare these suggestions with your sample. Exact identification is not guaranteed.');
+    const resultActions = document.createElement('div'); resultActions.className = 'kfi-result-actions';
+    const postUrl = safeSiteUrl(data?.post_url);
+    if (postUrl) {
+      const post = document.createElement('a'); post.href = postUrl; post.textContent = 'View your published identification'; post.className = 'kfi-post-link'; resultActions.appendChild(post);
+      const copy = document.createElement('button'); copy.type = 'button'; copy.textContent = 'Copy post link';
+      copy.addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(postUrl); copy.textContent = 'Link copied'; }
+        catch { copy.textContent = 'Open the post to copy its link'; }
+      }); resultActions.appendChild(copy);
+    }
+    const another = document.createElement('button'); another.type = 'button'; another.textContent = 'Try another image';
+    another.addEventListener('click', () => { resetFile(); input.click(); }); resultActions.appendChild(another);
+    result.appendChild(resultActions);
     if (data && typeof data === 'object' && Array.isArray(data.candidates)) {
-      if (data.catalogue_note) paragraph(data.catalogue_note).className = 'kfi-catalogue-note';
+      if (data.catalogue_note) {
+        const details = document.createElement('details'); details.className = 'kfi-catalogue-note';
+        const summary = document.createElement('summary'); summary.textContent = 'How these suggestions were checked'; details.appendChild(summary);
+        paragraph(data.catalogue_note, details); result.appendChild(details);
+      }
       if (data.sample_text) paragraph('Text sample: ' + data.sample_text).className = 'kfi-sample-text';
       if (!data.candidates.length) paragraph('No reliable suggestions from this image. Try a sharper crop with one line of text.');
       const renderCandidate = candidate => {
@@ -109,13 +128,15 @@ jQuery(function ($) {
         const tag = paragraph(candidate.kind === 'similar_alternative' ? 'Similar alternative' : 'Possible match', card); tag.className = 'kfi-match-kind';
         const heading = document.createElement('h3'); heading.textContent = candidate.name; card.appendChild(heading);
         const listed = candidate.catalogue_status === 'listed';
+        const comparison = document.createElement('details'); comparison.className = 'kfi-comparison-details';
+        const summary = document.createElement('summary'); summary.textContent = 'Comparison details'; comparison.appendChild(summary);
         if (candidate.catalogue_status) {
           paragraph(listed
             ? (candidate.evidence === 'local_render_alternative' ? 'Catalogue alternative · original font not identified' : (candidate.evidence === 'local_render_match' ? 'AI suggestion supported by a font-file comparison · identity unverified' : 'In Kreativ · name checked · identity unverified'))
-            : 'AI suggestion · no matching catalogue entry found in this search', card).className = 'kfi-catalogue-evidence';
+            : 'AI suggestion · no matching catalogue entry found in this search', comparison).className = 'kfi-catalogue-evidence';
         }
         const faceLabels = {regular:'Regular',bold:'Bold',italic:'Italic',bold_italic:'Bold italic'};
-        if (faceLabels[candidate.matched_style]) paragraph('Compared font file: ' + faceLabels[candidate.matched_style] + '. Exact face remains unverified.', card);
+        if (faceLabels[candidate.matched_style]) paragraph('Compared style: ' + faceLabels[candidate.matched_style] + '. Exact face remains unverified.', comparison);
         const previewHref = listed ? safePreviewUrl(candidate.preview_url) : null;
         if (previewHref) {
           const image = document.createElement('img'); image.src = previewHref; image.alt = candidate.name + ' catalogue specimen';
@@ -127,6 +148,7 @@ jQuery(function ($) {
         if (href) {
           const link = document.createElement('a'); link.href = href; link.textContent = (listed ? 'View ' : 'Search for ') + candidate.name + ' in Kreativ →'; card.appendChild(link);
         }
+        if (candidate.catalogue_status || faceLabels[candidate.matched_style]) card.appendChild(comparison);
         result.appendChild(card);
       };
       data.candidates.slice(0, 3).forEach(renderCandidate);
@@ -143,15 +165,12 @@ jQuery(function ($) {
       doc.querySelectorAll('script,style').forEach(node => node.remove());
       paragraph(doc.body.textContent || 'No font suggestions were returned.');
     }
-    const free = document.createElement('a');
-    free.href = new URL('/collections/best-free-fonts-commercial-use', GPTFontId.ajaxurl).href;
-    free.textContent = 'Explore free fonts for commercial use';
-    paragraph('Need a lower-cost starting point?').append(' ', free);
     result.focus();
   }
 
   input.addEventListener('change', () => choose(input.files?.[0]));
   consent?.addEventListener('change', sync);
+  form.querySelector('#kfi-change')?.addEventListener('click', () => input.click());
   form.querySelector('#kfi-remove')?.addEventListener('click', resetFile);
   form.querySelector('#kfi-rotate')?.addEventListener('click', () => {
     if (!previewImage || busy || preparing) return;
@@ -183,13 +202,14 @@ jQuery(function ($) {
     event.preventDefault();
     if (busy || preparing) return;
     if (!selected) { showError('Please choose an image first.'); return; }
-    if (consent && !consent.checked) { showError('Please confirm the image can be sent for analysis.'); return; }
+    if (consent && !consent.checked) { showError('Please confirm your image can be analysed and published.'); return; }
     const body = new FormData();
     body.append('action', 'gpt_font_id_identify');
     body.append('_ajax_nonce', GPTFontId.nonce);
     body.append('font_image', selected, selected.name);
-    // Explicit opt-in is never inferred from legacy auto-post settings or processing consent.
-    if (share?.checked) { body.append('share_for_review', 'yes'); body.append('review_consent', 'yes'); }
+    body.append('client', 'website');
+    body.append('publish_identification', 'yes');
+    body.append('publication_consent', GPTFontId.publicationConsentVersion || 'public-image-and-results-v1');
     busy = true; clearResult(); sync();
     $.ajax({url: GPTFontId.ajaxurl, type: 'POST', data: body, contentType: false, processData: false, timeout: 70000})
       .done(response => {

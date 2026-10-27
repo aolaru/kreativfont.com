@@ -6,6 +6,7 @@ define('KFI_VERSION', 'other-plugin-version'); // Another active Kreativ plugin 
 $fixture = $_GET['fixture'] ?? 'normal';
 $options = ['gpt_font_id_api_key' => 'fixture-not-a-key', 'gpt_font_id_auto_post' => 'yes', 'gpt_font_id_post_status' => 'publish'];
 $transients = []; $actions = []; $filters = []; $shortcodes = []; $posts = []; $metas = []; $api_calls = [];
+$public_uploads = []; $attachments = []; $deleted_uploads = [];
 if ($fixture === 'review_off') { $options['gpt_font_id_allow_review'] = 'no'; }
 if ($fixture === 'live_sol') { $options['gpt_font_id_model'] = 'gpt-6.1-sol'; }
 if ($fixture === 'live_terra') { $options['gpt_font_id_model'] = 'gpt-6.1-terra'; }
@@ -36,8 +37,9 @@ function remove_accents($text) { return $text; }
 function wp_parse_url($url, $component = -1) { return parse_url($url, $component); }
 function wp_upload_dir() { return ['basedir' => '/nonexistent-test-catalogue']; }
 function sanitize_title($value) { return strtolower(str_replace(' ', '-', $value)); }
-function get_term_by($field, $value, $taxonomy) { return $GLOBALS['fixture'] === 'no_catalogue' ? false : (object) ['slug' => $value]; }
-function get_permalink($post) { return 'https://kreativfont.com/fonts/' . strtolower(str_replace(' ', '-', gpt_font_id_catalogue_name($post->post_title))); }
+function get_term_by($field, $value, $taxonomy) { return $GLOBALS['fixture'] === 'no_catalogue' || $GLOBALS['fixture'] === 'publication_category_fail' ? false : (object) ['slug' => $value, 'term_id' => 77]; }
+function wp_insert_term(...$args) { return new WP_Error('category', 'fixture-category-failed'); }
+function get_permalink($post) { return is_int($post) ? 'https://kreativfont.com/identified-fonts/font-identification-' . $post : 'https://kreativfont.com/fonts/' . strtolower(str_replace(' ', '-', gpt_font_id_catalogue_name($post->post_title))); }
 function get_post_thumbnail_id($id) { return $id; }
 function wp_get_attachment_image_src($id, $size) {
     if ($GLOBALS['fixture'] === 'no_previews') { return false; }
@@ -129,11 +131,13 @@ function wp_remote_retrieve_body($response) { return $response['body']; }
 function wp_remote_retrieve_response_code($response) { return $response['code']; }
 function wp_remote_retrieve_header($response, $header) { return $response['headers'][$header] ?? ''; }
 function wp_insert_post($post, ...$args) {
+    if ($GLOBALS['fixture'] === 'publication_post_fail') { return new WP_Error('post', 'fixture-post-failed'); }
     foreach ($GLOBALS['filters']['wp_insert_post_data'] ?? [] as $filter) $post = $filter($post);
     $GLOBALS['posts'][] = $post; return count($GLOBALS['posts']);
 }
 function add_post_meta($id, $key, $value, $unique) {
     if ($GLOBALS['fixture'] === 'review_fail' && $key === '_kfi_review_image') return false;
+    if ($GLOBALS['fixture'] === 'publication_consent_fail' && $key === '_kfi_publication_consent') return false;
     $GLOBALS['metas'][] = ['key'=>$key,'private_image'=>str_starts_with($value, 'data:image/')]; return 1;
 }
 function wp_trash_post($id) { $GLOBALS['posts'][$id-1]['post_status'] = 'trash'; }
@@ -145,7 +149,26 @@ function wp_send_json_success($data) {
     throw new TestReply(['success'=>true,'data'=>$data]);
 }
 function wp_handle_upload(...$args) { throw new Exception('PUBLIC UPLOAD STORAGE MUST NEVER BE USED'); }
-function wp_insert_attachment(...$args) { throw new Exception('MEDIA LIBRARY MUST NEVER BE USED'); }
+function wp_upload_bits($name, $deprecated, $bytes) {
+    if (($_POST['publication_consent'] ?? '') !== 'public-image-and-results-v1' || ($_POST['publish_identification'] ?? '') !== 'yes') { throw new Exception('NO PUBLIC UPLOAD WITHOUT PUBLICATION CONSENT'); }
+    $GLOBALS['public_uploads'][] = ['name'=>$name,'mime'=>getimagesizefromstring($bytes)['mime'],'has_private_marker'=>str_contains($bytes,'PRIVATE_ORIGINAL_METADATA'),'sha256'=>hash('sha256',$bytes)];
+    return $GLOBALS['fixture'] === 'publication_upload_fail' ? ['error'=>'fixture-upload-failed'] : ['file'=>'/mock/uploads/'.$name,'url'=>'https://kreativfont.com/wp-content/uploads/'.$name,'error'=>false];
+}
+function wp_insert_attachment($post, $file, $parent, $error) {
+    if (($_POST['publication_consent'] ?? '') !== 'public-image-and-results-v1') { throw new Exception('NO MEDIA LIBRARY WITHOUT PUBLICATION CONSENT'); }
+    if ($GLOBALS['fixture'] === 'publication_attachment_fail') { return new WP_Error('attachment','fixture-attachment-failed'); }
+    $GLOBALS['attachments'][] = ['post'=>$post,'file'=>$file,'parent'=>$parent,'deleted'=>false]; return 900;
+}
+function wp_generate_attachment_metadata(...$args) { return $GLOBALS['fixture'] === 'publication_metadata_fail' ? [] : ['width'=>240,'height'=>80]; }
+function wp_update_attachment_metadata(...$args) { return true; }
+function set_post_thumbnail(...$args) { return true; }
+function wp_get_attachment_image(...$args) { return '<img src="https://kreativfont.com/wp-content/uploads/font-identification-1.png" alt="Submitted font sample">'; }
+function wp_update_post($post, $error) {
+    if ($GLOBALS['fixture'] === 'publication_update_fail') { return new WP_Error('publish','fixture-publish-failed'); }
+    $GLOBALS['posts'][$post['ID']-1] = array_merge($GLOBALS['posts'][$post['ID']-1],$post); return $post['ID'];
+}
+function wp_delete_attachment(...$args) { $GLOBALS['attachments'][0]['deleted']=true; return true; }
+function wp_delete_file($file) { $GLOBALS['deleted_uploads'][]=$file; }
 
 require dirname(__DIR__) . '/plugin/gpt-font-id.php';
 foreach ($actions['init'] as $callback) $callback();
@@ -191,7 +214,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     catch (TestReply $reply) {
         header('Content-Type: application/json');
         $reply->payload['_test'] = ['calls'=>$api_calls,'posts'=>$posts,'metas'=>$metas,'type'=>$GLOBALS['review_type'],
-            'active_model'=>gpt_font_id_active_model(),'benchmark_locked'=>isset($options['gpt_font_id_benchmark_lock'])];
+            'active_model'=>gpt_font_id_active_model(),'benchmark_locked'=>isset($options['gpt_font_id_benchmark_lock']),
+            'uploads'=>$public_uploads,'attachments'=>$attachments,'deleted_uploads'=>$deleted_uploads];
         echo json_encode($reply->payload); exit;
     }
 }

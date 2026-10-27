@@ -18,7 +18,7 @@ const {chromium} = require(require.resolve('@playwright/test', {paths:[process.e
     for (const [index, file] of files.entries()) {
       await page.goto('https://kreativfont.com/tools/kreativ-font-identifier?catalogue-check=' + Date.now());
       const config = JSON.parse((await page.content()).match(/var GPTFontId\s*=\s*(\{.*?\});/s)[1]);
-      assert.equal(config.version, '0.9.1'); assert.equal(config.publicStorage, false); assert.equal(config.reviewRequiresOptIn, true);
+      assert.equal(config.version, '1.0.0'); assert.equal(config.publicStorage, false); assert.equal(config.reviewRequiresOptIn, true);
       await page.locator('input[name=font_image]').setInputFiles(file);
       await page.locator('#gpt-font-preview img').waitFor();
       await page.locator('#kfi-analysis-consent').check();
@@ -27,8 +27,8 @@ const {chromium} = require(require.resolve('@playwright/test', {paths:[process.e
       await page.locator('#kfi-identify').click();
       const payload = await (await pending).json();
       assert.equal(payload.success, true, JSON.stringify(payload.data));
-      assert.equal(payload.data.post_url, ''); assert.equal(payload.data.review_submitted, false);
-      assert.ok(payload.data.notice.includes('has not saved'));
+      assert.ok(payload.data.post_url.startsWith('https://kreativfont.com/identified-fonts/')); assert.equal(payload.data.review_submitted, false);
+      assert.ok(payload.data.notice.includes('have been published'));
       assert.ok(['lookup_only','corroborated_shape_match','local_alternative'].includes(payload.data.catalogue.status));
       for (const candidate of payload.data.candidates) {
         assert.equal(new URL(candidate.url).hostname, 'kreativfont.com');

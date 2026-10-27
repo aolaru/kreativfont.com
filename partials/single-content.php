@@ -6,6 +6,12 @@ if ( ! $post instanceof WP_Post ) {
     return;
 }
 
+// The identifier owns its compact tool UI; never wrap it in the generic hero.
+if ( kreativ_is_identifier_page( $post ) ) {
+    kreativ_render_partial( 'partials/font-identifier.php' );
+    return;
+}
+
 $config = array(
     'tool' => array(
         'eyebrow'          => 'Font tool',

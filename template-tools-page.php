@@ -7,6 +7,11 @@ get_header();
 
 <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 <?php
+if ( kreativ_is_identifier_page( get_post() ) ) {
+    kreativ_render_partial( 'partials/font-identifier.php' );
+    continue;
+}
+
 $page_summary = kreativ_get_page_summary( get_post() );
 $research_pair = 'kreativ-font-pairing-tools' === get_post_field( 'post_name', get_post() ) ? kreativ_get_requested_font_research_pair() : array();
 ?>

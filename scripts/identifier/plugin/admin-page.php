@@ -55,7 +55,7 @@ function gpt_font_id_settings_page()
     <div class="wrap">
         <h1>Kreativ Font Identifier — Settings</h1>
         <p>Version <?php echo esc_html(KREATIV_GPT_FONT_ID_VERSION); ?> · Shortcode: <code>[gpt_font_identifier]</code></p>
-        <div class="notice notice-info inline"><p><strong>No automatic public storage.</strong> Images are analysed from a temporary upload, which is removed before the OpenAI request. Nothing is added to the Media Library. OpenAI receives the image with response storage disabled; its separate retention policies still apply.</p><p>Only explicit visitor opt-in saves the image and suggestions in the admin-only review queue. Reviews cannot be published from that queue. Older auto-post and post-status settings are no longer used. Previously published reports have not been changed.</p></div>
+        <div class="notice notice-info inline"><p><strong>Website identifications create public posts.</strong> Visitors must explicitly consent to public sharing and OpenAI analysis. Each successful website submission creates a post in Identified Fonts with a re-encoded image and suggestions. Failed analyses create no post.</p><p>Existing extension clients continue to identify privately unless they send the new publication consent. Their optional admin-only reviews remain private. OpenAI response storage stays disabled. Historical auto-post settings do not override visitor consent.</p></div>
         <p><a class="button" href="<?php echo esc_url(admin_url('edit.php?post_type=kfi_review')); ?>">Review shared submissions</a></p>
         <form method="post" action="options.php">
             <?php settings_fields('gpt_font_id'); ?>

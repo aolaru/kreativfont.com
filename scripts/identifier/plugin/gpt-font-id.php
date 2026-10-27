@@ -1,17 +1,18 @@
 <?php
 /**
  * Plugin Name: Kreativ Font Identifier
- * Description: Image-based font suggestions, with no public upload storage and optional admin-only review.
- * Version: 0.9.1
+ * Description: Image-based font suggestions with consented public identification posts and compatible private extension requests.
+ * Version: 1.0.0
  * Author: Andrei Olaru
  */
 
 defined('ABSPATH') || exit;
-define('KREATIV_GPT_FONT_ID_VERSION', '0.9.1');
+define('KREATIV_GPT_FONT_ID_VERSION', '1.0.0');
 require_once __DIR__ . '/admin-page.php';
 require_once __DIR__ . '/raster.php';
 require_once __DIR__ . '/catalogue.php';
 require_once __DIR__ . '/evaluation.php';
+require_once __DIR__ . '/publishing.php';
 
 add_action('init', function () {
     // Neither the review nor its image is a public post or Media Library attachment.
@@ -49,7 +50,11 @@ add_action('add_meta_boxes_kfi_review', function () {
     });
 });
 
-add_shortcode('gpt_font_identifier', function () {
+function gpt_font_id_enqueue_assets()
+{
+    static $enqueued = false;
+    if ($enqueued) { return; }
+    $enqueued = true;
     wp_enqueue_style('gpt-font-id-css', plugin_dir_url(__FILE__) . 'assets/style.css', [], KREATIV_GPT_FONT_ID_VERSION);
     wp_enqueue_script('gpt-font-id-js', plugin_dir_url(__FILE__) . 'assets/script.js', ['jquery'], KREATIV_GPT_FONT_ID_VERSION, true);
     // Keep this global, its keys, nonce action and endpoint stable for installed extensions.
@@ -58,33 +63,51 @@ add_shortcode('gpt_font_identifier', function () {
         'ajaxurl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('gpt_font_id_nonce'),
         'version' => KREATIV_GPT_FONT_ID_VERSION, 'publicStorage' => false, 'reviewRequiresOptIn' => true,
+        'publicationRequiresConsent' => true, 'publicationConsentVersion' => 'public-image-and-results-v1',
     ]) . ';', 'before');
+}
+
+add_action('wp_enqueue_scripts', function () {
+    $post = get_queried_object();
+    if (($post->post_name ?? '') === 'kreativ-font-identifier') { gpt_font_id_enqueue_assets(); }
+});
+
+add_shortcode('gpt_font_identifier', function () {
+    gpt_font_id_enqueue_assets();
     ob_start(); ?>
-    <form id="gpt-font-id-form" enctype="multipart/form-data">
-        <h2>Find possible fonts from an image</h2>
-        <p>Choose one clear line of text. We check suggested names in the Kreativ catalogue and compare available font specimens. Results are a starting point, not a verified identification.</p>
-        <label class="kfi-upload-label" for="kreativ-font-identifier-upload">Choose an image or drop it here</label>
-        <input id="kreativ-font-identifier-upload" type="file" name="font_image" accept="image/jpeg,image/png,image/gif,image/webp" aria-describedby="kfi-file-help kfi-privacy" required>
-        <p id="kfi-file-help">JPG, PNG, GIF or WebP · up to 4 MB · crop out unrelated text for better matches. Animated images use a single frame.</p>
-        <div id="gpt-font-preview" hidden></div>
-        <div class="kfi-image-actions" hidden>
-            <button type="button" id="kfi-rotate">Rotate 90°</button>
-            <button type="button" id="kfi-remove">Remove image</button>
-        </div>
-        <aside id="kfi-privacy">
-            <strong>No public storage by default</strong>
-            <p>Identify sends the image to Kreativ Font and OpenAI for analysis. By default, Kreativ Font removes the temporary upload before analysis and does not save the image or report. OpenAI’s data retention policies still apply. Avoid confidential or personal information.</p>
-            <label><input type="checkbox" id="kfi-analysis-consent" required> I understand this image will be sent to OpenAI for font analysis.</label>
-            <?php if (get_option('gpt_font_id_allow_review', 'yes') === 'yes') : ?>
-            <label class="kfi-review-choice"><input type="checkbox" name="share_for_review" value="yes" id="kfi-share-review"> Optional: save this image and its suggestions in an admin-only review queue. This does not publish them or grant permission to publish.</label>
-            <?php endif; ?>
-            <a href="<?php echo esc_url(home_url('/blog/terms-of-use-privacy-policy')); ?>">Privacy information</a>
-        </aside>
-        <button type="submit" id="kfi-identify">Find font matches</button>
+    <form id="gpt-font-id-form" enctype="multipart/form-data" aria-label="Identify a font">
+        <section class="kfi-upload-panel" aria-labelledby="kfi-upload-heading">
+            <h2 id="kfi-upload-heading"><span class="kfi-step-number" aria-hidden="true">1</span> Upload your image</h2>
+            <input class="kfi-file-input" id="kreativ-font-identifier-upload" type="file" name="font_image" accept="image/jpeg,image/png,image/gif,image/webp" aria-describedby="kfi-file-help" required>
+            <label class="kfi-upload-label" for="kreativ-font-identifier-upload">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 4-6 5 7"/></svg>
+                <strong>Drop an image here</strong><span>or <span class="kfi-choose-link">choose a file</span></span>
+            </label>
+            <div id="gpt-font-preview" hidden></div>
+            <div class="kfi-image-actions" hidden>
+                <button type="button" id="kfi-change">Change image</button>
+                <button type="button" id="kfi-rotate">Rotate</button>
+                <button type="button" id="kfi-remove">Remove</button>
+            </div>
+            <p id="kfi-file-help">JPG, PNG, GIF or WebP · up to 4 MB</p>
+            <p class="kfi-upload-tip">Best results: one clear line of text, cropped close to the letters.</p>
+        </section>
+        <section class="kfi-submit-panel" aria-labelledby="kfi-submit-heading">
+            <h2 id="kfi-submit-heading"><span class="kfi-step-number" aria-hidden="true">2</span> Find your matches</h2>
+            <p>Compare a shortlist of possible fonts and explore them in Kreativ.</p>
+            <aside id="kfi-privacy">
+                <strong>Each identification creates a public post</strong>
+                <p>Your image and suggestions will be published on Kreativ Font. Don’t upload private or personal information.</p>
+                <label><input type="checkbox" id="kfi-analysis-consent" required> I can share this image publicly and agree to send it to OpenAI for font analysis.</label>
+                <details><summary>About your image</summary><p>OpenAI processes the image with response storage disabled; its separate retention policies apply. The public post includes a re-encoded copy of your image and the suggestions. <a href="<?php echo esc_url(home_url('/blog/terms-of-use-privacy-policy')); ?>">Privacy information</a></p></details>
+            </aside>
+            <button type="submit" id="kfi-identify">Identify &amp; publish</button>
+            <p id="kfi-submit-help" role="status">Choose an image to get started.</p>
+        </section>
     </form>
     <div id="gpt-font-id-loading" role="status" aria-live="polite" hidden>
         <span class="gpt-spinner" aria-hidden="true"></span>
-        <p>Comparing letterforms… this may take up to a minute. Please keep this page open.</p>
+        <p>Finding font matches… keep this page open.</p>
     </div>
     <section id="gpt-font-id-result" aria-label="Font identification results" aria-live="polite" tabindex="-1" hidden></section>
     <noscript><p>JavaScript is required to preview the image and identify fonts. No image is sent automatically.</p></noscript>
@@ -433,6 +456,11 @@ function gpt_font_id_identify()
     }
     $image = gpt_font_id_prepare_image($_FILES['font_image'] ?? null);
     if (is_wp_error($image)) { wp_send_json_error($image->get_error_message()); }
+    $publication_requested = ($_POST['client'] ?? '') === 'website' || isset($_POST['publish_identification']) || isset($_POST['publication_consent']);
+    $publish = ($_POST['publish_identification'] ?? '') === 'yes' && ($_POST['publication_consent'] ?? '') === 'public-image-and-results-v1';
+    if ($publication_requested && !$publish) {
+        wp_send_json_error('Confirm that your image and suggestions can be published before identifying the font.');
+    }
     $api_key = get_option('gpt_font_id_api_key', '');
     if (!$api_key) { wp_send_json_error('The identifier is temporarily unavailable. Please try again later.'); }
     $rate = gpt_font_id_check_rate_limit();
@@ -441,15 +469,25 @@ function gpt_font_id_identify()
     if (is_wp_error($result)) { wp_send_json_error($result->get_error_message()); }
     $sharing = ($_POST['share_for_review'] ?? '') === 'yes' && ($_POST['review_consent'] ?? '') === 'yes';
     $review_submitted = false;
-    if ($sharing && get_option('gpt_font_id_allow_review', 'yes') === 'yes') {
+    if (!$publish && $sharing && get_option('gpt_font_id_allow_review', 'yes') === 'yes') {
         $review_submitted = gpt_font_id_submit_review($result, $image);
     }
     $notice = $review_submitted
         ? 'Shared with the site administrator for review only. Nothing has been published.'
         : ($sharing ? 'Your suggestions are ready, but the review could not be saved. Nothing has been published.' : 'Kreativ Font has not saved your image or report.');
+    $post_url = '';
+    if ($publish) {
+        $publication = gpt_font_id_publish_identification($result, $image);
+        if (is_wp_error($publication)) {
+            $notice = 'Your font suggestions are ready, but the public post could not be created. Nothing was published. You can still use the matches below.';
+        } else {
+            $post_url = get_permalink($publication);
+            $notice = 'Your image and font suggestions have been published. Save the post link to revisit or share them.';
+        }
+    }
     wp_send_json_success([
         'html' => gpt_font_id_result_html($result) . '<p>' . esc_html($notice) . '</p>',
-        'post_url' => '', // Never expose a private review URL to an anonymous submitter.
+        'post_url' => $post_url, // Private legacy reviews never receive a public URL.
         'candidates' => $result['candidates'], 'sample_text' => $result['sample_text'],
         'note' => $result['note'], 'review_submitted' => $review_submitted, 'notice' => $notice,
         'catalogue_note' => $result['catalogue_note'] ?? '', 'catalogue' => $result['catalogue'] ?? null,

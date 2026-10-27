@@ -2,6 +2,11 @@
 
 <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
 <?php
+if ( kreativ_is_identifier_page( get_post() ) ) {
+    kreativ_render_partial( 'partials/font-identifier.php' );
+    continue;
+}
+
 $is_tool_page       = kreativ_is_tool_page( get_post() );
 $page_summary       = kreativ_get_page_summary( get_post() );
 $page_shell_classes = 'kreativ-page-shell';
