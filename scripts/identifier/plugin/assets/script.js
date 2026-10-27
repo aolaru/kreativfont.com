@@ -9,6 +9,9 @@ jQuery(function ($) {
   const consent = form.querySelector('#kfi-analysis-consent');
   const dropzone = form.querySelector('.kfi-upload-label');
   const help = form.querySelector('#kfi-submit-help');
+  const publicationReady = GPTFontId.publicationRequiresConsent === true
+    && GPTFontId.publicationConsentVersion === 'public-image-and-results-v1'
+    && form.dataset.publicationConsent === GPTFontId.publicationConsentVersion;
   const loading = document.querySelector('#gpt-font-id-loading');
   const result = document.querySelector('#gpt-font-id-result');
   const actions = form.querySelector('.kfi-image-actions');
@@ -19,13 +22,13 @@ jQuery(function ($) {
   let busy = false, preparing = false, generation = 0;
 
   function sync() {
-    submit.disabled = busy || preparing || !selected || (consent && !consent.checked);
+    submit.disabled = !publicationReady || busy || preparing || !selected || (consent && !consent.checked);
     submit.textContent = busy ? 'Finding matches…' : 'Identify & publish';
-    input.disabled = busy || preparing;
+    input.disabled = !publicationReady || busy || preparing;
     input.tabIndex = selected ? -1 : 0;
-    if (consent) consent.disabled = busy || preparing;
+    if (consent) consent.disabled = !publicationReady || busy || preparing;
     if (dropzone) dropzone.hidden = Boolean(selected);
-    if (help) help.textContent = busy ? 'Finding matches and creating your post…' : (preparing ? 'Preparing your image…' : (!selected ? 'Choose an image to get started.' : (consent && !consent.checked ? 'Confirm public sharing to continue.' : 'Ready to identify your font.')));
+    if (help) help.textContent = !publicationReady ? 'Refresh this page to load the updated public-sharing notice.' : (busy ? 'Finding matches and creating your post…' : (preparing ? 'Preparing your image…' : (!selected ? 'Choose an image to get started.' : (consent && !consent.checked ? 'Confirm public sharing to continue.' : 'Ready to identify your font.'))));
     form.querySelectorAll('.kfi-image-actions button').forEach(button => { button.disabled = busy || preparing; });
     form.setAttribute('aria-busy', String(busy || preparing));
     if (loading) { loading.hidden = !busy; loading.style.display = busy ? '' : 'none'; }
@@ -201,6 +204,7 @@ jQuery(function ($) {
   form.addEventListener('submit', event => {
     event.preventDefault();
     if (busy || preparing) return;
+    if (!publicationReady) { showError('Refresh this page to load the current publication notice before submitting an image.'); return; }
     if (!selected) { showError('Please choose an image first.'); return; }
     if (consent && !consent.checked) { showError('Please confirm your image can be analysed and published.'); return; }
     const body = new FormData();
@@ -209,7 +213,7 @@ jQuery(function ($) {
     body.append('font_image', selected, selected.name);
     body.append('client', 'website');
     body.append('publish_identification', 'yes');
-    body.append('publication_consent', GPTFontId.publicationConsentVersion || 'public-image-and-results-v1');
+    body.append('publication_consent', GPTFontId.publicationConsentVersion);
     busy = true; clearResult(); sync();
     $.ajax({url: GPTFontId.ajaxurl, type: 'POST', data: body, contentType: false, processData: false, timeout: 70000})
       .done(response => {
@@ -221,4 +225,5 @@ jQuery(function ($) {
   });
   window.addEventListener('pagehide', () => { if (previewUrl) URL.revokeObjectURL(previewUrl); });
   sync();
+  if (!publicationReady) showError('This page has changed. Refresh to review the public-sharing notice before uploading an image.');
 });

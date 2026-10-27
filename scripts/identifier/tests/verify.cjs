@@ -31,7 +31,7 @@ function png(width=240,height=80) {
     for(let i=0;i<30;i++){try{await fetch(base);break;}catch{await new Promise(r=>setTimeout(r,100));}}
     const pageHtml=await(await fetch(base)).text();
     const config=JSON.parse(pageHtml.match(/var GPTFontId\s*=\s*(\{.*?\});/s)[1]);
-    assert.equal(config.version,'1.0.0');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
+    assert.equal(config.version,'1.0.1');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
     assert.equal(config.publicationRequiresConsent,true);assert.equal(config.publicationConsentVersion,'public-image-and-results-v1');
     const unit=await(await fetch(`${base}/unit`)).json();
     assert.ok(unit.alternative_html.includes('Similar catalogue alternatives'));assert.ok(unit.alternative_html.includes('Gelasio</a> — Similar catalogue alternative, not an identification.'));
@@ -175,8 +175,12 @@ function png(width=240,height=80) {
         const response=await fetch(`${base}/?fixture=${fixture}`,{method:'POST',headers:{'Content-Type':route.request().headers()['content-type']},body:route.request().postDataBuffer()});
         await route.fulfill({contentType:'application/json',headers:{'Access-Control-Allow-Origin':'*'},body:await response.text()});
       });
-      async function open(){await page.goto(base);await page.addScriptTag({path:jqueryPath});await page.addScriptTag({path:path.join(__dirname,'../plugin/assets/script.js')});await page.waitForFunction(()=>document.querySelector('#kfi-identify').disabled);}
+      async function open(stale=false){await page.goto(base);if(stale)await page.locator('#gpt-font-id-form').evaluate(form=>form.removeAttribute('data-publication-consent'));await page.addScriptTag({path:jqueryPath});await page.addScriptTag({path:path.join(__dirname,'../plugin/assets/script.js')});await page.waitForFunction(()=>document.querySelector('#kfi-identify').disabled);}
       async function select(){await page.locator('input[name=font_image]').setInputFiles({name:'sample.png',mimeType:'image/png',buffer:image});await page.locator('#gpt-font-preview img').waitFor();await page.waitForFunction(()=>!document.querySelector('input[name=font_image]').disabled);}
+      await open(true);
+      assert.equal(await page.locator('input[name=font_image]').isDisabled(),true);
+      assert.equal(await page.locator('#kfi-identify').isDisabled(),true);assert.equal(requests,0);
+      assert.ok((await page.locator('#kfi-submit-help').innerText()).includes('Refresh this page'));
       await open();await select();assert.equal(requests,0);assert.equal(await page.locator('#kfi-identify').isDisabled(),true);
       await page.locator('#kfi-analysis-consent').check();await page.locator('#kfi-identify').click();
       await page.locator('#gpt-font-id-result.success').waitFor();assert.equal(requests,1);assert.ok(!lastFields.includes('share_for_review'));

@@ -1,4 +1,4 @@
-# Kreativ Font Identifier 1.0.0
+# Kreativ Font Identifier 1.0.1
 
 Authoritative source for the existing WordPress plugin installed in
 `/htdocs/wp-content/plugins/kreativ-gpt-font-dentifier/` (the historical directory
@@ -19,6 +19,8 @@ actions, a compact publication notice and one required analysis/publication
 consent. Every successful website submission creates a public post in
 `identified-fonts` with the submitted image and unverified font suggestions.
 Results provide the post URL, copy-link and another-image actions.
+The script requires matching versioned publication markers in both page config
+and form markup; an older cached notice disables submission and asks for a refresh.
 
 The request must send `publish_identification=yes` and
 `publication_consent=public-image-and-results-v1`. A `client=website` request

@@ -2,12 +2,12 @@
 /**
  * Plugin Name: Kreativ Font Identifier
  * Description: Image-based font suggestions with consented public identification posts and compatible private extension requests.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Andrei Olaru
  */
 
 defined('ABSPATH') || exit;
-define('KREATIV_GPT_FONT_ID_VERSION', '1.0.0');
+define('KREATIV_GPT_FONT_ID_VERSION', '1.0.1');
 require_once __DIR__ . '/admin-page.php';
 require_once __DIR__ . '/raster.php';
 require_once __DIR__ . '/catalogue.php';
@@ -75,7 +75,7 @@ add_action('wp_enqueue_scripts', function () {
 add_shortcode('gpt_font_identifier', function () {
     gpt_font_id_enqueue_assets();
     ob_start(); ?>
-    <form id="gpt-font-id-form" enctype="multipart/form-data" aria-label="Identify a font">
+    <form id="gpt-font-id-form" enctype="multipart/form-data" aria-label="Identify a font" data-publication-consent="public-image-and-results-v1">
         <section class="kfi-upload-panel" aria-labelledby="kfi-upload-heading">
             <h2 id="kfi-upload-heading"><span class="kfi-step-number" aria-hidden="true">1</span> Upload your image</h2>
             <input class="kfi-file-input" id="kreativ-font-identifier-upload" type="file" name="font_image" accept="image/jpeg,image/png,image/gif,image/webp" aria-describedby="kfi-file-help" required>
@@ -99,7 +99,7 @@ add_shortcode('gpt_font_identifier', function () {
                 <strong>Each identification creates a public post</strong>
                 <p>Your image and suggestions will be published on Kreativ Font. Don’t upload private or personal information.</p>
                 <label><input type="checkbox" id="kfi-analysis-consent" required> I can share this image publicly and agree to send it to OpenAI for font analysis.</label>
-                <details><summary>About your image</summary><p>OpenAI processes the image with response storage disabled; its separate retention policies apply. The public post includes a re-encoded copy of your image and the suggestions. <a href="<?php echo esc_url(home_url('/blog/terms-of-use-privacy-policy')); ?>">Privacy information</a></p></details>
+                <details><summary>About your image</summary><p>OpenAI processes the image with response storage disabled; its separate retention policies apply. The public post includes a copy of your image and the suggestions. <a href="<?php echo esc_url(home_url('/blog/terms-of-use-privacy-policy')); ?>">Privacy information</a></p></details>
             </aside>
             <button type="submit" id="kfi-identify">Identify &amp; publish</button>
             <p id="kfi-submit-help" role="status">Choose an image to get started.</p>
