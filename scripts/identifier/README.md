@@ -1,4 +1,4 @@
-# Kreativ Font Identifier 1.0.1
+# Kreativ Font Identifier 1.0.2
 
 Authoritative source for the existing WordPress plugin installed in
 `/htdocs/wp-content/plugins/kreativ-gpt-font-dentifier/` (the historical directory

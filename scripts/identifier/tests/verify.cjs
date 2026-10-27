@@ -31,7 +31,7 @@ function png(width=240,height=80) {
     for(let i=0;i<30;i++){try{await fetch(base);break;}catch{await new Promise(r=>setTimeout(r,100));}}
     const pageHtml=await(await fetch(base)).text();
     const config=JSON.parse(pageHtml.match(/var GPTFontId\s*=\s*(\{.*?\});/s)[1]);
-    assert.equal(config.version,'1.0.1');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
+    assert.equal(config.version,'1.0.2');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
     assert.equal(config.publicationRequiresConsent,true);assert.equal(config.publicationConsentVersion,'public-image-and-results-v1');
     const unit=await(await fetch(`${base}/unit`)).json();
     assert.ok(unit.alternative_html.includes('Similar catalogue alternatives'));assert.ok(unit.alternative_html.includes('Gelasio</a> — Similar catalogue alternative, not an identification.'));

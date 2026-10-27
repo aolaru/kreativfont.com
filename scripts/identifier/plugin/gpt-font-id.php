@@ -2,12 +2,12 @@
 /**
  * Plugin Name: Kreativ Font Identifier
  * Description: Image-based font suggestions with consented public identification posts and compatible private extension requests.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Andrei Olaru
  */
 
 defined('ABSPATH') || exit;
-define('KREATIV_GPT_FONT_ID_VERSION', '1.0.1');
+define('KREATIV_GPT_FONT_ID_VERSION', '1.0.2');
 require_once __DIR__ . '/admin-page.php';
 require_once __DIR__ . '/raster.php';
 require_once __DIR__ . '/catalogue.php';
@@ -98,7 +98,7 @@ add_shortcode('gpt_font_identifier', function () {
             <aside id="kfi-privacy">
                 <strong>Each identification creates a public post</strong>
                 <p>Your image and suggestions will be published on Kreativ Font. Don’t upload private or personal information.</p>
-                <label><input type="checkbox" id="kfi-analysis-consent" required> I can share this image publicly and agree to send it to OpenAI for font analysis.</label>
+                <label><input type="checkbox" id="kfi-analysis-consent" required> I agree to AI analysis and public sharing of this image and its results.</label>
                 <details><summary>About your image</summary><p>OpenAI processes the image with response storage disabled; its separate retention policies apply. The public post includes a copy of your image and the suggestions. <a href="<?php echo esc_url(home_url('/blog/terms-of-use-privacy-policy')); ?>">Privacy information</a></p></details>
             </aside>
             <button type="submit" id="kfi-identify">Identify &amp; publish</button>
