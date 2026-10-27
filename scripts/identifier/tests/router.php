@@ -8,6 +8,7 @@ $options = ['gpt_font_id_api_key' => 'fixture-not-a-key', 'gpt_font_id_auto_post
 $transients = []; $actions = []; $filters = []; $shortcodes = []; $posts = []; $metas = []; $api_calls = [];
 if ($fixture === 'review_off') { $options['gpt_font_id_allow_review'] = 'no'; }
 if ($fixture === 'live_sol') { $options['gpt_font_id_model'] = 'gpt-6.1-sol'; }
+if ($fixture === 'live_terra') { $options['gpt_font_id_model'] = 'gpt-6.1-terra'; }
 if ($fixture === 'bad_model') { $options['gpt_font_id_model'] = 'untrusted-model'; }
 class WP_Error {
     public function __construct(public $code, public $message) {}

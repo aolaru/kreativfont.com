@@ -66,7 +66,7 @@ function gpt_font_id_settings_page()
                         <option value="<?php echo esc_attr($model); ?>" <?php selected(gpt_font_id_active_model(), $model); ?>><?php echo esc_html($profile['label']); ?></option>
                     <?php endforeach; ?>
                     </select>
-                    <p class="description">Default: GPT-4o. This controls both the website and installed Chrome extensions. Models are not promoted automatically, and visitors cannot override this setting. Check account access and benchmark before switching.</p>
+                    <p class="description">Default: GPT-4o. This controls both the website and installed Chrome extensions. Models are not promoted automatically, and visitors cannot override this setting. Saving the model selection does not run an analysis or benchmark.</p>
                     <label><input type="checkbox" name="gpt_font_id_model_ack" value="yes"> I intend to change the live model when saving these settings.</label>
                 </td></tr>
                 <tr><th><label for="gpt_font_id_api_key">OpenAI API key</label></th><td>
@@ -92,7 +92,7 @@ function gpt_font_id_settings_page()
             <p><label for="kfi-bench-mode">Evaluation mode</label> <select id="kfi-bench-mode"><option value="models">AI-only model comparison</option><option value="paired">Catalogue 0.9.0 versus original AI-only 0.7.0 (GPT-4o)</option></select></p>
             <p>Paired mode alternates pipeline order per image and includes local processing in latency/cost. Separate daily guard: $5 estimated and 320 generation calls. Historic 0.8.2 checkpoints cannot be resumed into 0.9.0. Scores measure family identification, grouped by the supplied style labels; they do not certify the exact weight or italic face.</p>
             <p>Use only synthetic or non-sensitive samples you may send to OpenAI. No benchmark images, reports or review records are retained on the site. Results stay in this browser until you export them. Keep this tab open while running.</p>
-            <p>Daily benchmark guard: $5 estimated token usage and 160 generation requests, separate from visitor limits. Calls with unknown usage retain a conservative $0.10 reservation. Prices are estimates from the standard model rates verified on 24 October 2026, not an invoice; other tiers, cache writes, taxes or account terms can differ.</p>
+            <p>Daily benchmark guard: $5 estimated token usage and 160 generation requests, separate from visitor limits. Calls with unknown usage retain a conservative $0.10 reservation. Prices are estimates from the standard model rates verified on 24 October 2026 (Terra: 27 October), not an invoice; other tiers, cache writes, taxes or account terms can differ.</p>
             <p><label for="kfi-bench-manifest">Labelled sample manifest (JSON)</label><br><input id="kfi-bench-manifest" type="file" accept="application/json,.json"></p>
             <p><label for="kfi-bench-images">Matching sample images</label><br><input id="kfi-bench-images" type="file" accept="image/png,image/jpeg,image/webp" multiple></p>
             <p><label for="kfi-bench-resume">Optional checkpoint JSON to resume</label><br><input id="kfi-bench-resume" type="file" accept="application/json,.json"><br>Resumes only an identical paired dataset/profile. Completed outcomes, including errors, are preserved and never rerun.</p>

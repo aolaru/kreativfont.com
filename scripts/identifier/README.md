@@ -1,4 +1,4 @@
-# Kreativ Font Identifier 0.9.0
+# Kreativ Font Identifier 0.9.1
 
 Authoritative source for the existing WordPress plugin installed in
 `/htdocs/wp-content/plugins/kreativ-gpt-font-dentifier/` (the historical directory
@@ -9,8 +9,18 @@ No credentials or saved API key are included in this source.
 
 ## Catalogue-assisted identification
 
-The website and existing Chrome extensions keep the saved GPT-4o configuration,
+The website and existing Chrome extensions use the saved model configuration,
 shortcode, nonce, upload fields, privacy flags and legacy HTML response contract.
+
+Version 0.9.1 adds `gpt-6.1-terra` for the requested live-model switch. Its profile
+uses low reasoning effort, a 4096-token output cap, high-detail images and the
+existing strict JSON schema with `store:false`. Standard rates are $1 input,
+$0.05 cached input and $5 output per million tokens, verified in the official
+[Terra documentation](https://developers.openai.com/api/docs/models/gpt-6.1-terra)
+on 27 October 2026. This configuration change has no font-accuracy benchmark or
+paid API validation; it makes no claim of improved identification accuracy.
+Saved model settings must be changed explicitly; deployments do not overwrite
+an administrator's choice. Historical GPT-4o evaluation profiles remain pinned.
 
 Each visitor analysis now makes one existing AI transcription/suggestion request.
 Local WordPress queries retrieve up to 600 published, unprotected font families.
@@ -115,8 +125,8 @@ directory. Comparative scores use complete pairs only, with errors as misses;
 cost/error totals also retain any unpaired outcomes. Family-cluster bootstrap
 intervals account for repeated variants, without claiming representative traffic.
 
-The default and existing live model remain **GPT-4o**. Settings → Font Identifier
-now has a fixed allowlist of GPT-4o, GPT-6.1 Sol and GPT-6 Luna. Changing the saved
+Installations without a saved model still default to **GPT-4o**. Settings → Font Identifier
+has a fixed allowlist of GPT-4o, GPT-6.1 Sol, GPT-6 Luna and GPT-6.1 Terra. Changing the saved
 live model requires a separate confirmation checkbox. Public AJAX fields cannot
 override it; no automatic model promotion or fallback is performed. The existing
 shortcode, extension nonce/config fields and HTML/JSON response remain compatible.
@@ -124,7 +134,7 @@ shortcode, extension nonce/config fields and HTML/JSON response remain compatibl
 The administrator-only benchmark lab checks exact model access before generation.
 It measures the first AI pass only, using its prompt, high-detail input, response
 schema, parser and model profiles. It does not measure the complete catalogue flow.
-GPT-4o keeps its 1600-token cap; the two
+GPT-4o keeps its 1600-token cap; the three
 reasoning candidates use low effort and a 4096-token cap, explicitly recorded in
 each result. An incomplete response stops a full run for profile adjustment.
 No benchmark changes `gpt_font_id_model`, creates review records, or consumes the

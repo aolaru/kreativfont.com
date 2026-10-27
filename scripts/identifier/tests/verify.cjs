@@ -29,7 +29,7 @@ function png(width=240,height=80) {
     for(let i=0;i<30;i++){try{await fetch(base);break;}catch{await new Promise(r=>setTimeout(r,100));}}
     const pageHtml=await(await fetch(base)).text();
     const config=JSON.parse(pageHtml.match(/var GPTFontId\s*=\s*(\{.*?\});/s)[1]);
-    assert.equal(config.version,'0.9.0');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
+    assert.equal(config.version,'0.9.1');assert.equal(config.publicStorage,false);assert.equal(config.reviewRequiresOptIn,true);
     const unit=await(await fetch(`${base}/unit`)).json();
     assert.ok(unit.alternative_html.includes('Similar catalogue alternatives'));assert.ok(unit.alternative_html.includes('Gelasio</a> — Similar catalogue alternative, not an identification.'));
     assert.deepEqual(unit.rate_sequence,[true,true,true,true,true,false]);
@@ -40,8 +40,15 @@ function png(width=240,height=80) {
     assert.equal(unit.payloads[0].reasoning,null);assert.deepEqual(unit.payloads[1].reasoning,{effort:'low'});assert.deepEqual(unit.payloads[2].reasoning,{effort:'low'});
     assert.equal(unit.profiles['gpt-4o'].estimated_cost_usd,0.005375);
     assert.equal(unit.profiles['gpt-6.1-sol'].estimated_cost_usd,0.00481);
+    assert.equal(unit.profiles['gpt-6.1-terra'].estimated_cost_usd,0.002405);
     const ignoredOverride=await submit('normal',{model:'gpt-6-luna'});assert.equal(ignoredOverride._test.calls[0].model,'gpt-4o');
     const configured=await submit('live_sol');assert.equal(configured._test.calls[0].model,'gpt-6.1-sol');
+    const terra=await submit('live_terra',{model:'gpt-4o'});
+    assert.equal(terra.success,true);assert.equal(terra._test.calls.length,1);
+    assert.equal(terra._test.calls[0].model,'gpt-6.1-terra');
+    assert.deepEqual(terra._test.calls[0].reasoning,{effort:'low'});assert.equal(terra._test.calls[0].max_output_tokens,4096);
+    assert.equal(terra._test.calls[0].store,false);assert.equal(terra._test.calls[0].temporary_file_deleted,true);
+    assert.equal(terra.data.post_url,'');assert.equal(terra._test.posts.length,0);assert.equal(terra._test.metas.length,0);
     const badModel=await submit('bad_model');assert.equal(badModel._test.calls[0].model,'gpt-4o');
     const benchFields={action:'gpt_font_id_benchmark',nonce:'fixture-nonce',model:'gpt-6-luna',share_for_review:'yes',review_consent:'yes'};
     const denied=await submit('normal',benchFields);assert.equal(denied.success,false);assert.equal(denied._test.calls.length,0);
@@ -180,7 +187,7 @@ function png(width=240,height=80) {
       await page.locator('#kfi-bench-run').click();
       await page.waitForFunction(()=>document.querySelector('#kfi-bench-status').textContent.startsWith('Benchmark finished'));
       const bench=await page.evaluate(()=>window.kfiBenchmarkReport);
-      assert.equal(bench.rows.length,3);assert.ok(bench.summary.every(row=>row.top1===1&&row.top3===1));
+      assert.equal(bench.rows.length,4);assert.ok(bench.summary.every(row=>row.top1===1&&row.top3===1));
       assert.equal(await page.locator('#gpt_font_id_model').inputValue(),'gpt-4o');
       assert.ok(!lastFields.includes('Georgia'),'Ground truth must not be sent to the model');
       await page.locator('#kfi-bench-mode').selectOption('paired');

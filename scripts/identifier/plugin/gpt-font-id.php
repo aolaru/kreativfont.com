@@ -2,12 +2,12 @@
 /**
  * Plugin Name: Kreativ Font Identifier
  * Description: Image-based font suggestions, with no public upload storage and optional admin-only review.
- * Version: 0.9.0
+ * Version: 0.9.1
  * Author: Andrei Olaru
  */
 
 defined('ABSPATH') || exit;
-define('KREATIV_GPT_FONT_ID_VERSION', '0.9.0');
+define('KREATIV_GPT_FONT_ID_VERSION', '0.9.1');
 require_once __DIR__ . '/admin-page.php';
 require_once __DIR__ . '/raster.php';
 require_once __DIR__ . '/catalogue.php';
@@ -184,11 +184,12 @@ function gpt_font_id_response_schema()
 /** Explicit profiles: never accept an arbitrary model from the public endpoint. */
 function gpt_font_id_models()
 {
-    // Standard token rates, USD / 1M tokens; verified in official model docs 2026-10-24.
+    // Standard token rates, USD / 1M tokens; Terra verified in official docs 2026-10-27.
     return [
         'gpt-4o' => ['label' => 'GPT-4o (baseline)', 'reasoning' => null, 'max_output_tokens' => 1600, 'input_rate' => 2.50, 'cached_rate' => 1.25, 'output_rate' => 10.00],
         'gpt-6.1-sol' => ['label' => 'GPT-6.1 Sol (benchmark candidate)', 'reasoning' => 'low', 'max_output_tokens' => 4096, 'input_rate' => 2.00, 'cached_rate' => 0.10, 'output_rate' => 10.00],
         'gpt-6-luna' => ['label' => 'GPT-6 Luna (benchmark candidate)', 'reasoning' => 'low', 'max_output_tokens' => 4096, 'input_rate' => 0.10, 'cached_rate' => 0.01, 'output_rate' => 0.50],
+        'gpt-6.1-terra' => ['label' => 'GPT-6.1 Terra', 'reasoning' => 'low', 'max_output_tokens' => 4096, 'input_rate' => 1.00, 'cached_rate' => 0.05, 'output_rate' => 5.00],
     ];
 }
 
