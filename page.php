@@ -7,6 +7,11 @@ if ( kreativ_is_identifier_page( get_post() ) ) {
     continue;
 }
 
+if ( function_exists( 'kreativ_get_creative_tool_config' ) && kreativ_get_creative_tool_config( get_post() ) ) {
+    kreativ_render_partial( 'partials/creative-tool.php', array( 'post' => get_post() ) );
+    continue;
+}
+
 $is_tool_page       = kreativ_is_tool_page( get_post() );
 $page_summary       = kreativ_get_page_summary( get_post() );
 $page_shell_classes = 'kreativ-page-shell';

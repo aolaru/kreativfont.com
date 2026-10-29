@@ -1,0 +1,79 @@
+<div class="kfng-wrapper">
+            <h2 class="kfng-title">Kreativ Font Name Generator</h2>
+            <p class="kfng-subtitle">
+                Describe your font style and generate unique, brandable font family names.
+            </p>
+
+            <!-- Quick presets -->
+            <div class="kfng-presets">
+                <span>Quick presets:</span>
+                <button type="button" class="kfng-preset" data-prompt="luxury serif logo font">Luxury Serif</button>
+                <button type="button" class="kfng-preset" data-prompt="cute handwritten script for kids book">Cute Handwritten</button>
+                <button type="button" class="kfng-preset" data-prompt="futuristic sans serif for sci-fi UI">Futuristic Sans</button>
+                <button type="button" class="kfng-preset" data-prompt="retro bold display 1970s headline">Retro Display</button>
+                <button type="button" class="kfng-preset" data-prompt="gaming techno display for esports logo">Gaming Techno</button>
+            </div>
+
+            <!-- Filters -->
+            <div class="kfng-filters">
+                <span>Font style filters:</span>
+                <label><input type="checkbox" class="kfng-filter" data-tag="serif"> Serif</label>
+                <label><input type="checkbox" class="kfng-filter" data-tag="sans-serif"> Sans</label>
+                <label><input type="checkbox" class="kfng-filter" data-tag="handwritten script"> Script</label>
+                <label><input type="checkbox" class="kfng-filter" data-tag="display"> Display</label>
+                <label><input type="checkbox" class="kfng-filter" data-tag="retro vintage"> Retro</label>
+                <label><input type="checkbox" class="kfng-filter" data-tag="luxury premium"> Luxury</label>
+                <label><input type="checkbox" class="kfng-filter" data-tag="futuristic sci-fi tech"> Futuristic</label>
+                <label><input type="checkbox" class="kfng-filter" data-tag="cute kawaii"> Cute</label>
+            </div>
+
+            <!-- Description -->
+            <label class="kfng-label" for="kfng-input">Describe the font style:</label>
+            <textarea id="kfng-input" class="kfng-input" rows="3"
+                      placeholder="e.g. luxury serif logo font, cute handwritten title, futuristic sci-fi sans"></textarea>
+
+            <!-- Name length selector (1 / 2 words) -->
+            <div class="kfng-name-length">
+                <label class="kfng-label" for="kfng-name-mode">Name format:</label>
+                <select id="kfng-name-mode" class="kfng-select">
+                    <option value="mixed">1–2 words (default)</option>
+                    <option value="one">1 word only</option>
+                    <option value="two">2 words only</option>
+                </select>
+            </div>
+
+            <!-- Generate + actions -->
+            <button type="button" id="kfng-generate" class="kfng-button">Generate Font Names</button>
+
+            <div class="kfng-actions">
+                <button type="button" id="kfng-copy-all" class="kfng-secondary">Copy all</button>
+                <button type="button" id="kfng-export" class="kfng-secondary">Download .txt</button>
+            </div>
+
+            <div id="kfng-status" class="kfng-status"></div>
+            <div id="kfng-results" class="kfng-results"></div>
+
+            <div class="kfng-favorites-block">
+                <h3 class="kfng-favorites-title">⭐ Saved favorites</h3>
+                <div id="kfng-favorites" class="kfng-favorites"></div>
+            </div>
+			<div class="kfng-footer">
+				<p>Made with <span class="kfng-heart">❤</span> by <a href="https://kreativfont.com" target="_blank">KREATIV</a></p>
+			</div>
+        </div>
+
+
+<p><small><strong>Version 1.1.0 — Major Upgrade</strong><br />
+&#8211; Added Name Length selector (1 word / 2 words / mixed)<br />
+&#8211; Implemented daily usage analytics (tracks number of generations per day)<br />
+&#8211; Fixed Quick Presets with persistent delegated click binding<br />
+&#8211; Added smooth animated expand/collapse for Pair and Variants sections<br />
+&#8211; Improved prompt enrichment with filters and name-length instructions<br />
+&#8211; Updated sanitization and REST input validation<br />
+&#8211; Added dark mode CSS variables and visual polish<br />
+&#8211; General code cleanup (PHP, JS, CSS)</p>
+<p><strong>Version 1.0.2</strong><br />
+* Styling refinements, animation system added</p>
+<p><strong>Version 1.0.1</strong><br />
+* Initial version<br />
+</small></p>

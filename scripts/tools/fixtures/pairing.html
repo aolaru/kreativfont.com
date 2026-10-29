@@ -1,0 +1,81 @@
+<div class="kfm-wrapper kfm-light"
+             style="--kfm-primary: #4A4AFF; --kfm-accent: #FFD166;">
+            <div class="kfm-card">
+                <div class="kfm-header">
+                    <div class="kfm-title">
+                        <span class="kfm-logo">K</span>
+                        <div>
+                            <h2>Kreativ Font Pairing Tools</h2>
+                            <p>Font pairing, similar fonts and comparisons in one place.</p>
+                        </div>
+                    </div>
+                    <div class="kfm-tabs" role="tablist">
+                        <button class="kfm-tab is-active" data-kfm-tab="pairing" type="button">
+                            Pairing                        </button>
+                        <button class="kfm-tab " data-kfm-tab="similar" type="button">
+                            Similar Fonts                        </button>
+                        <button class="kfm-tab " data-kfm-tab="compare" type="button">
+                            Compare                        </button>
+                    </div>
+                </div>
+                <div class="kfm-body" data-kfm-active-tab="pairing">
+            <div class="kfm-tab-panel is-active" data-kfm-panel="pairing">
+                        <form class="kfm-form" data-kfm-mode="pairing">
+            <label class="kfm-field">
+                <span>Base font name</span>
+                <input type="text" name="font" required placeholder="e.g. Futura, Garamond, Inter…" />
+            </label>
+            <label class="kfm-field">
+                <span>Design context (optional)</span>
+                <input type="text" name="context" placeholder="e.g. SaaS landing, book cover, logo…" />
+            </label>
+            <button type="submit" class="kfm-button">
+                Generate pairings            </button>
+            <div class="kfm-status" aria-live="polite"></div>
+        </form>
+        <div class="kfm-results" data-kfm-results="pairing"></div>
+                    </div>
+            <div class="kfm-tab-panel" data-kfm-panel="similar">
+                        <form class="kfm-form" data-kfm-mode="similar">
+            <label class="kfm-field">
+                <span>Font name</span>
+                <input type="text" name="font" required placeholder="e.g. Helvetica, Avenir, SF Pro…" />
+            </label>
+            <label class="kfm-field">
+                <span>Design context (optional)</span>
+                <input type="text" name="context" placeholder="e.g. editorial, UI, branding…" />
+            </label>
+            <button type="submit" class="kfm-button">
+                Find similar fonts            </button>
+            <div class="kfm-status" aria-live="polite"></div>
+        </form>
+        <div class="kfm-results" data-kfm-results="similar"></div>
+                    </div>
+            <div class="kfm-tab-panel" data-kfm-panel="compare">
+                        <form class="kfm-form" data-kfm-mode="compare">
+            <div class="kfm-fields-row">
+                <label class="kfm-field">
+                    <span>Font A</span>
+                    <input type="text" name="font" required placeholder="e.g. Helvetica" />
+                </label>
+                <label class="kfm-field">
+                    <span>Font B</span>
+                    <input type="text" name="font_b" required placeholder="e.g. Arial" />
+                </label>
+            </div>
+            <label class="kfm-field">
+                <span>Design context (optional)</span>
+                <input type="text" name="context" placeholder="e.g. long-form text, mobile UI…" />
+            </label>
+            <button type="submit" class="kfm-button">
+                Compare fonts            </button>
+            <div class="kfm-status" aria-live="polite"></div>
+        </form>
+        <div class="kfm-results" data-kfm-results="compare"></div>
+                    </div>
+        </div>
+                    </div><!-- .kfm-card -->
+            <div class="kfm-footer">
+                <span>Made with KREATIV</span>
+            </div>
+        </div><!-- .kfm-wrapper -->

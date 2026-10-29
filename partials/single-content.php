@@ -12,6 +12,11 @@ if ( kreativ_is_identifier_page( $post ) ) {
     return;
 }
 
+if ( function_exists( 'kreativ_get_creative_tool_config' ) && kreativ_get_creative_tool_config( $post ) ) {
+    kreativ_render_partial( 'partials/creative-tool.php', array( 'post' => $post ) );
+    return;
+}
+
 $config = array(
     'tool' => array(
         'eyebrow'          => 'Font tool',

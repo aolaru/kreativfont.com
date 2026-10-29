@@ -193,6 +193,26 @@ function kreativ_enqueue_theme_assets() {
         );
     }
 
+    if ( function_exists( 'kreativ_get_creative_tool_config' )
+        && ( is_category( 'tools' ) || ( is_singular() && kreativ_get_creative_tool_config( get_queried_object() ) ) ) ) {
+        wp_enqueue_style(
+            'kreativ-tools',
+            get_template_directory_uri() . '/css/kreativ-tools.css',
+            array( 'kreativ-styles' ),
+            kreativ_asset_version( '/css/kreativ-tools.css' )
+        );
+        if ( is_singular() ) {
+            wp_enqueue_script(
+                'kreativ-tools',
+                get_template_directory_uri() . '/js/kreativ-tools.js',
+                array(),
+                kreativ_asset_version( '/js/kreativ-tools.js' ),
+                true
+            );
+            kreativ_add_script_attributes( 'kreativ-tools', array( 'defer' => true ) );
+        }
+    }
+
     wp_register_script(
         'init',
         get_template_directory_uri() . '/assets/assets/components/init.js',

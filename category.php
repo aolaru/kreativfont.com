@@ -13,6 +13,11 @@ $cat_slug = $category->slug;
 $cat_name = $category->name;
 $cat_desc = category_description();
 $is_tools_archive = 'tools' === $cat_slug;
+if ( $is_tools_archive ) {
+    kreativ_render_partial( 'partials/tools-directory.php' );
+    get_footer();
+    return;
+}
 $is_font_archive  = kreativ_is_font_archive_term( $category );
 
 /* Homepage-style icons */

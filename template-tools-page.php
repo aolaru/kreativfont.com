@@ -12,6 +12,11 @@ if ( kreativ_is_identifier_page( get_post() ) ) {
     continue;
 }
 
+if ( kreativ_get_creative_tool_config( get_post() ) ) {
+    kreativ_render_partial( 'partials/creative-tool.php', array( 'post' => get_post() ) );
+    continue;
+}
+
 $page_summary = kreativ_get_page_summary( get_post() );
 $research_pair = 'kreativ-font-pairing-tools' === get_post_field( 'post_name', get_post() ) ? kreativ_get_requested_font_research_pair() : array();
 ?>

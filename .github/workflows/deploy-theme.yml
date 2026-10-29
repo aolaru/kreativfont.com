@@ -35,6 +35,7 @@ jobs:
           php scripts/test-search-ranking.php
           php scripts/test-identifier-layout.php
           php scripts/test-fancy-text-layout.php
+          php scripts/test-tools-layout.php
           php -l scripts/audit-production.php
 
   deploy:

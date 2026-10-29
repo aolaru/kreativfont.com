@@ -1,0 +1,166 @@
+/* Scoped typography workspaces. The plugins continue to own generation. */
+.kreativ-creative-tool, .kreativ-tools-directory {
+    --kt-bg: #fff;
+    --kt-soft: #f5f6fb;
+    --kt-text: #172033;
+    --kt-muted: #536078;
+    --kt-border: #dce1ed;
+    --kt-primary: #4a4aff;
+    --kt-link: #3737cd;
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 24px 20px 48px;
+    color: var(--kt-text);
+    font: 16px/1.55 system-ui, -apple-system, sans-serif;
+}
+body.dark-mode :is(.kreativ-creative-tool, .kreativ-tools-directory) {
+    --kt-bg: #0b1120;
+    --kt-soft: #141e33;
+    --kt-text: #f1f5fb;
+    --kt-muted: #b5bfd1;
+    --kt-border: #33415a;
+    --kt-link: #b4b4ff;
+}
+body.dark-mode:has(.kreativ-creative-tool), body.dark-mode:has(.kreativ-tools-directory) {
+    background: #020617;
+    color: #f1f5fb;
+}
+:is(.kreativ-creative-tool, .kreativ-tools-directory) *,
+:is(.kreativ-creative-tool, .kreativ-tools-directory) *::before,
+:is(.kreativ-creative-tool, .kreativ-tools-directory) *::after { box-sizing: border-box; }
+:is(.kreativ-creative-tool, .kreativ-tools-directory) [hidden] { display: none !important; }
+:is(.kreativ-creative-tool, .kreativ-tools-directory) a { color: var(--kt-link); }
+.kreativ-tool-heading { margin-bottom: 24px; }
+.kreativ-tool-breadcrumb { display: flex; gap: 10px; font-size: 13px; margin-bottom: 18px; }
+.kreativ-tool-eyebrow { display: block; font-size: 12px; font-weight: 700; color: var(--kt-muted); letter-spacing: .04em; }
+.kreativ-tool-eyebrow i { margin-right: 6px; color: var(--kt-link); }
+.kreativ-tool-heading h1 { color: var(--kt-text); font: 700 clamp(26px, 3.4vw, 38px)/1.16 system-ui, sans-serif; letter-spacing: -.035em; margin: 8px 0 12px; }
+.kreativ-tool-heading > p { max-width: 68ch; margin: 0; color: var(--kt-muted); font-size: 16px; line-height: 1.6; }
+.kreativ-tool-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 264px; gap: 24px; align-items: start; }
+.kreativ-tool-app { min-width: 0; }
+.kreativ-tool-guide { background: var(--kt-soft); border: 1px solid var(--kt-border); padding: 20px; border-radius: 14px; }
+.kreativ-tool-guide h2 { color: var(--kt-text); font: 650 18px/1.4 system-ui, sans-serif; margin: 8px 0; }
+.kreativ-tool-guide p { font-size: 14px; line-height: 1.6; color: var(--kt-muted); margin: 12px 0; }
+.kreativ-tool-note { border-top: 1px solid var(--kt-border); padding-top: 12px; }
+.kreativ-tool-guide a { display: inline-block; padding: 8px 0; font-size: 14px; font-weight: 600; }
+.kreativ-tool-more { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--kt-border); font-size: 14px; }
+.kreativ-tool-more > span { color: var(--kt-muted); }
+.kreativ-tool-more a { display: inline-flex; align-items: center; min-height: 44px; }
+.kreativ-tool-selection { border: 1px solid var(--kt-border); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+.kreativ-tool-selection h2 { font-size: 16px; }
+.kreativ-tool-selection a { display: inline-block; margin-right: 16px; padding: 8px 0; }
+
+/* Remove nested title cards and give the controls the full working area. */
+.kreativ-creative-tool :is(.kfng-wrapper, .kfm-wrapper) {
+    --kfng-bg: var(--kt-bg);
+    --kfng-bg-light: var(--kt-soft);
+    --kfng-border: var(--kt-border);
+    --kfng-text: var(--kt-text);
+    --kfng-text-muted: var(--kt-muted);
+    --kfm-bg: var(--kt-bg);
+    --kfm-surface: var(--kt-bg);
+    --kfm-text: var(--kt-text);
+    --kfm-text-muted: var(--kt-muted);
+    --kfm-border: var(--kt-border);
+    --kfm-border-strong: var(--kt-border);
+    width: 100%; max-width: none; margin: 0; padding: 22px;
+    background: var(--kt-bg); color: var(--kt-text);
+    border: 1px solid var(--kt-border); border-radius: 14px; box-shadow: none;
+    font: inherit;
+}
+.kreativ-creative-tool :is(.kfng-title, .kfng-subtitle, .kfm-title) { display: none; }
+.kreativ-creative-tool .kfm-card { padding: 0; border: 0; border-radius: 0; background: transparent; }
+.kreativ-creative-tool .kfm-header { display: block; margin-bottom: 18px; }
+.kreativ-creative-tool .kfm-tabs { display: grid; width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px; border: 1px solid var(--kt-border); border-radius: 12px; background: var(--kt-soft); gap: 4px; }
+.kreativ-creative-tool .kfm-body { margin: 0; }
+.kreativ-creative-tool :is(button, select, input, textarea) { font-family: inherit; }
+.kreativ-creative-tool button {
+    min-width: 44px; min-height: 44px; padding: 9px 12px;
+    border: 1px solid var(--kt-border); border-radius: 9px;
+    background: var(--kt-bg); color: var(--kt-text);
+    font: 600 14px/1.4 system-ui, sans-serif; box-shadow: none; letter-spacing: normal;
+    cursor: pointer; margin: 0; transform: none;
+}
+.kreativ-creative-tool button:hover { background: var(--kt-soft); border-color: var(--kt-primary); transform: none; }
+.kreativ-creative-tool button:disabled { opacity: .5; cursor: not-allowed; }
+.kreativ-creative-tool :is(.kfng-button, .kfm-button), .kreativ-creative-tool .kfm-tab.is-active { color: #fff; background: var(--kt-primary); border-color: var(--kt-primary); }
+.kreativ-creative-tool :is(.kfng-button, .kfm-button):hover, .kreativ-creative-tool .kfm-tab.is-active:hover { background: #3636ce; }
+.kreativ-creative-tool :is(button, input, textarea, select, summary, a):focus-visible,
+.kreativ-tools-directory a:focus-visible { outline: 3px solid #8888ff; outline-offset: 3px; }
+.kreativ-creative-tool :is(.kfm-field input[type="text"], .kfng-input, .kfng-select) {
+    width: 100%; min-width: 0; min-height: 46px; padding: 11px 12px;
+    border: 1px solid var(--kt-border); border-radius: 9px;
+    font-size: 16px; line-height: 1.5; color: var(--kt-text); background: var(--kt-bg);
+}
+.kreativ-creative-tool :is(input, textarea)::placeholder { color: var(--kt-muted); opacity: 1; }
+.kreativ-creative-tool .kfng-input { min-height: 110px; margin: 6px 0 18px; }
+.kreativ-creative-tool :is(.kfm-field span, .kfng-label) { color: var(--kt-text); font-size: 14px; font-weight: 600; }
+.kreativ-creative-tool .kfm-field { min-width: 0; }
+.kreativ-creative-tool .kfm-form { gap: 16px; }
+.kreativ-creative-tool .kfm-results { max-height: none; overflow: visible; padding: 20px; background: var(--kt-soft); border-color: var(--kt-border); font-size: 15px; line-height: 1.65; overflow-wrap: anywhere; }
+.kreativ-creative-tool .kfm-results:empty { display: none; }
+.kreativ-creative-tool .kfm-results :is(h3, h4) { font: 650 18px/1.4 system-ui, sans-serif; color: var(--kt-text); margin: 20px 0 8px; }
+.kreativ-creative-tool .kfm-results > :first-child { margin-top: 0; }
+.kreativ-creative-tool .kfm-results p { color: var(--kt-text); line-height: 1.65; }
+.kreativ-creative-tool :is(.kfm-status, .kfng-status, .kreativ-tool-feedback) { color: var(--kt-muted); font: 14px/1.5 system-ui, sans-serif; margin: 12px 0; }
+.kreativ-creative-tool :is(.kfm-status, .kfng-status, .kreativ-tool-feedback):empty { display: none; }
+.kreativ-creative-tool :is(.kfm-status-error, .kreativ-tool-feedback.is-error) { color: #b42318; }
+body.dark-mode .kreativ-creative-tool :is(.kfm-status-error, .kreativ-tool-feedback.is-error) { color: #ffb4ab; }
+.kreativ-tool-result-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.kreativ-creative-tool :is(.kfng-presets, .kfng-filters) { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 18px; color: var(--kt-muted); font-size: 13px; }
+.kreativ-creative-tool :is(.kfng-presets, .kfng-filters) > span { width: 100%; font-weight: 600; }
+.kreativ-creative-tool .kfng-filters label { display: inline-flex; align-items: center; min-height: 44px; margin: 0; gap: 7px; padding: 8px 11px; border: 1px solid var(--kt-border); border-radius: 9px; cursor: pointer; }
+.kreativ-creative-tool .kfng-filters label:has(:checked) { background: var(--kt-soft); border-color: var(--kt-primary); color: var(--kt-text); }
+.kreativ-creative-tool .kfng-filter { width: 16px; height: 16px; accent-color: var(--kt-primary); }
+.kreativ-creative-tool .kfng-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.kreativ-tool-filters { margin: 0 0 18px; }
+.kreativ-tool-filters summary { min-height: 44px; padding: 10px 0; color: var(--kt-muted); font-size: 14px; font-weight: 600; cursor: pointer; }
+.kreativ-creative-tool .kreativ-tool-filters .kfng-filters { margin: 8px 0 0; }
+.kreativ-tool-filters .kfng-filters > span { display: none; }
+.kreativ-creative-tool .kfng-item { padding: 16px; margin-bottom: 12px; background: var(--kt-soft); border-color: var(--kt-border); color: var(--kt-text); }
+.kreativ-creative-tool .kfng-item:hover { transform: none; }
+.kreativ-creative-tool .kfng-name { display: block; margin-bottom: 10px; font-size: 19px; font-weight: 650; overflow-wrap: anywhere; }
+.kreativ-creative-tool .kfng-item-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.kreativ-creative-tool .kfng-extra.kfng-open { max-height: none; overflow: visible; }
+.kreativ-creative-tool .kfng-variant-list { display: grid; width: 100%; gap: 8px; }
+.kreativ-creative-tool .kfng-variant-item { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.kreativ-creative-tool .kfng-variant-item .kfng-extra-name { flex: 1; min-width: 100px; overflow-wrap: anywhere; }
+.kreativ-creative-tool .kfng-favorites-title { font: 650 18px/1.4 system-ui, sans-serif; }
+.kreativ-creative-tool .kfng-list-favorites .kfng-item { background: var(--kt-soft); border-color: var(--kt-border); }
+.kreativ-creative-tool :is(.kfng-footer, .kfm-footer) { font-size: 12px; color: var(--kt-muted); }
+.kreativ-tool-history { margin-top: 20px; padding: 12px 16px; border: 1px solid var(--kt-border); border-radius: 12px; color: var(--kt-muted); font-size: 14px; }
+.kreativ-tool-history summary { min-height: 44px; padding: 10px 0; cursor: pointer; font-weight: 600; }
+.kreativ-tool-history p { line-height: 1.6; }
+.kreativ-tools-count { display: inline-block; margin-top: 16px; background: var(--kt-soft); border: 1px solid var(--kt-border); border-radius: 20px; padding: 5px 12px; color: var(--kt-muted); font-size: 13px; }
+.kreativ-tools-catalogue { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.kreativ-tool-card { display: flex; flex-direction: column; padding: 26px; border: 1px solid var(--kt-border); border-radius: 16px; background: var(--kt-bg); color: var(--kt-text); text-decoration: none; font-weight: 400; }
+.kreativ-tool-card:hover { border-color: var(--kt-primary); background: var(--kt-soft); text-decoration: none; }
+.kreativ-tool-card > i { display: grid; place-items: center; width: 48px; height: 48px; background: var(--kt-soft); color: var(--kt-link); border-radius: 12px; margin-bottom: 24px; font-size: 21px; }
+.kreativ-tool-card h2 { font: 650 24px/1.3 system-ui, sans-serif; color: var(--kt-text); margin: 8px 0 12px; }
+.kreativ-tool-card p { font-size: 15px; line-height: 1.65; color: var(--kt-muted); margin: 0 0 20px; }
+.kreativ-tool-card-action { display: block; margin-top: auto; font-size: 14px; font-weight: 650; }
+.kreativ-tool-guides { margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--kt-border); }
+.kreativ-tool-guides h2 { color: var(--kt-text); font-size: 22px; }
+.kreativ-tool-guides p { color: var(--kt-muted); font-size: 15px; line-height: 1.6; }
+.kreativ-tool-guides > a { display: block; padding: 12px 0; min-height: 44px; font-size: 15px; }
+@media (max-width: 900px) {
+    .kreativ-tool-workspace { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+    .kreativ-tool-guide { margin-top: 4px; }
+}
+@media (max-width: 600px) {
+    .kreativ-creative-tool, .kreativ-tools-directory { padding: 16px 12px 32px; }
+    .kreativ-tool-heading { margin-bottom: 18px; }
+    .kreativ-tool-breadcrumb { margin-bottom: 12px; }
+    .kreativ-tool-heading > p { font-size: 15px; }
+    .kreativ-creative-tool :is(.kfng-wrapper, .kfm-wrapper) { padding: 16px; }
+    .kreativ-creative-tool .kfm-tab { font-size: 13px; padding: 9px 5px; }
+    .kreativ-creative-tool .kfm-fields-row { flex-direction: column; }
+    .kreativ-creative-tool .kfm-results { padding: 16px; }
+    .kreativ-creative-tool .kfng-item { padding: 12px; }
+    .kreativ-tools-catalogue { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+    .kreativ-tool-card { padding: 22px; }
+    .kreativ-tool-card > i { margin-bottom: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .kreativ-creative-tool *, .kreativ-tools-directory * { transition: none !important; animation: none !important; }
+}

@@ -220,6 +220,8 @@ $page_specs = array(
     array( 'label' => 'Virtual collection route', 'path' => '/collections/best-packaging-fonts', 'status' => 200, 'h1' => 'Best Packaging Fonts', 'canonical' => true, 'single_meta_description' => true ),
     array( 'label' => 'Tag archive', 'path' => '/tag/handmade-typeface', 'status' => 200, 'canonical' => true ),
     array( 'label' => 'Tool post', 'path' => '/tools/fancy-text-generator', 'status' => 200, 'h1' => 'Kreativ Fancy Text Generator', 'canonical' => true ),
+    array( 'label' => 'Naming tool', 'path' => '/tools/kreativ-font-name-generator', 'status' => 200, 'h1' => 'Kreativ Font Name Generator', 'canonical' => true ),
+    array( 'label' => 'Pairing tool', 'path' => '/tools/kreativ-font-pairing-tools', 'status' => 200, 'h1' => 'Kreativ Font Pairing Tools', 'canonical' => true ),
     array( 'label' => 'Contact', 'path' => '/blog/contact', 'status' => 200, 'h1' => 'Contact', 'canonical' => true ),
     array( 'label' => 'Legal', 'path' => '/blog/terms-of-use-privacy-policy', 'status' => 200, 'h1' => 'Terms Of Use & Privacy Policy', 'canonical' => true ),
     array( 'label' => '404', 'path' => '/production-audit-not-found', 'status' => 404, 'h1' => 'Page not found', 'canonical' => false ),
@@ -228,6 +230,37 @@ $pages      = array();
 
 foreach ( $page_specs as $spec ) {
     $pages[ $spec['label'] ] = kreativ_audit_page( $base_url, $cache_token, $spec );
+}
+
+if ( ! empty( $pages['Tools'] ) ) {
+    require_once dirname( __DIR__ ) . '/inc/tools.php';
+    $cards = $pages['Tools']['xpath']->query( kreativ_audit_class_query( 'kreativ-tool-card' ) );
+    $expected_paths = array_map( function ( $slug ) use ( $base_url ) {
+        return $base_url . '/tools/' . $slug;
+    }, array_keys( kreativ_get_tool_catalogue() ) );
+    $actual_paths = array();
+    foreach ( $cards as $card ) {
+        $actual_paths[] = rtrim( $card->getAttribute( 'href' ), '/' );
+    }
+    sort( $expected_paths );
+    sort( $actual_paths );
+    if ( $expected_paths === $actual_paths ) {
+        kreativ_audit_pass( 'Tools: directory contains exactly the four interactive tools' );
+    } else {
+        kreativ_audit_fail( 'Tools: directory does not match the interactive tool catalogue' );
+    }
+}
+
+foreach ( array( 'Naming tool' => 'kfng-wrapper', 'Pairing tool' => 'kfm-wrapper' ) as $label => $plugin_class ) {
+    if ( empty( $pages[ $label ] ) ) continue;
+    $xpath = $pages[ $label ]['xpath'];
+    if ( 1 === $xpath->query( kreativ_audit_class_query( 'kreativ-creative-tool' ) )->length
+        && 1 === $xpath->query( kreativ_audit_class_query( $plugin_class ) )->length
+        && 0 === $xpath->query( kreativ_audit_class_query( 'kreativ-page-hero' ) )->length ) {
+        kreativ_audit_pass( "{$label}: compact workspace and one generator" );
+    } else {
+        kreativ_audit_fail( "{$label}: expected compact workspace and one generator" );
+    }
 }
 
 // A successful HTML response cannot detect a browser blocking a script after
