@@ -48,9 +48,35 @@ $config = array(
 
 $view         = $config[ $content_kind ] ?? $config['article'];
 $page_summary = kreativ_get_content_summary( $post, 28, false );
+$is_fancy_generator = 224093 === (int) ( $post->ID ?? 0 ) && has_shortcode( $post->post_content, 'kreativ_font_translator' );
 ?>
 
-<div class="<?php echo esc_attr( 'kreativ-page-shell' . $view['shell_class'] ); ?>">
+<div class="<?php echo esc_attr( 'kreativ-page-shell' . $view['shell_class'] . ( $is_fancy_generator ? ' kft-tool-page' : '' ) ); ?>">
+    <?php if ( $is_fancy_generator ) : ?>
+        <section class="kft-page-header" aria-labelledby="kft-page-title">
+            <nav class="kft-page-breadcrumb" aria-label="Breadcrumb">
+                <a href="<?php echo esc_url( home_url( '/' ) ); ?>">Home</a><span aria-hidden="true">/</span>
+                <a href="<?php echo esc_url( home_url( '/tools' ) ); ?>">Tools</a>
+            </nav>
+            <div class="kft-page-heading">
+                <div class="kft-page-copy">
+                    <h1 id="kft-page-title"><?php echo esc_html( get_the_title( $post ) ); ?></h1>
+                    <p class="kft-page-summary">Create copyable text with 20 Unicode styles, or save 18 typography presets as PNG images.</p>
+                    <ol class="kft-page-steps" role="list" aria-label="Create fancy text in three steps">
+                        <li><span class="kft-step-number" aria-hidden="true">1</span><span>Enter text</span></li>
+                        <li><span class="kft-step-number" aria-hidden="true">2</span><span>Choose a style</span></li>
+                        <li><span class="kft-step-number" aria-hidden="true">3</span><span>Copy or download</span></li>
+                    </ol>
+                </div>
+                <?php if ( has_post_thumbnail( $post ) ) : ?>
+                    <figure class="kft-featured-artwork"><?php echo get_the_post_thumbnail( $post, 'medium_large', array( 'loading' => 'eager', 'decoding' => 'async', 'fetchpriority' => 'high' ) ); ?></figure>
+                <?php endif; ?>
+            </div>
+            <div class="kft-page-meta"><span>Free · No sign-up · Runs in your browser</span>
+                <nav aria-label="Generator guide"><a href="#how-to-use">How to use</a><a href="#choose-your-format">Text or image?</a><a href="#generator-faq">FAQs</a></nav>
+            </div>
+        </section>
+    <?php else : ?>
     <section class="kreativ-page-hero kreativ-page-hero-compact">
         <div class="kreativ-page-hero-main">
             <div class="kreativ-page-eyebrow">
@@ -75,7 +101,10 @@ $page_summary = kreativ_get_content_summary( $post, 28, false );
         </div>
     </section>
 
+    <?php endif; ?>
+
     <section class="kreativ-page-content">
+        <?php if ( ! $is_fancy_generator ) : ?>
         <nav class="kreativ-post-breadcrumb" aria-label="Breadcrumb">
             <a href="<?php echo esc_url( home_url( '/' ) ); ?>">Home</a>
             <?php if ( $view['breadcrumb_label'] && $view['breadcrumb_url'] ) : ?>
@@ -83,6 +112,7 @@ $page_summary = kreativ_get_content_summary( $post, 28, false );
                 <a href="<?php echo esc_url( $view['breadcrumb_url'] ); ?>"><?php echo esc_html( $view['breadcrumb_label'] ); ?></a>
             <?php endif; ?>
         </nav>
+        <?php endif; ?>
 
         <article class="kreativ-post-content">
             <?php the_content(); ?>
