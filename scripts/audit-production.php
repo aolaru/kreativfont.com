@@ -366,11 +366,20 @@ foreach ( array( 'Tool post' => 'Font tool', 'Contact' => 'Information', 'Legal'
     $eyebrow     = $eyebrows->length ? kreativ_audit_text( $eyebrows->item( 0 ) ) : '';
     $post_nav    = $xpath->query( kreativ_audit_class_query( 'kreativ-post-nav' ) );
     $font_crumbs = $xpath->query( kreativ_audit_class_query( 'kreativ-post-breadcrumb', '//a[normalize-space(.) = "Fonts"]' ) );
+    $header_matches = $expected_eyebrow === $eyebrow;
 
-    if ( $expected_eyebrow === $eyebrow && 0 === $post_nav->length && 0 === $font_crumbs->length ) {
+    if ( 'Tool post' === $label ) {
+        // Fancy Text owns a compact header rather than the generic tool eyebrow.
+        $header_matches = 1 === $xpath->query( kreativ_audit_class_query( 'kft-tool-page' ) )->length
+            && 1 === $xpath->query( kreativ_audit_class_query( 'kft-page-header' ) )->length
+            && 1 === $xpath->query( '//*[@id="kft-page-title"]' )->length
+            && 0 === $xpath->query( kreativ_audit_class_query( 'kreativ-page-hero' ) )->length;
+    }
+
+    if ( $header_matches && 0 === $post_nav->length && 0 === $font_crumbs->length ) {
         kreativ_audit_pass( "{$label}: non-font template routing" );
     } else {
-        kreativ_audit_fail( "{$label}: font-specific template elements remain" );
+        kreativ_audit_fail( "{$label}: expected non-font header without font navigation" );
     }
 }
 
