@@ -63,7 +63,7 @@ function gpt_font_id_enqueue_assets()
         'ajaxurl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('gpt_font_id_nonce'),
         'version' => KREATIV_GPT_FONT_ID_VERSION, 'publicStorage' => false, 'reviewRequiresOptIn' => true,
-        'publicationRequiresConsent' => true, 'publicationConsentVersion' => 'public-image-and-results-v1',
+        'publicationRequiresConsent' => true, 'publicationConsentVersion' => 'public-image-and-results-v1', 'privateAnalysisSupported' => true,
     ]) . ';', 'before');
 }
 
