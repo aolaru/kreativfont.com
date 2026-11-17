@@ -4,6 +4,26 @@ Template Name: Updates Page
 */
 
 $kreativ_updates = array(
+    'October 2026' => array(
+        'title'   => 'Font discovery and creative tools made clearer',
+        'summary' => 'October brought more focused search results, a clearer home for font tools, and a simpler font identification experience.',
+        'items'   => array(
+            'Search and autocomplete now put exact font family name matches first, making known fonts easier to find.',
+            'The font tools directory was redesigned to make it easier to choose between identification, pairing, naming, and expressive text tools.',
+            'The font identifier received a simpler image upload and preview flow, with clearer notice and consent before website submissions are published.',
+            'Font identification was strengthened with catalog and specimen comparisons, including checks for bold and italic faces.',
+            'The Fancy Text tool regained its compact mobile header, leaving more room for the workspace on smaller screens.',
+        ),
+    ),
+    'September 2026' => array(
+        'title'   => 'Faster, steadier browsing',
+        'summary' => 'September focused on performance and reliability across font pages and tools.',
+        'items'   => array(
+            'Header and font card layouts were stabilized to reduce unexpected movement as pages load.',
+            'Tool pages were streamlined to reduce rendering overhead, and duplicate content rendering was removed from single posts.',
+            'Collection page styling and search engine crawl controls were improved for more consistent browsing and discovery.',
+        ),
+    ),
     'August 2026' => array(
         'title'   => 'Catalog growth, quality controls, and site reliability strengthened',
         'summary' => 'August focused on making the font catalog easier to grow without losing structure, while tightening the technical foundations that keep discovery and deployment dependable.',
