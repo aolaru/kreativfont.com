@@ -4,6 +4,15 @@ Template Name: Updates Page
 */
 
 $kreativ_updates = array(
+    'November 2026' => array(
+        'title'   => 'New fonts and a refreshed product history',
+        'summary' => 'November so far has brought more fonts to explore and a clearer record of recent site improvements.',
+        'items'   => array(
+            'The free-font catalog continued to grow, with additions including Source Serif 4, Cormorant, and Smooch Sans.',
+            'New commercial font features include Brinell, an industrial slab serif, and Tomato Cantina, a vintage Italian-inspired font duo.',
+            'The Updates page was brought up to date with September and October improvements to browsing, search, and font tools.',
+        ),
+    ),
     'October 2026' => array(
         'title'   => 'Font discovery and creative tools made clearer',
         'summary' => 'October brought more focused search results, a clearer home for font tools, and a simpler font identification experience.',
