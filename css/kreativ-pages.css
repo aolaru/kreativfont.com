@@ -400,6 +400,18 @@
     margin-bottom: 0.45rem;
 }
 
+.kreativ-update-points a {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.kreativ-update-points a:hover,
+.kreativ-update-points a:focus-visible {
+    text-decoration-thickness: 2px;
+}
+
 .kreativ-page-content .search-form,
 .kreativ-page-content .searchform {
     display: flex;

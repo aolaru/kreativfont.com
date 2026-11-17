@@ -96,6 +96,45 @@ $kreativ_updates = array(
     ),
 );
 
+$kreativ_update_links = array(
+    'Source Serif 4' => '/fonts/source-serif-4-font-free-download',
+    'Cormorant' => '/fonts/cormorant-font-free-download',
+    'Smooch Sans' => '/fonts/smooch-sans-font-free-download',
+    'Brinell' => '/fonts/brinell-industrial-slab-serif-with-a-human-touch',
+    'Tomato Cantina' => '/fonts/tomato-cantina-vintage-italian-inspired-font-duo',
+    'font tools directory' => '/tools',
+    'font identifier' => '/tools/kreativ-font-identifier',
+    'Font identification' => '/tools/kreativ-font-identifier',
+    'Fancy Text tool' => '/tools/fancy-text-generator',
+    'identification' => '/tools/kreativ-font-identifier',
+    'pairing' => '/tools/kreativ-font-pairing-tools',
+    'naming' => '/tools/kreativ-font-name-generator',
+    'expressive text tools' => '/tools/fancy-text-generator',
+    'Tool pages' => '/tools',
+    'font tools' => '/tools',
+    'free-font catalog' => '/fonts?font_filter=free',
+    'latest free fonts' => '/fonts?font_filter=free',
+    'latest commercial fonts' => '/fonts',
+    'homepage' => '/',
+    'Homepage' => '/',
+    'Collection page' => '/collections',
+);
+
+$kreativ_link_update_item = static function ( $item ) use ( $kreativ_update_links ) {
+    $phrases = array_keys( $kreativ_update_links );
+    usort( $phrases, static function ( $a, $b ) { return strlen( $b ) - strlen( $a ); } );
+    $pattern = '/(' . implode( '|', array_map( static function ( $phrase ) { return preg_quote( $phrase, '/' ); }, $phrases ) ) . ')/';
+    $parts = preg_split( $pattern, $item, -1, PREG_SPLIT_DELIM_CAPTURE );
+
+    foreach ( $parts as $part ) {
+        if ( isset( $kreativ_update_links[ $part ] ) ) {
+            printf( '<a href="%s">%s</a>', esc_url( home_url( $kreativ_update_links[ $part ] ) ), esc_html( $part ) );
+        } else {
+            echo esc_html( $part );
+        }
+    }
+};
+
 get_header();
 ?>
 
@@ -134,7 +173,7 @@ get_header();
 
                         <ul class="kreativ-update-points">
                             <?php foreach ( $updates['items'] as $item ) : ?>
-                                <li><?php echo esc_html( $item ); ?></li>
+                                <li><?php $kreativ_link_update_item( $item ); ?></li>
                             <?php endforeach; ?>
                         </ul>
                     </article>
