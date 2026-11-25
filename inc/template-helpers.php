@@ -600,7 +600,7 @@ function kreativ_get_single_font_primary_action_data( $post = null ) {
         $primary_url     = $download_data['download_url'] ?? '';
         $primary_label   = 'Download font ZIP';
         $primary_icon    = 'fa-solid fa-arrow-down';
-        $action_title    = 'Download the font ZIP before reading the full details.';
+        $action_title    = 'Download the font or review its details.';
         $secondary_url   = $download_data['source_url'] ?? '';
         $secondary_label = 'View source';
 
@@ -608,7 +608,7 @@ function kreativ_get_single_font_primary_action_data( $post = null ) {
             $primary_url     = $secondary_url;
             $primary_label   = 'View source';
             $primary_icon    = 'fa-solid fa-arrow-up-right-from-square';
-            $action_title    = 'View the official font source before reading the full details.';
+            $action_title    = 'Review the font at its official source.';
             $secondary_url   = '';
             $secondary_label = '';
         }
@@ -618,7 +618,7 @@ function kreativ_get_single_font_primary_action_data( $post = null ) {
             'eyebrow'         => 'Free font package',
             'icon'            => 'fa-solid fa-download',
             'title'           => $action_title,
-            'copy'            => 'Use the page below for specimen, license notes, and package details before production work.',
+            'copy'            => 'Review the specimen, license, and package details before using this font in a project.',
             'primary_url'     => $primary_url,
             'primary_label'   => $primary_label,
             'primary_icon'    => $primary_icon,

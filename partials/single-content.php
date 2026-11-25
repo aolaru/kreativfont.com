@@ -52,7 +52,9 @@ $config = array(
 );
 
 $view         = $config[ $content_kind ] ?? $config['article'];
-$page_summary = kreativ_get_content_summary( $post, 28, false );
+$page_summary = 'article' === $content_kind && ! has_excerpt( $post )
+    ? ''
+    : kreativ_get_content_summary( $post, 28, false );
 $is_fancy_generator = 224093 === (int) ( $post->ID ?? 0 ) && has_shortcode( $post->post_content, 'kreativ_font_translator' );
 ?>
 

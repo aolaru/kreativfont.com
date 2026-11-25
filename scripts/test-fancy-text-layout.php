@@ -15,6 +15,7 @@ function get_the_title(...$args) { return 'Test tool'; }
 function home_url($path = '/') { return 'https://kreativfont.com' . $path; }
 function has_shortcode($content, $tag) { return str_contains($content, '[' . $tag . ']'); }
 function kreativ_get_content_summary(...$args) { return 'Generic page summary'; }
+function has_excerpt($post) { return $GLOBALS['fancy_test_has_excerpt'] ?? true; }
 function esc_attr($text) { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8'); }
 function esc_html($text) { return esc_attr($text); }
 function esc_url($text) { return esc_attr($text); }
@@ -49,5 +50,8 @@ foreach (['tool', 'article', 'information'] as $kind) {
     check(!str_contains($html, 'kft-tool-page') && str_contains($html, 'kreativ-page-hero'), 'Keep unrelated page layouts');
     check(str_contains($html, 'Generic page summary') && substr_count($html, '<h1') === 1, 'Keep unrelated headings and summaries');
 }
+$GLOBALS['fancy_test_has_excerpt'] = false;
+check(!str_contains(render(999, 'Article content', 'article'), 'Generic page summary'), 'Do not use a font-oriented fallback as an article summary');
+check(str_contains(render(999, 'Tool content', 'tool'), 'Generic page summary'), 'Keep tool summaries without an authored excerpt');
 check(!str_contains(render(224093, 'No generator shortcode'), 'kft-tool-page'), 'Do not use the tool header if the generator is removed');
 echo "PASS: Fancy Text retains its compact header and dark-mode shell; unrelated page layouts are unchanged.\n";
