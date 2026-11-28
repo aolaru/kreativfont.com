@@ -56,6 +56,7 @@ $page_summary = 'article' === $content_kind && ! has_excerpt( $post )
     ? ''
     : kreativ_get_content_summary( $post, 28, false );
 $is_fancy_generator = 224093 === (int) ( $post->ID ?? 0 ) && has_shortcode( $post->post_content, 'kreativ_font_translator' );
+$show_article_hero_image = 225572 === (int) $post->ID && has_post_thumbnail( $post );
 ?>
 
 <div class="<?php echo esc_attr( 'kreativ-page-shell' . $view['shell_class'] . ( $is_fancy_generator ? ' kft-tool-page' : '' ) ); ?>">
@@ -84,7 +85,7 @@ $is_fancy_generator = 224093 === (int) ( $post->ID ?? 0 ) && has_shortcode( $pos
             </div>
         </section>
     <?php else : ?>
-    <section class="kreativ-page-hero kreativ-page-hero-compact">
+    <section class="kreativ-page-hero <?php echo $show_article_hero_image ? 'kreativ-single-hero' : 'kreativ-page-hero-compact'; ?>">
         <div class="kreativ-page-hero-main">
             <div class="kreativ-page-eyebrow">
                 <i class="<?php echo esc_attr( $view['icon'] ); ?>" aria-hidden="true"></i>
@@ -106,6 +107,13 @@ $is_fancy_generator = 224093 === (int) ( $post->ID ?? 0 ) && has_shortcode( $pos
                 <?php endforeach; ?>
             </div>
         </div>
+        <?php if ( $show_article_hero_image ) : ?>
+            <div class="kreativ-page-hero-side kreativ-single-hero-media">
+                <div class="kreativ-single-hero-image-frame">
+                    <?php echo get_the_post_thumbnail( $post, 'large', array( 'class' => 'kreativ-single-hero-image', 'loading' => 'eager', 'fetchpriority' => 'high' ) ); ?>
+                </div>
+            </div>
+        <?php endif; ?>
     </section>
 
     <?php endif; ?>
