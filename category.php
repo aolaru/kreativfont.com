@@ -77,6 +77,7 @@ $query = new WP_Query(
             'posts_per_page' => 24,
             'orderby'        => $active_font_filter_config['orderby'],
             'tax_query'      => $tax_query,
+            'meta_query'     => kreativ_get_font_archive_rights_meta_query( $active_font_facets ),
         )
     )
 );
@@ -192,11 +193,18 @@ $archive_count_label = sprintf(
                 <?php endforeach; ?>
 
                 <label class="kreativ-font-facet-field">
-                    <span>Availability</span>
+                    <span>Listing</span>
                     <select name="availability">
-                        <option value="">Any availability</option>
-                        <option value="commercial"<?php selected( $active_font_facets['availability'] ?? '', 'commercial' ); ?>>Commercial</option>
-                        <option value="free"<?php selected( $active_font_facets['availability'] ?? '', 'free' ); ?>>Free</option>
+                        <option value="">Any listing</option>
+                        <option value="commercial"<?php selected( $active_font_facets['availability'] ?? '', 'commercial' ); ?>>Not marked free</option>
+                        <option value="free"<?php selected( $active_font_facets['availability'] ?? '', 'free' ); ?>>Listed in Free Fonts</option>
+                    </select>
+                </label>
+                <label class="kreativ-font-facet-field"><span>Usage rights</span>
+                    <select name="usage_rights"><option value="">Any usage rights</option>
+                        <?php foreach ( kreativ_get_font_usage_rights_options() as $value => $label ) : ?>
+                            <?php if ( 'unknown' !== $value ) : ?><option value="<?php echo esc_attr( $value ); ?>"<?php selected( $active_font_facets['usage_rights'] ?? '', $value ); ?>><?php echo esc_html( $label ); ?></option><?php endif; ?>
+                        <?php endforeach; ?>
                     </select>
                 </label>
             </div>

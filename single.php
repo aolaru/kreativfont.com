@@ -147,6 +147,12 @@ if ( $page_summary && preg_match( '/view\\s*&?\\s*purchase|important notice/i', 
                     </dl>
                 <?php endif; ?>
 
+                <?php $license_source = esc_url( get_post_meta( get_the_ID(), '_kreativ_font_license_source', true ), array( 'http', 'https' ) ); ?>
+                <?php if ( $license_source && 'unknown' !== kreativ_get_font_usage_rights( get_post() ) ) : ?>
+                    <?php $license_checked = get_post_meta( get_the_ID(), '_kreativ_font_license_checked', true ); ?>
+                    <p>Usage rights depend on the exact license and intended use. <a href="<?php echo $license_source; ?>" rel="nofollow noopener">Review the license source</a><?php echo $license_checked ? esc_html( ' (checked ' . $license_checked . ')' ) : ''; ?>.</p>
+                <?php endif; ?>
+
                 <div class="kreativ-research-board" data-kreativ-research-board data-pairing-url="<?php echo esc_url( $pairing_tool_url ); ?>">
                     <div class="kreativ-research-board-head">
                         <span><i class="fa-solid fa-book-bookmark" aria-hidden="true"></i> Research board</span>

@@ -230,9 +230,10 @@ function kreativ_get_single_related_font_collections( $post = null, $limit = 4 )
 
     $is_free = kreativ_post_has_category_slugs( $post, kreativ_get_free_fonts_category_slugs() );
 
-    if ( $is_free ) {
+    $rights = kreativ_get_font_usage_rights( $post );
+    if ( $is_free && 'commercial_use' === $rights ) {
         $add_collection( 'best-free-fonts-commercial-use' );
-    } else {
+    } elseif ( ! $is_free && 'commercial_use' === $rights ) {
         $add_collection( 'trending-commercial-fonts' );
     }
 
@@ -309,6 +310,7 @@ function kreativ_get_dynamic_font_collection_query_args( $config = array() ) {
         'posts_per_page' => 24,
         'orderby'        => array( 'date' => 'DESC' ),
         'free_mode'      => '',
+        'usage_rights'   => '',
         'branch_filters' => array(),
     );
 
@@ -382,7 +384,7 @@ function kreativ_get_dynamic_font_collection_query_args( $config = array() ) {
         );
     }
 
-    return array(
+    $args = array(
         'post_type'           => 'post',
         'post_status'         => 'publish',
         'posts_per_page'      => (int) $config['posts_per_page'],
@@ -390,6 +392,12 @@ function kreativ_get_dynamic_font_collection_query_args( $config = array() ) {
         'orderby'            => $config['orderby'],
         'tax_query'          => $tax_query,
     );
+    if ( 'commercial_use' === $config['usage_rights'] ) {
+        $args['meta_query'] = array(
+            array( 'key' => '_kreativ_font_usage_rights', 'value' => 'commercial_use', 'compare' => '=' ),
+        );
+    }
+    return $args;
 }
 
 function kreativ_post_matches_branch_filters( $post = null, $branch_filters = array() ) {

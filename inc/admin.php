@@ -197,6 +197,56 @@ function kreativ_add_credit_review_meta_box() {
 }
 add_action( 'add_meta_boxes', 'kreativ_add_credit_review_meta_box' );
 
+function kreativ_add_font_license_meta_box() {
+    add_meta_box( 'kreativ-font-license', 'Font Licensing', 'kreativ_render_font_license_meta_box', 'post', 'normal', 'default' );
+}
+add_action( 'add_meta_boxes', 'kreativ_add_font_license_meta_box' );
+
+function kreativ_render_font_license_meta_box( $post ) {
+    $rights  = kreativ_get_font_usage_rights( $post );
+    $source  = get_post_meta( $post->ID, '_kreativ_font_license_source', true );
+    $checked = get_post_meta( $post->ID, '_kreativ_font_license_checked', true );
+    wp_nonce_field( 'kreativ_save_font_license', 'kreativ_font_license_nonce' );
+    ?>
+    <p><label for="kreativ-font-rights"><strong>Usage rights</strong></label><br>
+        <select id="kreativ-font-rights" name="kreativ_font_rights">
+            <?php foreach ( kreativ_get_font_usage_rights_options() as $value => $label ) : ?>
+                <option value="<?php echo esc_attr( $value ); ?>"<?php selected( $rights, $value ); ?>><?php echo esc_html( $label ); ?></option>
+            <?php endforeach; ?>
+        </select>
+    </p>
+    <p><label for="kreativ-font-license-source"><strong>License source URL</strong></label><br>
+        <input type="url" class="widefat" id="kreativ-font-license-source" name="kreativ_font_license_source" value="<?php echo esc_attr( $source ); ?>">
+    </p>
+    <p><label for="kreativ-font-license-checked"><strong>Date checked</strong></label><br>
+        <input type="date" id="kreativ-font-license-checked" name="kreativ_font_license_checked" value="<?php echo esc_attr( $checked ); ?>">
+    </p>
+    <p class="description">Check the exact edition and its license. A valid source URL is required for a verified status; otherwise it is saved as Not verified. The Free Fonts category is a separate listing, not proof of commercial rights.</p>
+    <?php
+}
+
+function kreativ_save_font_license( $post_id ) {
+    if ( ! isset( $_POST['kreativ_font_license_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['kreativ_font_license_nonce'] ) ), 'kreativ_save_font_license' ) || ! current_user_can( 'edit_post', $post_id ) || wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
+        return;
+    }
+    $rights = isset( $_POST['kreativ_font_rights'] ) && is_scalar( $_POST['kreativ_font_rights'] ) ? sanitize_key( wp_unslash( $_POST['kreativ_font_rights'] ) ) : 'unknown';
+    $source = isset( $_POST['kreativ_font_license_source'] ) && is_scalar( $_POST['kreativ_font_license_source'] ) ? esc_url_raw( wp_unslash( $_POST['kreativ_font_license_source'] ), array( 'http', 'https' ) ) : '';
+    $date = isset( $_POST['kreativ_font_license_checked'] ) && is_scalar( $_POST['kreativ_font_license_checked'] ) ? sanitize_text_field( wp_unslash( $_POST['kreativ_font_license_checked'] ) ) : '';
+    if ( ! metadata_exists( 'post', $post_id, '_kreativ_font_usage_rights' ) && 'personal_use' === get_post_meta( $post_id, 'kreativ_font_availability', true ) && 'personal_use' === $rights && '' === $source ) {
+        return;
+    }
+    if ( ! isset( kreativ_get_font_usage_rights_options()[ $rights ] ) || ( 'unknown' !== $rights && ( ! $source || ! wp_http_validate_url( $source ) ) ) ) {
+        $rights = 'unknown';
+    }
+    if ( ! preg_match( '/^(\d{4})-(\d{2})-(\d{2})$/', $date, $parts ) || ! checkdate( (int) $parts[2], (int) $parts[3], (int) $parts[1] ) ) {
+        $date = '';
+    }
+    update_post_meta( $post_id, '_kreativ_font_usage_rights', $rights );
+    update_post_meta( $post_id, '_kreativ_font_license_source', $source );
+    update_post_meta( $post_id, '_kreativ_font_license_checked', $date );
+}
+add_action( 'save_post_post', 'kreativ_save_font_license' );
+
 function kreativ_render_credit_review_meta_box( $post ) {
     wp_nonce_field( 'kreativ_save_credit_review', 'kreativ_credit_nonce' );
     foreach ( array( 'designer' => 'Designer', 'foundry' => 'Foundry' ) as $branch => $label ) {

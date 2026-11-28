@@ -33,6 +33,7 @@ jobs:
           node scripts/test-cj-impressions.cjs
           php scripts/test-cj-enqueue.php
           php scripts/test-search-ranking.php
+          php scripts/test-font-licensing.php
           php scripts/test-identifier-layout.php
           php scripts/test-fancy-text-layout.php
           php scripts/test-tools-layout.php

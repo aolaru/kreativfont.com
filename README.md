@@ -100,6 +100,12 @@ The audit verifies top-page HTTP responses, document structure, metadata, search
 - `scripts/audit-production.php`: repeatable post-deploy production checks
 - `scripts/identifier/`: separately deployed Font Identifier plugin source and privacy/compatibility tests; see its README for the dedicated backup/deploy workflow
 
+## Font Licensing
+
+In a font post's **Font Licensing** panel, choose usage rights based on the exact edition and enter the source URL and date checked. A non-unknown status requires a valid source URL. The Free Fonts category is a separate listing signal, not proof of price or commercial rights. Unreviewed posts remain unverified; do not infer rights from a vendor, category, or old CTA. Commercial-use filters and licensing-focused collections use reviewed rights and may be sparse until posts are reviewed. Always check the original license for the intended use.
+
+The earlier `kreativ_font_availability=personal_use` setting remains readable until the post is reviewed in the new panel. Run `php scripts/test-font-licensing.php` for the licensing regression checks.
+
 ## Quarantined Legacy Templates
 
 These files are kept for backward compatibility, but their public `Template Name` headers have been removed so they are not offered for new page assignments:

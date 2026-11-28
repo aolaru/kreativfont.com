@@ -88,10 +88,13 @@ kreativ_render_dynamic_font_collection_page(
         'badge_text'     => 'Free',
         'badge_slug'     => 'free-fonts',
         'context_note'   => 'Free font',
+        'empty_title'    => 'No reviewed fonts yet.',
+        'empty_copy'     => 'Fonts will appear here after their commercial-use terms have been reviewed. Check the original license for every project.',
         'posts_per_page' => 24,
         'orderby'        => array(
             'date' => 'DESC',
         ),
         'free_mode'      => 'include',
+        'usage_rights'   => 'commercial_use',
     )
 );

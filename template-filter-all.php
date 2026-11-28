@@ -259,9 +259,9 @@ $home_sections = array();
 if ( 'latest' === $active_font_filter && $free_fonts_slugs ) {
     $home_sections[] = array(
         'slug'       => 'fonts',
-        'title'      => 'Latest Commercial Fonts',
-        'eyebrow'    => 'Commercial picks',
-        'summary'    => 'Fresh premium releases for branding, packaging, editorial work, and sharper client-facing font choices.',
+        'title'      => 'Latest Font Releases',
+        'eyebrow'    => 'New discoveries',
+        'summary'    => 'Recent fonts not listed in the free category. Check each source for price and license terms.',
         'view_all'   => home_url( '/fonts' ),
         'show_filters' => true,
         'posts_per_page' => 12,

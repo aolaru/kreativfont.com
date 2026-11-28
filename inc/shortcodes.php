@@ -43,7 +43,7 @@ function kreativ_font_cta_shortcode( $atts = array(), $content = null, $shortcod
     if ( '' === $note ) {
         $note = $is_free
             ? 'Check the included license before using this font in commercial work.'
-            : 'Use the official marketplace or foundry source for legal personal or commercial licensing.';
+            : 'Check the official source for current pricing and license terms before use.';
     }
 
     $secondary_url   = esc_url_raw( $atts['secondary_url'] );

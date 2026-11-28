@@ -34,6 +34,30 @@ function kreativ_get_free_fonts_category_slugs() {
     return array_values( array_unique( $available_slugs ) );
 }
 
+function kreativ_get_font_usage_rights_options() {
+    return array(
+        'unknown'        => 'Not verified',
+        'personal_use'   => 'Personal use only',
+        'commercial_use' => 'Commercial use permitted; check terms',
+        'contact'        => 'Contact the foundry for licensing',
+        'restricted'     => 'Restricted; check the license',
+    );
+}
+
+function kreativ_get_font_usage_rights( $post = null ) {
+    $post = get_post( $post );
+    if ( ! $post instanceof WP_Post ) {
+        return 'unknown';
+    }
+
+    $rights = get_post_meta( $post->ID, '_kreativ_font_usage_rights', true );
+    if ( ! metadata_exists( 'post', $post->ID, '_kreativ_font_usage_rights' ) && 'personal_use' === get_post_meta( $post->ID, 'kreativ_font_availability', true ) ) {
+        $rights = 'personal_use';
+    }
+
+    return is_string( $rights ) && isset( kreativ_get_font_usage_rights_options()[ $rights ] ) ? $rights : 'unknown';
+}
+
 function kreativ_get_font_content_category_slugs() {
     return array( 'fonts', 'free-fonts' );
 }
@@ -518,7 +542,32 @@ function kreativ_get_active_font_archive_facets() {
         $active['availability'] = $availability;
     }
 
+    $rights = isset( $_GET['usage_rights'] ) && is_scalar( $_GET['usage_rights'] ) ? sanitize_key( wp_unslash( $_GET['usage_rights'] ) ) : '';
+    if ( in_array( $rights, array( 'personal_use', 'commercial_use', 'contact', 'restricted' ), true ) ) {
+        $active['usage_rights'] = $rights;
+    }
+
     return $active;
+}
+
+function kreativ_get_font_archive_rights_meta_query( $active_facets = array() ) {
+    $rights = $active_facets['usage_rights'] ?? '';
+    if ( ! in_array( $rights, array( 'personal_use', 'commercial_use', 'contact', 'restricted' ), true ) ) {
+        return array();
+    }
+    $current = array( 'key' => '_kreativ_font_usage_rights', 'value' => $rights, 'compare' => '=' );
+    if ( 'personal_use' !== $rights ) {
+        return array( $current );
+    }
+    return array( array(
+        'relation' => 'OR',
+        $current,
+        array(
+            'relation' => 'AND',
+            array( 'key' => '_kreativ_font_usage_rights', 'compare' => 'NOT EXISTS' ),
+            array( 'key' => 'kreativ_font_availability', 'value' => 'personal_use', 'compare' => '=' ),
+        ),
+    ) );
 }
 
 function kreativ_get_font_archive_facet_tax_query( $active_facets = array() ) {
@@ -567,6 +616,9 @@ function kreativ_get_font_archive_query_args( $font_filter = 'latest', $active_f
 
     if ( ! empty( $active_facets['availability'] ) ) {
         $args['availability'] = $active_facets['availability'];
+    }
+    if ( ! empty( $active_facets['usage_rights'] ) ) {
+        $args['usage_rights'] = $active_facets['usage_rights'];
     }
 
     return $args;
@@ -799,6 +851,7 @@ function kreativ_get_archive_query_args( $args = array() ) {
     $defaults = array(
         'sort'               => kreativ_get_archive_sort(),
         'tax_query'          => array(),
+        'meta_query'         => array(),
         'posts_per_page'     => 24,
         'paged'              => max( 1, get_query_var( 'paged' ) ),
         'post_type'          => 'post',
@@ -849,5 +902,6 @@ function kreativ_get_archive_query_args( $args = array() ) {
         'ignore_sticky_posts' => $args['ignore_sticky_posts'],
         'post_status'         => $args['post_status'],
         'tax_query'           => $args['tax_query'],
+        'meta_query'          => $args['meta_query'],
     );
 }

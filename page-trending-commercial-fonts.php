@@ -42,6 +42,9 @@ kreativ_render_dynamic_font_collection_page(
             'date'          => 'DESC',
         ),
         'free_mode'      => 'exclude',
+        'usage_rights'   => 'commercial_use',
+        'empty_title'    => 'No reviewed fonts yet.',
+        'empty_copy'     => 'Fonts will appear here after their commercial-use terms have been reviewed. Check the original license for every project.',
         'free_picks_enabled' => false,
         'title_exclude_patterns' => array(
             '/\bfree\s+font\s+pack\b/i',

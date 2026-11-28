@@ -670,7 +670,7 @@ function kreativ_get_single_font_primary_action_data( $post = null ) {
             'eyebrow'         => 'License this font',
             'icon'            => 'fa-solid fa-cart-shopping',
             'title'           => sanitize_text_field( $atts['title'] ?? 'View pricing and licensing for this font.' ),
-            'copy'            => sanitize_text_field( $atts['note'] ?? 'Use the official marketplace or foundry source for legal personal or commercial licensing.' ),
+            'copy'            => sanitize_text_field( $atts['note'] ?? 'Check the official source for current pricing and license terms before use.' ),
             'primary_url'     => $url,
             'primary_label'   => sanitize_text_field( $atts['label'] ?? 'View / Purchase Font' ),
             'primary_icon'    => 'fa-solid fa-arrow-up-right-from-square',
@@ -708,8 +708,14 @@ function kreativ_get_single_font_facts( $post = null ) {
     }
 
     $facts[] = array(
-        'label' => 'Availability',
-        'value' => kreativ_post_has_category_slugs( $post, kreativ_get_free_fonts_category_slugs() ) ? 'Free font' : 'Commercial font',
+        'label' => 'Listing',
+        'value' => kreativ_post_has_category_slugs( $post, kreativ_get_free_fonts_category_slugs() ) ? 'Listed in Free Fonts' : 'Check price at source',
+    );
+    $rights = kreativ_get_font_usage_rights( $post );
+    $rights_options = kreativ_get_font_usage_rights_options();
+    $facts[] = array(
+        'label' => 'Usage rights',
+        'value' => $rights_options[ $rights ],
     );
 
     return $facts;
