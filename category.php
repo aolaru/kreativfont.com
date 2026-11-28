@@ -38,6 +38,10 @@ $font_filters = kreativ_get_font_filters();
 $active_font_filter = kreativ_get_active_font_filter( $font_filters );
 $active_font_facets = $is_font_archive ? kreativ_get_active_font_archive_facets() : array();
 $font_archive_facets = $is_font_archive ? kreativ_get_font_archive_facets() : array();
+$credit_branch = kreativ_get_branch_key_for_category_term( $category );
+$is_credit_archive = in_array( $credit_branch, array( 'designer', 'foundry' ), true );
+$is_credit_directory = $is_credit_archive && in_array( (int) $category->term_id, kreativ_get_font_branch_parent_term_ids( $credit_branch ), true );
+$credit_website = $is_credit_archive && ! $is_credit_directory ? get_term_meta( $cat_id, '_kreativ_credit_website', true ) : '';
 
 if ( ! $is_font_archive ) {
     $active_font_filter = 'latest';
@@ -103,6 +107,10 @@ $archive_count_label = sprintf(
 
             <p><?php echo wp_kses_post( $cat_desc ? $cat_desc : esc_html( $archive_context['summary'] ) ); ?></p>
 
+            <?php if ( $credit_website && wp_http_validate_url( $credit_website ) ) : ?>
+                <p><a href="<?php echo esc_url( $credit_website ); ?>" target="_blank" rel="noopener noreferrer">Official website <span class="screen-reader-text">(opens in a new tab)</span></a></p>
+            <?php endif; ?>
+
             <div class="kreativ-category-meta-pills">
                 <span class="kreativ-category-meta-pill"><i class="fa-solid fa-grid-2"></i> <?php echo esc_html( $archive_count_label ); ?></span>
                 <?php if ( $is_tools_archive ) : ?>
@@ -124,6 +132,28 @@ $archive_count_label = sprintf(
     </div>
 </div>
 
+<?php if ( $is_credit_directory && ! empty( $font_archive_facets[ $credit_branch ]['terms'] ) ) : ?>
+    <section class="container kreativ-credit-directory" data-credit-directory>
+        <h2><?php echo esc_html( 'designer' === $credit_branch ? 'Browse designers' : 'Browse foundries' ); ?></h2>
+        <label class="kreativ-credit-directory-search" hidden>Search names <input type="search" data-credit-directory-search autocomplete="off"></label>
+        <div class="kreativ-credit-directory-letters" data-credit-directory-letters hidden aria-label="Filter by initial">
+            <button type="button" data-credit-initial="" aria-pressed="true">All</button>
+            <?php foreach ( range( 'A', 'Z' ) as $letter ) : ?>
+                <button type="button" data-credit-initial="<?php echo esc_attr( $letter ); ?>" aria-pressed="false"><?php echo esc_html( $letter ); ?></button>
+            <?php endforeach; ?>
+        </div>
+        <p data-credit-directory-empty hidden>No matching names.</p>
+        <ul class="kreativ-credit-directory-list">
+            <?php foreach ( $font_archive_facets[ $credit_branch ]['terms'] as $directory_term ) : ?>
+                <?php $directory_link = get_term_link( $directory_term ); ?>
+                <?php if ( ! is_wp_error( $directory_link ) ) : ?>
+                    <li data-credit-directory-item><a href="<?php echo esc_url( $directory_link ); ?>"><?php echo esc_html( $directory_term->name ); ?></a></li>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </ul>
+    </section>
+<?php endif; ?>
+
 <?php if ( $is_font_archive ) : ?>
     <div class="kreativ-font-filter-bar kreativ-archive-filter-bar">
         <?php foreach ( $font_filters as $filter_slug => $filter_config ) : ?>
@@ -133,19 +163,32 @@ $archive_count_label = sprintf(
         <?php endforeach; ?>
     </div>
 
+    <nav class="container kreativ-credit-directory-links" aria-label="Credit directories">
+        <?php foreach ( array( 'designer' => 'All designers', 'foundry' => 'All foundries' ) as $directory_branch => $directory_label ) : ?>
+            <?php $directory_parents = kreativ_get_font_branch_parent_term_ids( $directory_branch ); ?>
+            <?php $directory_url = ! empty( $directory_parents ) ? get_term_link( (int) $directory_parents[0], 'category' ) : false; ?>
+            <?php if ( $directory_url && ! is_wp_error( $directory_url ) ) : ?>
+                <a href="<?php echo esc_url( $directory_url ); ?>"><?php echo esc_html( $directory_label ); ?></a>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </nav>
+
     <?php if ( ! empty( $font_archive_facets ) ) : ?>
         <form class="kreativ-font-facet-form" method="get" action="<?php echo esc_url( get_term_link( $category ) ); ?>">
             <div class="kreativ-font-facet-grid">
                 <?php foreach ( $font_archive_facets as $branch_key => $facet ) : ?>
-                    <label class="kreativ-font-facet-field">
-                        <span><?php echo esc_html( $facet['label'] ); ?></span>
-                        <select name="<?php echo esc_attr( $facet['param'] ); ?>">
+                    <div class="kreativ-font-facet-field"<?php echo in_array( $branch_key, array( 'designer', 'foundry' ), true ) ? ' data-credit-facet' : ''; ?>>
+                        <label for="kreativ-facet-<?php echo esc_attr( $branch_key ); ?>"><?php echo esc_html( $facet['label'] ); ?></label>
+                        <?php if ( in_array( $branch_key, array( 'designer', 'foundry' ), true ) ) : ?>
+                            <label hidden>Search <?php echo esc_html( strtolower( $facet['label'] ) ); ?> names <input type="search" data-credit-facet-search autocomplete="off"></label>
+                        <?php endif; ?>
+                        <select id="kreativ-facet-<?php echo esc_attr( $branch_key ); ?>" name="<?php echo esc_attr( $facet['param'] ); ?>">
                             <option value="">Any <?php echo esc_html( strtolower( $facet['label'] ) ); ?></option>
                             <?php foreach ( $facet['terms'] as $term ) : ?>
                                 <option value="<?php echo esc_attr( $term->slug ); ?>"<?php selected( $active_font_facets[ $branch_key ] ?? '', $term->slug ); ?>><?php echo esc_html( $term->name ); ?></option>
                             <?php endforeach; ?>
                         </select>
-                    </label>
+                    </div>
                 <?php endforeach; ?>
 
                 <label class="kreativ-font-facet-field">

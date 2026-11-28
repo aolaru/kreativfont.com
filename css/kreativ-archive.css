@@ -194,7 +194,9 @@ body.kreativ-cat-tools            { --kreativ-cat-gradient: var(--kf-gradient-he
     text-transform: uppercase;
 }
 
-.kreativ-font-facet-field select {
+.kreativ-font-facet-field select,
+.kreativ-font-facet-field input,
+.kreativ-credit-directory input {
     width: 100%;
     min-height: 42px;
     padding: 0.55rem 0.7rem;
@@ -207,6 +209,26 @@ body.kreativ-cat-tools            { --kreativ-cat-gradient: var(--kf-gradient-he
     font-weight: 600;
     letter-spacing: 0;
     text-transform: none;
+}
+
+.kreativ-credit-directory {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.kreativ-credit-directory-links { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.75rem; }
+
+.kreativ-credit-directory h2 { font-size: 1.3rem; }
+.kreativ-credit-directory-search { display: grid; gap: 0.35rem; max-width: 28rem; }
+.kreativ-credit-directory-search[hidden] { display: none; }
+.kreativ-credit-directory-letters:not([hidden]) { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.75rem; }
+.kreativ-credit-directory-letters button { min-width: 2rem; min-height: 2rem; border: 1px solid #cbd1dc; border-radius: 4px; background: transparent; color: inherit; cursor: pointer; }
+.kreativ-credit-directory-letters button[aria-pressed="true"] { background: #3433b3; color: #fff; }
+.kreativ-credit-directory-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 180px), 1fr));
+    gap: 0.5rem 1rem;
+    list-style: none;
+    padding: 0;
 }
 
 .kreativ-font-facet-actions {
@@ -315,7 +337,9 @@ body.dark-mode .kreativ-font-facet-actions a {
     color: #cfd8f5;
 }
 
-body.dark-mode .kreativ-font-facet-field select {
+body.dark-mode .kreativ-font-facet-field select,
+body.dark-mode .kreativ-font-facet-field input,
+body.dark-mode .kreativ-credit-directory input {
     border-color: rgba(255, 255, 255, 0.12);
     background: rgba(20, 26, 44, 0.92);
     color: #edf2ff;

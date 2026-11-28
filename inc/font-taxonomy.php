@@ -456,7 +456,8 @@ function kreativ_get_font_archive_facets( $limit = 80 ) {
                     'taxonomy'   => 'category',
                     'parent'     => $parent_id,
                     'hide_empty' => true,
-                    'number'     => max( 1, (int) $limit ),
+                    // People and foundries must not disappear after the first 80 names.
+                    'number'     => in_array( $branch_key, array( 'designer', 'foundry' ), true ) ? 0 : max( 1, (int) $limit ),
                     'orderby'    => 'name',
                     'order'      => 'ASC',
                 )
@@ -486,6 +487,15 @@ function kreativ_get_font_archive_facets( $limit = 80 ) {
 
     return $facets;
 }
+
+function kreativ_enqueue_archive_credit_search() {
+    if ( ! is_category() ) {
+        return;
+    }
+
+    wp_enqueue_script( 'kreativ-credit-search', get_template_directory_uri() . '/js/kreativ-credit-search.js', array(), kreativ_asset_version( '/js/kreativ-credit-search.js' ), true );
+}
+add_action( 'wp_enqueue_scripts', 'kreativ_enqueue_archive_credit_search' );
 
 function kreativ_get_active_font_archive_facets() {
     $active = array();
