@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300">
+  <rect width="640" height="300" fill="#fff0de"/>
+  <circle cx="320" cy="150" r="114" fill="#ffe2bd"/>
+  <g transform="rotate(-5 320 150)"><rect x="127" y="60" width="386" height="180" rx="10" fill="#fffaf3" stroke="#e9cdb2" stroke-width="2"/><text x="156" y="98" fill="#ae755e" font-family="Arial,sans-serif" font-size="11" font-weight="bold" letter-spacing="3">A NAME FOR YOUR TYPE</text><text x="156" y="162" fill="#6b3842" font-family="Georgia,serif" font-size="54" font-style="italic">Lumière</text><path d="M156 181h234" stroke="#e9cdb2" stroke-width="2"/><text x="156" y="208" fill="#ae755e" font-family="Arial,sans-serif" font-size="11" letter-spacing="2">REGULAR  /  ITALIC  /  BOLD</text></g>
+  <path d="M504 45l4 12 12 4-12 4-4 12-4-12-12-4 12-4zM113 190l3 9 9 3-9 3-3 9-3-9-9-3 9-3z" fill="#e07b59"/>
+  <text x="42" y="277" fill="#a36c57" font-family="Arial,sans-serif" font-size="12" font-weight="bold" letter-spacing="3">MAKE A NAME</text>
+  <text x="598" y="277" text-anchor="end" fill="#a36c57" font-family="Arial,sans-serif" font-size="12" letter-spacing="2">03 / 04</text>
+</svg>

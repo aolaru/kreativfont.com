@@ -135,6 +135,7 @@ body.dark-mode .kreativ-creative-tool :is(.kfm-status-error, .kreativ-tool-feedb
 .kreativ-tools-catalogue { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 .kreativ-tool-card { display: flex; flex-direction: column; padding: 26px; border: 1px solid var(--kt-border); border-radius: 16px; background: var(--kt-bg); color: var(--kt-text); text-decoration: none; font-weight: 400; }
 .kreativ-tool-card:hover { border-color: var(--kt-primary); background: var(--kt-soft); text-decoration: none; }
+.kreativ-tool-card-thumbnail { display: block; width: 100%; height: auto; aspect-ratio: 640 / 300; object-fit: cover; border-radius: 10px; margin-bottom: 22px; }
 .kreativ-tool-card > i { display: grid; place-items: center; width: 48px; height: 48px; background: var(--kt-soft); color: var(--kt-link); border-radius: 12px; margin-bottom: 24px; font-size: 21px; }
 .kreativ-tool-card h2 { font: 650 24px/1.3 system-ui, sans-serif; color: var(--kt-text); margin: 8px 0 12px; }
 .kreativ-tool-card p { font-size: 15px; line-height: 1.65; color: var(--kt-muted); margin: 0 0 20px; }

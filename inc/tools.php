@@ -7,6 +7,7 @@ function kreativ_get_tool_catalogue() {
             'task' => 'Identify a font',
             'summary' => 'Upload a lettering image and explore possible font matches.',
             'icon' => 'fa-magnifying-glass',
+            'thumbnail' => 'font-identifier.svg',
             'action' => 'Identify a font',
         ),
         'kreativ-font-pairing-tools' => array(
@@ -14,6 +15,7 @@ function kreativ_get_tool_catalogue() {
             'task' => 'Find fonts that work together',
             'summary' => 'Find pairings, explore similar fonts, or compare two typefaces for your project.',
             'icon' => 'fa-object-group',
+            'thumbnail' => 'font-pairing.svg',
             'action' => 'Explore font pairings',
             'kind' => 'pairing',
             'input' => 'Start with a font you know',
@@ -25,6 +27,7 @@ function kreativ_get_tool_catalogue() {
             'task' => 'Name a type family',
             'summary' => 'Turn a type style or creative direction into font-family name ideas. Save favorites and explore family variants.',
             'icon' => 'fa-pen-nib',
+            'thumbnail' => 'font-name-generator.svg',
             'action' => 'Create name ideas',
             'kind' => 'naming',
             'input' => 'Describe the character of your type',
@@ -36,6 +39,7 @@ function kreativ_get_tool_catalogue() {
             'task' => 'Style text for sharing',
             'summary' => 'Copy Unicode lettering or download a styled PNG for a bio, caption, or graphic.',
             'icon' => 'fa-wand-magic-sparkles',
+            'thumbnail' => 'fancy-text-generator.svg',
             'action' => 'Create fancy text',
         ),
     );

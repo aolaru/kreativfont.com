@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300">
+  <rect width="640" height="300" fill="#e7e8ff"/>
+  <path d="M0 242H640M0 58H640M80 0V300M560 0V300" stroke="#c9caf8" stroke-width="1"/>
+  <circle cx="320" cy="146" r="113" fill="#d4d5ff"/>
+  <text x="320" y="207" text-anchor="middle" fill="#25255e" font-family="Georgia,serif" font-size="205" font-weight="bold">a</text>
+  <circle cx="360" cy="132" r="65" fill="none" stroke="#fff" stroke-width="13"/>
+  <path d="M407 179l49 49" stroke="#fff" stroke-width="16" stroke-linecap="round"/>
+  <path d="M360 79v15m0 76v15m-53-53h15m76 0h15" stroke="#4b4bea" stroke-width="3"/>
+  <circle cx="114" cy="93" r="6" fill="#4b4bea"/><path d="M501 76v25m-12-12h25" stroke="#4b4bea" stroke-width="3"/>
+  <text x="42" y="272" fill="#5555a3" font-family="Arial,sans-serif" font-size="12" font-weight="bold" letter-spacing="3">LOOK CLOSER</text>
+  <text x="598" y="272" text-anchor="end" fill="#5555a3" font-family="Arial,sans-serif" font-size="12" letter-spacing="2">01 / 04</text>
+</svg>

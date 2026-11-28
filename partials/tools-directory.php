@@ -22,7 +22,11 @@ $guides = new WP_Query( array(
     <section class="kreativ-tools-catalogue" aria-label="Choose a font tool">
         <?php foreach ( $tools as $tool_slug => $tool ) : ?>
             <a class="kreativ-tool-card" href="<?php echo esc_url( home_url( '/tools/' . $tool_slug ) ); ?>">
-                <i class="fa-solid <?php echo esc_attr( $tool['icon'] ); ?>" aria-hidden="true"></i>
+                <?php if ( ! empty( $tool['thumbnail'] ) ) : ?>
+                    <img class="kreativ-tool-card-thumbnail" src="<?php echo esc_url( get_template_directory_uri() . '/img/tools/' . $tool['thumbnail'] ); ?>" alt="" width="640" height="300" loading="lazy">
+                <?php else : ?>
+                    <i class="fa-solid <?php echo esc_attr( $tool['icon'] ); ?>" aria-hidden="true"></i>
+                <?php endif; ?>
                 <span class="kreativ-tool-eyebrow"><?php echo esc_html( $tool['task'] ); ?></span>
                 <h2><?php echo esc_html( $tool['title'] ); ?></h2>
                 <p><?php echo esc_html( $tool['summary'] ); ?></p>
